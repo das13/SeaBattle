@@ -75,6 +75,36 @@ public class Server {
             writer.writeCharacters("100");
             writer.writeEndElement();
             writer.writeEndElement();
+            writer.writeStartElement("player");
+            writer.writeAttribute("id" , "2");
+            writer.writeStartElement("nickname");
+            writer.writeCharacters("hacker");
+            writer.writeEndElement();
+            writer.writeStartElement("password");
+            writer.writeCharacters("lol");
+            writer.writeEndElement();
+            writer.writeStartElement("status");
+            writer.writeCharacters("offline");
+            writer.writeEndElement();
+            writer.writeStartElement("rating");
+            writer.writeCharacters("9999");
+            writer.writeEndElement();
+            writer.writeEndElement();
+            writer.writeStartElement("player");
+            writer.writeAttribute("id" , "3");
+            writer.writeStartElement("nickname");
+            writer.writeCharacters("unnamed");
+            writer.writeEndElement();
+            writer.writeStartElement("password");
+            writer.writeCharacters("test");
+            writer.writeEndElement();
+            writer.writeStartElement("status");
+            writer.writeCharacters("playing");
+            writer.writeEndElement();
+            writer.writeStartElement("rating");
+            writer.writeCharacters("10");
+            writer.writeEndElement();
+            writer.writeEndElement();
             writer.writeEndElement();
             writer.writeEndDocument();
         } catch (IOException e) {
@@ -113,5 +143,29 @@ public class Server {
         } catch (IOException e) {
             //logger.error("Problem with creating \"serverConf.xml\".");
         }
+    }
+
+    public static File getPlayerList() {
+        return playerList;
+    }
+
+    public static void setPlayerList(File playerList) {
+        Server.playerList = playerList;
+    }
+
+    public static File getIpBlackList() {
+        return ipBlackList;
+    }
+
+    public static void setIpBlackList(File ipBlackList) {
+        Server.ipBlackList = ipBlackList;
+    }
+
+    public static File getServerConf() {
+        return serverConf;
+    }
+
+    public static void setServerConf(File serverConf) {
+        Server.serverConf = serverConf;
     }
 }

@@ -7,32 +7,51 @@ import javax.xml.stream.XMLStreamWriter;
 public class OutClientXML {
     XMLOutputFactory factory;
     XMLStreamWriter writer;
+    //второй для контроля в консоли
     XMLStreamWriter writer2;
 
-    public void sendAuthorization(String input) throws XMLStreamException {
+    public void sendAuthorization(String login, String password) throws XMLStreamException {
         writer.writeStartDocument("1.0");
+
         writer.writeStartElement("root");
+
         writer.writeStartElement("key");
         writer.writeCharacters("AUTHORIZATION");
         writer.writeEndElement();
+
         writer.writeStartElement("value");
-        writer.writeCharacters(input);
+        writer.writeCharacters(login);
         writer.writeEndElement();
+
+        writer.writeStartElement("value");
+        writer.writeCharacters(password);
         writer.writeEndElement();
+
+        writer.writeEndElement();
+
         writer.writeEndDocument();
 
         writer.flush();
 
         //console check
         writer2.writeStartDocument("1.0");
+
         writer2.writeStartElement("root");
+
         writer2.writeStartElement("key");
         writer2.writeCharacters("AUTHORIZATION");
         writer2.writeEndElement();
+
         writer2.writeStartElement("value");
-        writer2.writeCharacters(input);
+        writer2.writeCharacters(login);
         writer2.writeEndElement();
+
+        writer2.writeStartElement("value");
+        writer2.writeCharacters(password);
         writer2.writeEndElement();
+
+        writer2.writeEndElement();
+
         writer2.writeEndDocument();
 
         writer2.flush();

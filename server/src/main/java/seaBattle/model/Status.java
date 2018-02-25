@@ -1,5 +1,5 @@
 package seaBattle.model;
 
 public enum Status {
-    online,offline,banned
+    ONLINE, PLAYING, OFFLANE, BANNED;
 }

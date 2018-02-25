@@ -26,12 +26,15 @@ public class ClientController {
 
     public void run() throws IOException, XMLStreamException {
 
-        String input;
+        String login;
+        String password;
 
         while (!socket.isClosed()){
-            System.out.println("\nwaiting. write login");
-            input = scanner.nextLine();
-            outClientXML.sendAuthorization(input);
+            System.out.println("\nwrite login:");
+            login = scanner.nextLine();
+            System.out.println("write password:");
+            password = scanner.nextLine();
+            outClientXML.sendAuthorization(login,password);
 
         }
         System.out.println("\n\nPress somth to exit");

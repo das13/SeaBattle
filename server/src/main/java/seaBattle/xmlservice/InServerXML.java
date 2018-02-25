@@ -10,33 +10,7 @@ public class InServerXML {
     private XMLInputFactory xmlif;
     private Reader fileReader;
 
-    public XMLStreamReader getXmlr() {
-        return xmlr;
-    }
-
-    public void setXmlr(XMLStreamReader xmlr) {
-        this.xmlr = xmlr;
-    }
-
-    public XMLInputFactory getXmlif() {
-        return xmlif;
-    }
-
-    public void setXmlif(XMLInputFactory xmlif) {
-        this.xmlif = xmlif;
-    }
-
-    public Reader getFileReader() {
-        return fileReader;
-    }
-
-    public void setFileReader(Reader fileReader) {
-        this.fileReader = fileReader;
-    }
-
     public static void printEvent(XMLStreamReader xmlr) {
-        System.out.print("EVENT:["+xmlr.getLocation().getLineNumber()+"]["+
-                xmlr.getLocation().getColumnNumber()+"] ");
         switch (xmlr.getEventType()) {
             case XMLStreamConstants.START_ELEMENT:
                 System.out.print("<");
@@ -102,7 +76,6 @@ public class InServerXML {
         }
         System.out.println("");
     }
-
     private static void printName(XMLStreamReader xmlr){
         if(xmlr.hasName()){
             String prefix = xmlr.getPrefix();
@@ -111,9 +84,7 @@ public class InServerXML {
             printName(prefix,uri,localName);
         }
     }
-    private static void printName(String prefix,
-                                  String uri,
-                                  String localName) {
+    private static void printName(String prefix, String uri, String localName) {
         if (uri != null && !("".equals(uri)) ) System.out.print("['"+uri+"']");
         //if (uri != null && !("".equals(uri)) ) System.out.print("['"+uri+"']:");
         if (prefix != null) System.out.print(prefix+"");
@@ -148,5 +119,25 @@ public class InServerXML {
         else
             System.out.print("xmlns"+prefix+"='"+uri+"'");
 //            System.out.print("xmlns:"+prefix+"='"+uri+"'");
+    }
+
+    //getters & setters
+    public XMLStreamReader getXmlr() {
+        return xmlr;
+    }
+    public void setXmlr(XMLStreamReader xmlr) {
+        this.xmlr = xmlr;
+    }
+    public XMLInputFactory getXmlif() {
+        return xmlif;
+    }
+    public void setXmlif(XMLInputFactory xmlif) {
+        this.xmlif = xmlif;
+    }
+    public Reader getFileReader() {
+        return fileReader;
+    }
+    public void setFileReader(Reader fileReader) {
+        this.fileReader = fileReader;
     }
 }
