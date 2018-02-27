@@ -39,17 +39,17 @@ public class OutClientXML {
         writer.writeEndDocument();
         writer.flush();
 
-        writer2.writeStartDocument("1.0");
-        writer2.writeStartElement("root");
-        writer2.writeStartElement("key");
-        writer2.writeCharacters(key);
-        writer2.writeEndElement();
-        writer2.writeStartElement("value");
-        writer2.writeCharacters(value1);
-        writer2.writeEndElement();
-        writer2.writeEndElement();
-        writer2.writeEndDocument();
-        writer2.flush();
+//        writer2.writeStartDocument("1.0");
+//        writer2.writeStartElement("root");
+//        writer2.writeStartElement("key");
+//        writer2.writeCharacters(key);
+//        writer2.writeEndElement();
+//        writer2.writeStartElement("value");
+//        writer2.writeCharacters(value1);
+//        writer2.writeEndElement();
+//        writer2.writeEndElement();
+//        writer2.writeEndDocument();
+//        writer2.flush();
     }
 
     //send XML with 2 values

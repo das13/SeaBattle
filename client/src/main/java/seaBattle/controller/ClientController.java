@@ -40,7 +40,14 @@ public class ClientController {
             inClientXML.setReader(inClientXML.getFactory().createXMLStreamReader(inClientXML.getFileReader()));
             XMLStreamReader reader = inClientXML.getReader();
             while (reader.hasNext()) {
-                inClientXML.printEvent(reader);
+                System.out.println("key = \"" + inClientXML.checkValue(reader) +"\"");
+                System.out.println("value = \"" + inClientXML.checkValue(reader) +"\"");
+                reader.next();
+                reader.next();
+                //пока считывает один value
+                //inClientXML.checkValue(reader);
+
+                //inClientXML.printEvent(reader);
                 if (reader.isEndElement() && "root".equals(reader.getName().toString())) {
                     break;
                 }else{
@@ -60,13 +67,10 @@ public class ClientController {
             }
 
 
-//            inClientXML.printEvent(inClientXML.getReader());
-
-
         }
         System.out.println("\n\nPress somth to exit");
         outClientXML.getWriter().close();
-        outClientXML.getWriter2().close();
+//        outClientXML.getWriter2().close();
     }
 }
 

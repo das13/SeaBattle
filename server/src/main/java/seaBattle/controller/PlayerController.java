@@ -67,7 +67,7 @@ public class PlayerController extends Thread {
                                 System.out.println("xml message with key \"REG\" detected");
                                 String login = inServerXML.checkValue(reader);
                                 String password = inServerXML.checkValue(reader);
-                                outServerXML.send("REG", registrationPhase(login,password));
+                                outServerXML.send("REG", regResult(login,password));
                                 break;
                             case "MSG":
                                 System.out.println("xml message with key \"MSG\" detected");
@@ -136,13 +136,13 @@ public class PlayerController extends Thread {
             Node node = players.item(i);
             //если указанные имя и пароль не найдены в списке
             if (!node.getChildNodes().item(1).getTextContent().equals(login) && !node.getChildNodes().item(3).getTextContent().equals(password)){
-                str = "***player with this login or password was not found. register first***";
+                str = "not exist";
             }
 
             //если совпадает имя или пароль
             if ((node.getChildNodes().item(1).getTextContent().equals(login) && !node.getChildNodes().item(3).getTextContent().equals(password)) ||
                     (!node.getChildNodes().item(1).getTextContent().equals(login) && node.getChildNodes().item(3).getTextContent().equals(password))){
-                str = "***account name or password is incorrect***";
+                str = "incorrect";
                 break;
             }
             //если совпадает и имя и пароль
@@ -156,7 +156,7 @@ public class PlayerController extends Thread {
                 StreamResult result = new StreamResult(new File(filepath));
                 transformer.transform(source, result);
 
-                str = "***authorization success!***";
+                str = "success!";
                 break;
             }
         }
@@ -164,12 +164,22 @@ public class PlayerController extends Thread {
         return str;
     }
 
-    public String registrationPhase(String value1, String value2) throws ParserConfigurationException, IOException, SAXException {
+    public String regResult(String value1, String value2) throws ParserConfigurationException, IOException, SAXException {
         final String filepath = System.getProperty("user.dir") + File.separator + PLAYERLIST;
         final File xmlFile = new File(filepath);
         DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         Document doc = db.parse(xmlFile);
         doc.normalize();
+        //check nickname match
+        NodeList players = doc.getElementsByTagName("player");
+        for (int i = 0; i < players.getLength(); i++) {
+            Node node = players.item(i);
+            if (node.getChildNodes().item(1).getTextContent().equals(value1)){
+                str = "error. player with nickname " + value1 + " already exist.";
+                return str;
+            }
+        }
+
         Element player = doc.createElement("player");
         doc.getFirstChild().appendChild(player);
         Element nickname = doc.createElement("nickname");
