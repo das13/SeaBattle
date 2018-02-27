@@ -27,12 +27,16 @@ public class ClientController {
     public void run() throws IOException, XMLStreamException {
 
         while (!socket.isClosed()){
-            System.out.println("authorization loop");
-            System.out.println("\nwrite login:");
-            String login = scanner.nextLine();
-            System.out.println("write password:");
-            String password = scanner.nextLine();
-            outClientXML.sendAuthorization(login,password);
+            System.out.println("\nwrite key");
+            String key = scanner.nextLine();
+            System.out.println("write value1:");
+            String value1 = scanner.nextLine();
+            System.out.println("write value2:");
+            String value2 = scanner.nextLine();
+            System.out.println("sending:");
+            outClientXML.send(key,value1,value2);
+            System.out.println("\nserver xml answer:\n");
+
             inClientXML.setReader(inClientXML.getFactory().createXMLStreamReader(inClientXML.getFileReader()));
             XMLStreamReader reader = inClientXML.getReader();
             while (reader.hasNext()) {

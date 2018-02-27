@@ -34,7 +34,6 @@ public class OutServerXML {
         writer.writeStartElement("value");
         writer.writeCharacters(value);
         writer.writeEndElement();
-        
         writer.writeEndElement();
         writer.writeEndDocument();
         writer.flush();

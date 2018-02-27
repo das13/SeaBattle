@@ -1,6 +1,7 @@
 package seaBattle.controller;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -17,6 +18,7 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -46,7 +48,7 @@ public class PlayerController extends Thread {
         threadNumber = Server.getCountOfThread();
         try {
             while (!socket.isClosed()){
-                System.out.println("waiting to receive xml data in thread #" + threadNumber);
+                System.out.println("\n/receiving from thread #" + threadNumber);
                 //for XML data receiving
                 inServerXML.setReader(inServerXML.getFactory().createXMLStreamReader(inServerXML.getFileReader()));
                 XMLStreamReader reader = inServerXML.getReader();
@@ -54,24 +56,21 @@ public class PlayerController extends Thread {
                     if (reader.getEventType() == 1 && reader.getLocalName().equals("key")){
                         reader.next();
                         switch (reader.getText()){
-                            case "AUTHORIZATION": {
-                                System.out.println("\nxml message with key \"AUTHORIZATION\" from thread #" + threadNumber + " detected\npreparing answer:");
-                                reader.next();
-                                reader.next();
-                                reader.next();
-                                player.setLogin(reader.getText());
-                                reader.next();
-                                reader.next();
-                                reader.next();
-                                player.setPassword(reader.getText());
-                                outServerXML.send("AUTHORIZATION", authorizationPhase(player.getLogin(),player.getPassword()));
+                            case "AUTH": {
+                                System.out.println("\nxml message with key \"AUTH\" from thread #" + threadNumber + " detected\npreparing answer:");
+                                String login = inServerXML.checkValue(reader);
+                                String password = inServerXML.checkValue(reader);
+                                outServerXML.send("AUTH", authResult(login,password));
                                 break;
                             }
-                            case "REGISTRATION":
-                                System.out.println("xml message with key \"REGISTRATION\" detected");
+                            case "REG":
+                                System.out.println("xml message with key \"REG\" detected");
+                                String login = inServerXML.checkValue(reader);
+                                String password = inServerXML.checkValue(reader);
+                                outServerXML.send("REG", registrationPhase(login,password));
                                 break;
-                            case "MESSAGE":
-                                System.out.println("xml message with key \"MESSAGE\" detected");
+                            case "MSG":
+                                System.out.println("xml message with key \"MSG\" detected");
                                 break;
                             case "ASK OUT":
                                 System.out.println("xml message with key \"ASK OUT\" detected");
@@ -79,7 +78,7 @@ public class PlayerController extends Thread {
                             case "ASK ANSWER":
                                 System.out.println("xml message with key \"ASK ANSWER\" detected");
                                 break;
-                            case "SHIP LOCATION":
+                            case "SHIP":
                                 System.out.println("xml message with key \"SHIP LOCATION\" detected");
                                 break;
                             case "READY":
@@ -101,8 +100,6 @@ public class PlayerController extends Thread {
                         reader.next();
                     }
                 }
-
-                System.out.println("\nfinished to receive xml data in thread #" + threadNumber);
                 reader.close();
             }
         } catch (XMLStreamException | SAXException | ParserConfigurationException | IOException | TransformerException e) {
@@ -121,8 +118,9 @@ public class PlayerController extends Thread {
             }
         }
     }
+
     
-    public String authorizationPhase(String login, String password) throws ParserConfigurationException, IOException, SAXException, TransformerException, XMLStreamException {
+    public String authResult(String login, String password) throws ParserConfigurationException, IOException, SAXException, TransformerException, XMLStreamException {
 
         // Строим объектную модель исходного XML файла
         final String filepath = System.getProperty("user.dir") + File.separator + PLAYERLIST;
@@ -158,12 +156,50 @@ public class PlayerController extends Thread {
                 StreamResult result = new StreamResult(new File(filepath));
                 transformer.transform(source, result);
 
-                System.out.println("THREAD #" + threadNumber + "." + login + " authorized, status changed to \"online\". moving to IDLE mode with chat");
                 str = "***authorization success!***";
                 break;
             }
         }
         // Сообщение клиенту о результате авторизации
+        return str;
+    }
+
+    public String registrationPhase(String value1, String value2) throws ParserConfigurationException, IOException, SAXException {
+        final String filepath = System.getProperty("user.dir") + File.separator + PLAYERLIST;
+        final File xmlFile = new File(filepath);
+        DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        Document doc = db.parse(xmlFile);
+        doc.normalize();
+        Element player = doc.createElement("player");
+        doc.getFirstChild().appendChild(player);
+        Element nickname = doc.createElement("nickname");
+        nickname.setTextContent(value1);
+        player.appendChild(nickname);
+        Element password = doc.createElement("password");
+        password.setTextContent(value2);
+        player.appendChild(password);
+        Element status = doc.createElement("status");
+        status.setTextContent("offline");
+        player.appendChild(status);
+        Element rating = doc.createElement("rating");
+        rating.setTextContent("100");
+        player.appendChild(rating);
+
+        Transformer transformer = null;
+        try {
+            transformer = TransformerFactory.newInstance().newTransformer();
+        } catch (TransformerConfigurationException e) {
+            e.printStackTrace();
+        }
+        DOMSource source = new DOMSource(doc);
+        StreamResult result = new StreamResult(new File(filepath));
+        try {
+            transformer.transform(source, result);
+        } catch (TransformerException e) {
+            e.printStackTrace();
+        }
+        System.out.println("new player registered");
+        str = "registration success";
         return str;
     }
 }

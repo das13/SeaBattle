@@ -2,6 +2,7 @@ package seaBattle.xmlservice;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -22,6 +23,16 @@ public class InServerXML {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    public String checkValue(XMLStreamReader reader){
+        try {
+            reader.next();
+            reader.next();
+            reader.next();
+        } catch (XMLStreamException e) {
+            e.printStackTrace();
+        }
+        return reader.getText();
     }
     public static void printEvent(XMLStreamReader reader) {
         switch (reader.getEventType()) {
