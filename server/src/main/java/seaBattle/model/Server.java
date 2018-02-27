@@ -1,5 +1,7 @@
 package seaBattle.model;
 
+import seaBattle.controller.PlayerController;
+
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -8,6 +10,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
+import java.util.HashMap;
 import java.util.HashSet;
 
 public class Server {
@@ -16,6 +19,8 @@ public class Server {
     private static HashSet<String> names = new HashSet<String>();
 
     private static HashSet<PrintWriter> writers = new HashSet<PrintWriter>();
+
+    private static HashMap<Integer,Player> players = new HashMap<Integer, Player>();
 
     private static int countOfThread = 0;
     private static File playerList = new File("playerList.xml");
@@ -35,13 +40,13 @@ public class Server {
     }
 
     public static void main(String[] args) throws Exception {
-        System.out.println("The chat server is running.");
+        System.out.println("The server is running.");
         ServerSocket listener = new ServerSocket(PORT);
         checkServerXMLfiles();
 
         try {
             while (true) {
-                new PlayerThread(listener.accept()).start();
+                new PlayerController(listener.accept()).start();
                 countOfThread++;
             }
         } finally {

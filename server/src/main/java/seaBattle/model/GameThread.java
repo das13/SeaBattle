@@ -1,7 +1,7 @@
 package seaBattle.model;
 
 public class GameThread extends Thread {
-    private PlayerThread firstPlayerThread;
-    private PlayerThread secondPlayerThread;
-    private PlayerThread currentPlayerThread;
+    private Player firstPlayerThread;
+    private Player secondPlayerThread;
+    private Player currentPlayerThread;
 }
