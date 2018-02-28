@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/seabattle-client.iml" filepath="$PROJECT_DIR$/seabattle-client.iml" />
+      <module fileurl="file://$PROJECT_DIR$/seaBattleClient.iml" filepath="$PROJECT_DIR$/seaBattleClient.iml" />
     </modules>
   </component>
 </project>
