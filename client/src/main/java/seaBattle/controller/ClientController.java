@@ -33,9 +33,9 @@ public class ClientController {
             String value1 = scanner.nextLine();
             System.out.println("write value2:");
             String value2 = scanner.nextLine();
-            System.out.println("sending:");
+            System.out.println("SENDING:");
             outClientXML.send(key,value1,value2);
-            System.out.println("\nserver xml answer:\n");
+            System.out.println("\n\nSERVER THREAD ANSWER:");
 
             inClientXML.setReader(inClientXML.getFactory().createXMLStreamReader(inClientXML.getFileReader()));
             XMLStreamReader reader = inClientXML.getReader();
@@ -43,11 +43,6 @@ public class ClientController {
                 System.out.println("key = \"" + inClientXML.checkValue(reader) +"\"");
                 System.out.println("value = \"" + inClientXML.checkValue(reader) +"\"");
                 reader.next();
-                reader.next();
-                //пока считывает один value
-                //inClientXML.checkValue(reader);
-
-                //inClientXML.printEvent(reader);
                 if (reader.isEndElement() && "root".equals(reader.getName().toString())) {
                     break;
                 }else{
