@@ -55,18 +55,22 @@ public class PlayerController extends Thread {
                 while (reader.hasNext()) {
                     if (reader.getEventType() == 1 && reader.getLocalName().equals("key")){
                         reader.next();
-                        switch (reader.getText()){
+                        switch (inServerXML.checkValue(reader)){
                             case "AUTH": {
-                                System.out.println("\nxml message with key \"AUTH\" from thread #" + threadNumber + " detected\npreparing answer:");
+                                System.out.println("\nxml message with key \"AUTH\" from thread #" + threadNumber + " detected:");
                                 String login = inServerXML.checkValue(reader);
+                                System.out.println("login = \"" + login + "\"");
                                 String password = inServerXML.checkValue(reader);
+                                System.out.println("password = \"" + password + "\"" + "\n\nSENDING ANSWER:");
                                 outServerXML.send("AUTH", authResult(login,password));
                                 break;
                             }
                             case "REG":
-                                System.out.println("xml message with key \"REG\" detected");
+                                System.out.println("\nxml message with key \"REG\" from thread #" + threadNumber + " detected:");
                                 String login = inServerXML.checkValue(reader);
+                                System.out.println("login = \"" + login + "\"");
                                 String password = inServerXML.checkValue(reader);
+                                System.out.println("password = \"" + password + "\"" + "\n\nSENDING ANSWER:");
                                 outServerXML.send("REG", regResult(login,password));
                                 break;
                             case "MSG":
@@ -136,13 +140,13 @@ public class PlayerController extends Thread {
             Node node = players.item(i);
             //если указанные имя и пароль не найдены в списке
             if (!node.getChildNodes().item(1).getTextContent().equals(login) && !node.getChildNodes().item(3).getTextContent().equals(password)){
-                str = "not exist";
+                str = "account with such login or password is not exist";
             }
 
             //если совпадает имя или пароль
             if ((node.getChildNodes().item(1).getTextContent().equals(login) && !node.getChildNodes().item(3).getTextContent().equals(password)) ||
                     (!node.getChildNodes().item(1).getTextContent().equals(login) && node.getChildNodes().item(3).getTextContent().equals(password))){
-                str = "incorrect";
+                str = "account or password is incorrect";
                 break;
             }
             //если совпадает и имя и пароль
@@ -156,7 +160,7 @@ public class PlayerController extends Thread {
                 StreamResult result = new StreamResult(new File(filepath));
                 transformer.transform(source, result);
 
-                str = "success!";
+                str = "authorization success!";
                 break;
             }
         }
@@ -181,6 +185,7 @@ public class PlayerController extends Thread {
         }
 
         Element player = doc.createElement("player");
+        player.setAttribute("id","4");
         doc.getFirstChild().appendChild(player);
         Element nickname = doc.createElement("nickname");
         nickname.setTextContent(value1);

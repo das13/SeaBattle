@@ -24,16 +24,24 @@ public class InServerXML {
             e.printStackTrace();
         }
     }
-    public String checkValue(XMLStreamReader reader){
+    public static String checkValue(XMLStreamReader reader){
+        StringBuilder sb = new StringBuilder();
+        String value = "";
         try {
-            reader.next();
-            reader.next();
-            reader.next();
+            while (reader.getEventType() != 4){
+                reader.next();
+            }
+            while (reader.getEventType() == 4) {
+                sb.append(reader.getText());
+                value = sb.toString();
+                reader.next();
+            }
         } catch (XMLStreamException e) {
             e.printStackTrace();
         }
-        return reader.getText();
+        return value;
     }
+
     public static void printEvent(XMLStreamReader reader) {
         switch (reader.getEventType()) {
             case XMLStreamConstants.START_ELEMENT:

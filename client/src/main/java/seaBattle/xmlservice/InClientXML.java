@@ -26,14 +26,21 @@ public class InClientXML {
     }
 
     public String checkValue(XMLStreamReader reader){
+        StringBuilder sb = new StringBuilder();
+        String value = "";
         try {
-            reader.next();
-            reader.next();
-            reader.next();
+            while (reader.getEventType() != 4){
+                reader.next();
+            }
+            while (reader.getEventType() == 4){
+                sb.append(reader.getText());
+                value = sb.toString();
+                reader.next();
+            }
         } catch (XMLStreamException e) {
             e.printStackTrace();
         }
-        return reader.getText();
+        return value;
     }
 
     public void printEvent(XMLStreamReader reader) {

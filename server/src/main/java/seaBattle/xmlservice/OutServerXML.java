@@ -24,7 +24,7 @@ public class OutServerXML {
         }
     }
 
-    public void send(String key, String value){
+    public synchronized void send(String key, String value){
         try {
         writer.writeStartDocument("1.0");
         writer.writeStartElement("root");
