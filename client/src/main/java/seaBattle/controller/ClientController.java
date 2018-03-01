@@ -1,5 +1,6 @@
 package seaBattle.controller;
 
+import seaBattle.model.testModel.Player;
 import seaBattle.xmlservice.InClientXML;
 import seaBattle.xmlservice.OutClientXML;
 
@@ -66,6 +67,10 @@ public class ClientController {
         System.out.println("\n\nPress somth to exit");
         outClientXML.getWriter().close();
 //        outClientXML.getWriter2().close();
+    }
+
+    public void getInviteForGameFrom(Player player) {
+        
     }
 }
 

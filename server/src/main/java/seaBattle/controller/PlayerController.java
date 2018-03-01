@@ -80,7 +80,7 @@ public class PlayerController extends Thread {
                                 System.out.println("xml message with key \"MSG\" detected");
                                 break;
                             case "ASK OUT":
-                                GameController gameController = new GameController(player);
+                                GameController gameController = new GameController(player,this);
                                 System.out.println("\nWrite nickname of target:");
                                 String targetLogin = inServerXML.checkValue(reader);
                                 outServerXML.send("ASK OUT", askOutResult(targetLogin));
