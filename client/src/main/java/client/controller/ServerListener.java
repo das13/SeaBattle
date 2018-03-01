@@ -15,7 +15,6 @@ import javax.xml.stream.XMLStreamReader;
 
 public class ServerListener implements Runnable{
 
-    private static final String HASCONNECTED = "has connected";
     final static Logger logger = Logger.getLogger(ServerListener.class);
     private OutClientXML outClientXML;
     private String password;
@@ -25,15 +24,9 @@ public class ServerListener implements Runnable{
     private static String username;
     private CommonWindowController cwController;
     private RegController regController;
-    private static ObjectOutputStream oos;
-    private InputStream is;
-    private ObjectInputStream input;
-    private OutputStream outputStream;
     private InClientXML inClientXML;
     private Scanner scanner;
     private String key;
-
-
 
     public ServerListener(String hostname, int port, String username, String password, CommonWindowController controller, String key) {
         this.hostname = hostname;
@@ -47,7 +40,7 @@ public class ServerListener implements Runnable{
     @Override
     public void run() {
         regController = RegController.getRegController();
-        try (Socket socket = new Socket(hostname, 9001)){
+        try (Socket socket = new Socket(hostname, port)){
             this.socket = socket;
             inClientXML = new InClientXML(socket);
             outClientXML = new OutClientXML(socket);
@@ -63,11 +56,11 @@ public class ServerListener implements Runnable{
                 System.out.println("value = \"" + value +"\"");
                 if (value.equals("registration success")){
                     regController.showCommonWindow();
-                    break;
+                    //break;
                 }
                 if (value.equals("authorization success!")){
                     regController.showCommonWindow();
-                    break;
+                   // break;
                 }
                 reader.next();
                 reader.next();
