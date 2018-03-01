@@ -10,6 +10,7 @@ import client.xmlservice.OutClientXML;
 import org.apache.log4j.Logger;
 
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 
 
 public class ServerListener implements Runnable{
@@ -19,10 +20,11 @@ public class ServerListener implements Runnable{
     private OutClientXML outClientXML;
     private String password;
     private Socket socket;
-    public String hostname;
-    public int port;
-    public static String username;
-    public CommonWindowController cwController;
+    private String hostname;
+    private int port;
+    private static String username;
+    private CommonWindowController cwController;
+    private RegController regController;
     private static ObjectOutputStream oos;
     private InputStream is;
     private ObjectInputStream input;
@@ -40,12 +42,11 @@ public class ServerListener implements Runnable{
         ServerListener.username = username;
         this.cwController = cwController;
         this.key = key;
-
-
     }
 
     @Override
     public void run() {
+        regController = RegController.getRegController();
         try (Socket socket = new Socket(hostname, 9001)){
             this.socket = socket;
             inClientXML = new InClientXML(socket);
@@ -53,15 +54,54 @@ public class ServerListener implements Runnable{
             outClientXML.send(key, username, password);
             //console check
             this.scanner = new Scanner(System.in);
+            inClientXML.setReader(inClientXML.getFactory().createXMLStreamReader(inClientXML.getFileReader()));
+            XMLStreamReader reader = inClientXML.getReader();
+            while (reader.hasNext()) {
+                String key = inClientXML.checkValue(reader);
+                String value = inClientXML.checkValue(reader);
+                System.out.println("key = \"" + key +"\"");
+                System.out.println("value = \"" + value +"\"");
+                if (value.equals("registration success")){
+                    regController.showCommonWindow();
+                    break;
+                }
+                if (value.equals("authorization success!")){
+                    regController.showCommonWindow();
+                    break;
+                }
+                reader.next();
+                reader.next();
+                                //пока считывает один value
+                                //inClientXML.checkValue(reader);
+                                //inClientXML.printEvent(reader);
 
-            RegController.getRegController().showCommonWindow();
-           // cwController.getCwController().getLblLogin().setText(username);
+                if (reader.isEndElement() && "root".equals(reader.getName().toString())) {
+                    break;
+                }else{
+                    reader.next();
+                }
+                //            while (true) {
+                //                while (true){
+                //                    System.out.println("idle loop");
+                //                    условие выхода с цикла ожидания
+                //                    break;
+                //                }
+                //                while (true) {
+                //                    System.out.println("game loop");
+                //                    условие выхода с цикла игры
+                //                    break;
+                //                }
+            }
+
+
+
+            //
         } catch (IOException e) {
             RegController.getRegController().showErrorDialog("Could not connect to server");
             logger.error("Could not Connect" + socket.getInetAddress() + ":" + socket.getPort());
 
         } catch (XMLStreamException e) {
-            e.printStackTrace();
+            logger.error("XMLStreamException in ServerListener thread", e);
         }
         logger.info("Connection accepted " + socket.getInetAddress() + ":" + socket.getPort());
     }

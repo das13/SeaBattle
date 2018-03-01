@@ -32,6 +32,15 @@ public class RegController implements Initializable {
     private Button regButton;
     @FXML
     private Button signButton;
+
+    public void setInputStatus(Label inputStatus) {
+        this.inputStatus = inputStatus;
+    }
+
+    public Label getInputStatus() {
+        return inputStatus;
+    }
+
     @FXML
     private Label inputStatus;
     public static CommonWindowController cwController;
@@ -57,6 +66,7 @@ public class RegController implements Initializable {
     private void pressRegButton(ActionEvent event){
         if(isNotEmptyFields()){
             checkStatus();
+            initializeUserInput();
             ServerListener listener = new ServerListener(hostname, port, username, password, cwController, "REG");
             Thread x = new Thread(listener);
             x.start();
