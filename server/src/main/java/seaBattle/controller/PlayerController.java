@@ -25,6 +25,9 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
 import java.net.Socket;
+import java.util.Iterator;
+
+import static seaBattle.model.Server.players;
 
 public class PlayerController extends Thread {
     private Socket socket;
@@ -58,11 +61,11 @@ public class PlayerController extends Thread {
                         switch (inServerXML.checkValue(reader)){
                             case "AUTH": {
                                 System.out.println("\nxml message with key \"AUTH\" from thread #" + threadNumber + " detected:");
-                                String login = inServerXML.checkValue(reader);
-                                System.out.println("login = \"" + login + "\"");
-                                String password = inServerXML.checkValue(reader);
-                                System.out.println("password = \"" + password + "\"" + "\n\nSENDING ANSWER:");
-                                outServerXML.send("AUTH", authResult(login,password));
+                                player.setLogin(inServerXML.checkValue(reader));
+                                System.out.println("login = \"" + player.getLogin() + "\"");
+                                player.setPassword(inServerXML.checkValue(reader));
+                                System.out.println("password = \"" + player.getPassword() + "\"" + "\n\nSENDING ANSWER:");
+                                outServerXML.send("AUTH", authResult(player.getLogin(),player.getPassword()));
                                 break;
                             }
                             case "REG":
@@ -77,7 +80,21 @@ public class PlayerController extends Thread {
                                 System.out.println("xml message with key \"MSG\" detected");
                                 break;
                             case "ASK OUT":
-                                System.out.println("xml message with key \"ASK OUT\" detected");
+                                GameController gameController = new GameController(player);
+                                System.out.println("\nWrite nickname of target:");
+                                String targetLogin = inServerXML.checkValue(reader);
+                                outServerXML.send("ASK OUT", askOutResult(targetLogin));
+                                Iterator itr = players.iterator();
+                                Player targetPlayer = null;
+                                while (itr.hasNext()) {
+                                    Player pl = (Player) itr.next();
+                                    if (pl.getLogin().equals(targetLogin)) {
+                                        targetPlayer = pl;
+                                        break;
+                                    }
+                                }
+                                gameController.startGame(targetPlayer);
+                                //System.out.println("xml message with key \"ASK OUT\" detected");
                                 break;
                             case "ASK ANSWER":
                                 System.out.println("xml message with key \"ASK ANSWER\" detected");
@@ -215,6 +232,10 @@ public class PlayerController extends Thread {
         }
         System.out.println("new player registered");
         str = "registration success";
+        return str;
+    }
+
+    public String askOutResult(String value) {
         return str;
     }
 }

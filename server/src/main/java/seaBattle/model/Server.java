@@ -20,7 +20,7 @@ public class Server {
 
     private static HashSet<PrintWriter> writers = new HashSet<PrintWriter>();
 
-    private static HashMap<Integer,Player> players = new HashMap<Integer, Player>();
+    public static HashSet<Player> players = new HashSet<>();
 
     private static int countOfThread = 0;
     private static File playerList = new File("playerList.xml");
