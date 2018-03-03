@@ -1,16 +1,20 @@
 package seaBattle.controller;
 
-import seaBattle.xmlservice.InServerXML;
-import seaBattle.xmlservice.OutServerXML;
+import seaBattle.model.Player;
 import seaBattle.xmlservice.SaveLoadServerXML;
 
-import java.net.Socket;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.util.List;
 
 public class ServerController {
-    Socket socket;
 
-    InServerXML inServerXML = new InServerXML(socket);
-    OutServerXML outServerXML = new OutServerXML(socket);
     SaveLoadServerXML saveLoadServerXML = new SaveLoadServerXML();
 
 }
+
+
+
+

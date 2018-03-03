@@ -2,47 +2,42 @@ package seaBattle.model;
 
 import seaBattle.controller.PlayerController;
 
-import javax.xml.stream.XMLOutputFactory;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 
 public class Server {
     private static final int PORT = 9001;
 
-    private static HashSet<String> names = new HashSet<String>();
+    private static Set<Player> allPlayersSet = Collections.synchronizedSet(new HashSet<Player>());
+    private static HashSet<Player> onlinePlayersSet = new HashSet<Player>();
+    private static HashSet<Player> ingamePlayersSet = new HashSet<Player>();
 
-    private static HashSet<PrintWriter> writers = new HashSet<PrintWriter>();
-
-    private static HashMap<Integer,Player> players = new HashMap<Integer, Player>();
 
     private static int countOfThread = 0;
-    private static File playerList = new File("playerList.xml");
-    private static File ipBlackList = new File("ipBlackList.xml");
-    private static File serverConf = new File ("serverConf.xml");
+    private static File playerListXML = new File("playerList.xml");
+    private static File ipBlackListXML = new File("ipBlackList.xml");
+    private static File serverConfXML = new File ("serverConf.xml");
 
     public static int getCountOfThread() {
         return countOfThread;
-    }
-
-    public static HashSet<String> getNames() {
-        return names;
-    }
-
-    public static HashSet<PrintWriter> getWriters() {
-        return writers;
     }
 
     public static void main(String[] args) throws Exception {
         System.out.println("The server is running.");
         ServerSocket listener = new ServerSocket(PORT);
         checkServerXMLfiles();
+        loadAllPlayersSet();
+        updateOnlinePlayersSet();
+        updateIngamePlayersSet();
 
         try {
             while (true) {
@@ -54,123 +49,233 @@ public class Server {
         }
     }
 
-    public static void checkServerXMLfiles() throws XMLStreamException {
+    public static void checkServerXMLfiles() throws XMLStreamException, JAXBException {
         //проверка наличия playerList.xml и создание при негативном результате
-        if (!playerList.exists()) try {
-            //не работает трансформ
-//            Transformer t = TransformerFactory.newInstance().newTransformer();
-//            t.setOutputProperty(OutputKeys.INDENT, "yes");
-//            t.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
-            XMLOutputFactory factory = XMLOutputFactory.newFactory();
-            XMLStreamWriter writer = factory.createXMLStreamWriter(new FileOutputStream("playerList.xml"));
-            writer.writeStartDocument();
-            writer.writeStartElement("playerList");
-            writer.writeStartElement("player");
-            writer.writeAttribute("id" , "1");
-            writer.writeStartElement("nickname");
-            writer.writeCharacters("admin");
-            writer.writeEndElement();
-            writer.writeStartElement("password");
-            writer.writeCharacters("admin");
-            writer.writeEndElement();
-            writer.writeStartElement("status");
-            writer.writeCharacters("offline");
-            writer.writeEndElement();
-            writer.writeStartElement("rating");
-            writer.writeCharacters("100");
-            writer.writeEndElement();
-            writer.writeEndElement();
-            writer.writeStartElement("player");
-            writer.writeAttribute("id" , "2");
-            writer.writeStartElement("nickname");
-            writer.writeCharacters("hacker");
-            writer.writeEndElement();
-            writer.writeStartElement("password");
-            writer.writeCharacters("lol");
-            writer.writeEndElement();
-            writer.writeStartElement("status");
-            writer.writeCharacters("offline");
-            writer.writeEndElement();
-            writer.writeStartElement("rating");
-            writer.writeCharacters("9999");
-            writer.writeEndElement();
-            writer.writeEndElement();
-            writer.writeStartElement("player");
-            writer.writeAttribute("id" , "3");
-            writer.writeStartElement("nickname");
-            writer.writeCharacters("unnamed");
-            writer.writeEndElement();
-            writer.writeStartElement("password");
-            writer.writeCharacters("test");
-            writer.writeEndElement();
-            writer.writeStartElement("status");
-            writer.writeCharacters("playing");
-            writer.writeEndElement();
-            writer.writeStartElement("rating");
-            writer.writeCharacters("10");
-            writer.writeEndElement();
-            writer.writeEndElement();
-            writer.writeEndElement();
-            writer.writeEndDocument();
-        } catch (IOException e) {
-            //logger.error("Problem with creating \"playerList.xml\".");
+        if (!playerListXML.exists()) {
+
+            PlayerList playerList = new PlayerList();
+
+            playerList.setPlayerList(new ArrayList<Player>());
+            //создаём два игрока
+            Player p1 = new Player();
+            p1.setLogin("admin");
+            p1.setPassword("admin");
+            p1.setStatus("offline");
+            p1.setRank(100);
+
+            Player p2 = new Player();
+            p2.setLogin("hacker");
+            p2.setPassword("lol");
+            p2.setStatus("offline");
+            p2.setRank(9999);
+
+            //добавляем в список
+            playerList.getPlayerList().add(p1);
+            playerList.getPlayerList().add(p2);
+
+            JAXBContext jaxbContext = JAXBContext.newInstance(PlayerList.class);
+            Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+            jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+            //Marsha-им плеерлист в консоль
+            jaxbMarshaller.marshal(playerList, System.out);
+
+            //Marshal-им плеерлист в файл
+            jaxbMarshaller.marshal(playerList, new File(playerListXML.getPath()));
         }
 
         //проверка наличия ipBlackList.xml и создание при негативном результате
-        if (!ipBlackList.exists()) try {
-            XMLOutputFactory factory = XMLOutputFactory.newFactory();
-            XMLStreamWriter writer = factory.createXMLStreamWriter(new FileOutputStream("ipBlackList.xml"));
-            writer.writeStartDocument();
-            writer.writeStartElement("ipBlackList");
-            writer.writeStartElement("ip");
-            writer.writeCharacters("250.250.250.250");
-            writer.writeEndElement();
-            writer.writeEndElement();
-            writer.writeEndDocument();
-        } catch (IOException e) {
-            //logger.error("Problem with creating \"ipBlackList.xml\".");
+        if (!ipBlackListXML.exists()) {
+
+            IpBlackList ip1 = new IpBlackList();
+            ip1.setIpAdress("250.250.250.250");
+
+            try {
+
+                File file = new File(ipBlackListXML.getPath());
+                JAXBContext jaxbContext = JAXBContext.newInstance(IpBlackList.class);
+                Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+
+                // output pretty printed
+                jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+                jaxbMarshaller.marshal(ip1, file);
+                jaxbMarshaller.marshal(ip1, System.out);
+
+            } catch (JAXBException e) {
+                e.printStackTrace();
+            }
+
         }
 
         //проверка наличия serverConf.xml и создание при негативном результате
-        if (!serverConf.exists()) try {
-            XMLOutputFactory factory = XMLOutputFactory.newFactory();
-            XMLStreamWriter writer = factory.createXMLStreamWriter(new FileOutputStream("serverConf.xml"));
-            writer.writeStartDocument();
-            writer.writeStartElement("serverConf");
-            writer.writeStartElement("ip");
-            writer.writeCharacters("localhost");
-            writer.writeEndElement();
-            writer.writeStartElement("port");
-            writer.writeCharacters("2345");
-            writer.writeEndElement();
-            writer.writeEndElement();
-            writer.writeEndDocument();
-        } catch (IOException e) {
-            //logger.error("Problem with creating \"serverConf.xml\".");
+        if (!serverConfXML.exists()) {
+
+            ServerConf serverConf = new ServerConf();
+
+            serverConf.setHost("localhost");
+            serverConf.setPort(getPORT());
+
+            try {
+
+                File file = new File(serverConfXML.getPath());
+                JAXBContext jaxbContext = JAXBContext.newInstance(ServerConf.class);
+                Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+
+                // output pretty printed
+                jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+                jaxbMarshaller.marshal(serverConf, file);
+                jaxbMarshaller.marshal(serverConf, System.out);
+
+            } catch (JAXBException e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    public static File getPlayerList() {
-        return playerList;
+    public static void loadAllPlayersSet(){
+        try {
+            File file = new File(playerListXML.getPath());
+            JAXBContext jaxbContext = JAXBContext.newInstance(PlayerList.class);
+
+            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+            PlayerList playerList = (PlayerList) jaxbUnmarshaller.unmarshal(file);
+            for (int i = 0; i < playerList.getPlayerList().size(); i++) {
+                System.out.println(playerList.getPlayerList().get(i).getLogin());
+                allPlayersSet.add(playerList.getPlayerList().get(i));
+            }
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        }
     }
 
-    public static void setPlayerList(File playerList) {
-        Server.playerList = playerList;
+    public static void updateAllPlayersSet(){
+        try {
+            File file = new File(playerListXML.getPath());
+            JAXBContext jaxbContext = JAXBContext.newInstance(PlayerList.class);
+
+            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+            PlayerList playerList = (PlayerList) jaxbUnmarshaller.unmarshal(file);
+
+            Set<Player> tempSet = allPlayersSet;
+            allPlayersSet.removeAll(tempSet);
+
+            allPlayersSet.addAll(playerList.getPlayerList());
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        }
     }
 
-    public static File getIpBlackList() {
-        return ipBlackList;
+    public static void updateOnlinePlayersSet(){
+        for (Player player : allPlayersSet){
+            if (player.getStatus().equals("online")){
+                onlinePlayersSet.add(player);
+            }
+        }
     }
 
-    public static void setIpBlackList(File ipBlackList) {
-        Server.ipBlackList = ipBlackList;
+    public static void updateIngamePlayersSet(){
+        for (Player player : allPlayersSet){
+            if (player.getStatus().equals("ingame")){
+                ingamePlayersSet.add(player);
+            }
+        }
     }
 
-    public static File getServerConf() {
-        return serverConf;
+    public static int getPORT() {
+        return PORT;
     }
 
-    public static void setServerConf(File serverConf) {
-        Server.serverConf = serverConf;
+    public static File getPlayerListXML() {
+        return playerListXML;
+    }
+
+    public static void setPlayerListXML(File playerListXML) {
+        Server.playerListXML = playerListXML;
+    }
+
+    public static File getIpBlackListXML() {
+        return ipBlackListXML;
+    }
+
+    public static void setIpBlackListXML(File ipBlackListXML) {
+        Server.ipBlackListXML = ipBlackListXML;
+    }
+
+    public static File getServerConfXML() {
+        return serverConfXML;
+    }
+
+    public static void setServerConfXML(File serverConfXML) {
+        Server.serverConfXML = serverConfXML;
+    }
+
+    public static Set<Player> getAllPlayersSet() {
+        return allPlayersSet;
+    }
+
+    public static void setAllPlayersSet(Set<Player> allPlayersSet) {
+        Server.allPlayersSet = allPlayersSet;
+    }
+
+    public static HashSet<Player> getOnlinePlayersSet() {
+        return onlinePlayersSet;
+    }
+
+    public static void setOnlinePlayersSet(HashSet<Player> onlinePlayersSet) {
+        Server.onlinePlayersSet = onlinePlayersSet;
+    }
+
+    public static HashSet<Player> getIngamePlayersSet() {
+        return ingamePlayersSet;
+    }
+
+    public static void setIngamePlayersSet(HashSet<Player> ingamePlayersSet) {
+        Server.ingamePlayersSet = ingamePlayersSet;
+    }
+}
+
+
+@XmlRootElement(name = "ipBlackList")
+@XmlAccessorType(XmlAccessType.FIELD)
+class IpBlackList{
+
+    String ip;
+
+    public String getIpAdress() {
+        return ip;
+    }
+
+
+    public void setIpAdress(String ipAdress) {
+        this.ip = ipAdress;
+    }
+}
+
+
+
+
+@XmlRootElement(name = "serverConf")
+@XmlAccessorType(XmlAccessType.FIELD)
+class ServerConf{
+
+    String host;
+    int port;
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
     }
 }

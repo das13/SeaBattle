@@ -2,7 +2,7 @@ package seaBattle.model;
 
 public class BSException extends Exception {
 
-    BSException(String message) {
+    public BSException(String message) {
         super(message);
     }
 }
