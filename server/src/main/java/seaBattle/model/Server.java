@@ -141,6 +141,7 @@ public class Server {
 
             Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
             PlayerList playerList = (PlayerList) jaxbUnmarshaller.unmarshal(file);
+            System.out.println("\nloaded players from playerList.xml:");
             for (int i = 0; i < playerList.getPlayerList().size(); i++) {
                 System.out.println(playerList.getPlayerList().get(i).getLogin());
                 allPlayersSet.add(playerList.getPlayerList().get(i));
