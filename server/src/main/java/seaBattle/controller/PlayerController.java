@@ -39,6 +39,7 @@ public class PlayerController extends Thread {
     private InServerXML inServerXML;
     private OutServerXML outServerXML;
     private Player thisPlayer;
+    private GameController gc;
 
     public OutServerXML getOutServerXML() {
         return outServerXML;
@@ -126,13 +127,21 @@ public class PlayerController extends Thread {
                                 inviteResult(player1,player2);
                                 break;
                             }
+                            //можно получить ТОЛЬКО от player2 (от того, кого пригласили)
                             case "REPLY": {
                                 System.out.println("xml message with key \"REPLY\" detected");
-                                String player = inServerXML.checkValue(reader);
-                                System.out.println("player = \"" + player + "\"");
+                                String player1 = inServerXML.checkValue(reader);
+                                System.out.println("player1 = \"" + player1 + "\"");
                                 String reply = inServerXML.checkValue(reader);
                                 System.out.println("reply = \"" + reply + "\"");
-                                replyResult(player,reply);
+                                replyResult(player1,reply);
+//                                for (PlayerController pc : Server.getAllPlayersControllerSet()) {
+//                                    if (pc.getThisPlayer().getLogin().equals(player1)) {
+//                                        pc.getOutServerXML().send("START GAME",thisPlayer.getLogin());
+//                                        createGame(pc,this);
+//                                        outServerXML.send("START GAME",player1);
+//                                    }
+//                                }
                                 break;
                             }
                             case "SHIP LOCATION": {
@@ -196,20 +205,6 @@ public class PlayerController extends Thread {
         }
     }
 
-
-
-    //действие если игрок сдался
-    private void surrenderResult(String player) {
-    }
-
-    //действие на выстрел игрока
-    private void shootResult(String player, String x1, String y1, String x2, String y2) {
-    }
-
-    //действие на попытку установки корабля игроком
-    private void shipLocationResult(String player, String x1, String y1, String x2, String y2) {
-    }
-
     //действие на приглашение игроком№1 игрока№2 в игру
     private void inviteResult(String player1, String player2) {
         for (PlayerController pl:Server.getAllPlayersControllerSet()) {
@@ -217,11 +212,26 @@ public class PlayerController extends Thread {
                 pl.getOutServerXML().send("INVITE",player1);
             }
         }
-        outServerXML.send("INVITE","send success");
+        outServerXML.send("INVITE","invite send to player: " + player2);
     }
 
     //действие на ответ игрока№2 игроку№1 на приглашение в игру
-    private void replyResult(String player, String reply) {
+    private void replyResult(String player1, String value) {
+
+        for (PlayerController pc : Server.getAllPlayersControllerSet()) {
+            if (pc.getThisPlayer().getLogin().equals(player1)) {
+                gc = new GameController(pc,this);
+                pc.setGc(gc);
+                System.out.println("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLAAAAAAAAAAAAAAAAAAAAAAAUUUUUUUUUUUUUUNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNCHHHHHHHHHHHHHHHHHHHHHH");
+                gc.start();
+                pc.getOutServerXML().send("START GAME",thisPlayer.getLogin());
+                outServerXML.send("START GAME",player1);
+            }
+        }
+    }
+
+    public void createGame(PlayerController pc1, PlayerController pc2){
+        System.out.println("THE GAME HAS BEEN CREATED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
     }
 
     //действие на сообщение
@@ -305,6 +315,15 @@ public class PlayerController extends Thread {
         return str;
     }
 
+    private void surrenderResult(String player) {
+    }
+
+    private void shootResult(String player, String x1, String y1, String x2, String y2) {
+    }
+
+    private void shipLocationResult(String player, String x1, String y1, String x2, String y2) {
+    }
+
     public void modifyPlayerInXML (File file, Player player, String nodeName, String newTextContent) throws ParserConfigurationException, IOException, SAXException, TransformerException, BSException {
         // Строим объектную модель исходного XML файла
         final String filepath = System.getProperty("user.dir") + File.separator + file;
@@ -343,6 +362,14 @@ public class PlayerController extends Thread {
 
     //getters and setters
 
+
+    public GameController getGc() {
+        return gc;
+    }
+
+    public void setGc(GameController gc) {
+        this.gc = gc;
+    }
 
     public void setSocket(Socket socket) {
         this.socket = socket;

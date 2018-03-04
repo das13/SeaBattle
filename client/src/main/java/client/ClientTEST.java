@@ -30,7 +30,7 @@ public class ClientTEST {
         clientTEST.run();
     }
 
-    public void run() throws IOException, XMLStreamException {
+    synchronized public void run() throws IOException, XMLStreamException, InterruptedException {
         while (!socket.isClosed()){
             System.out.println("\nwrite key");
             String key = scanner.nextLine();
@@ -64,7 +64,7 @@ public class ClientTEST {
     class ClientTESTThread extends Thread{
 
         @Override
-        public void run() {
+        synchronized public void run() {
             while (!socket.isClosed()){
                 try {
                     inClientXML.setReader(inClientXML.getFactory().createXMLStreamReader(inClientXML.getFileReader()));
@@ -115,16 +115,26 @@ public class ClientTEST {
                                 case "INVITE": {
                                     System.out.println("xml message with key \"INVITE\" received");
                                     String player1 = inClientXML.checkValue(reader);
-                                    System.out.println("INVITE from = \"" + player1 + "\"");
-                                    System.out.println("Your answer:");
-                                    String valueReq = new Scanner(System.in).nextLine();
-                                    outClientXML.send("REPLY",valueReq);
+                                    System.out.println("value = \"" + player1 + "\"");
+                                    //сделать на клиенте
+//                                    //первый тот кто отвечает - второй тот кому отвечает первый - то что отвечает первый второму
+//                                    String[] list = new String[0];
+//                                    list[0] = login;
+//                                    list[1] = player1;
+//                                    list[2] = valueReq;
+//                                    outClientXML.send("REPLY",list);
                                     //сообщение от сервера о том что игрок №n предлагает игру
                                     break;
                                 }
                                 case "REPLY": {
                                     System.out.println("xml message with key \"REPLY\" received");
                                     //сообщение от сервера о том что ответ игрока №n на ваше предложение игры - ...
+                                    break;
+                                }
+                                case "START GAME": {
+                                    System.out.println("\nxml message with key \"START GAME\" received:");
+                                    String value = inClientXML.checkValue(reader);
+                                    System.out.println("GAME STARTED WITH = \"" + value + "\"");
                                     break;
                                 }
                                 case "SHIP": {

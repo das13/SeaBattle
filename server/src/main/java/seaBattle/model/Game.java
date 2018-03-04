@@ -1,15 +1,15 @@
 package seaBattle.model;
 
-public class GameThread extends Thread {
+public class Game extends Thread {
     private Player firstPlayerThread;
     private Player secondPlayerThread;
     private Player currentPlayerThread;
 
-    public GameThread(Player firstPlayerThread) {
+    public Game(Player firstPlayerThread) {
         this.firstPlayerThread = firstPlayerThread;
     }
 
-    public GameThread(Player firstPlayerThread, Player secondPlayerThread) {
+    public Game(Player firstPlayerThread, Player secondPlayerThread) {
         this.firstPlayerThread = firstPlayerThread;
         this.secondPlayerThread = secondPlayerThread;
     }
