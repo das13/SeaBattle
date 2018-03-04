@@ -17,8 +17,13 @@ public class GameController extends Thread {
     }
 
     public void run() {
+//        System.out.println();
+//        playerController1.getOutServerXML().send("PLAYER INFO", "player 1");
+//        System.out.println();
+//        playerController2.getOutServerXML().send("PLAYER INFO", "player 2");
+//        System.out.println();
         while (true) {
-            System.out.println("РАССТАНОВКААААААААААААААААААААААААААААААААААААААААА");
+            System.out.println("\nЭТАП РАССТАНОВКИ КОРАБЛЕЙ.");
             //расстановка
             break;
         }

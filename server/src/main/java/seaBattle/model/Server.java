@@ -33,7 +33,7 @@ public class Server {
     }
 
     public static void main(String[] args) throws Exception {
-        System.out.println("The server is running.");
+        System.out.println("THE SERVER IS RUNNING");
         ServerSocket listener = new ServerSocket(PORT);
         checkServerXMLfiles();
         loadAllPlayersSet();
@@ -49,6 +49,7 @@ public class Server {
                 pc.start();
                 allPlayersControllerSet.add(pc);
                 countOfThread++;
+                System.out.println("\n/ thread #" + countOfThread + " now is listening /");
             }
         } finally {
             listener.close();
@@ -147,11 +148,12 @@ public class Server {
 
             Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
             PlayerList playerList = (PlayerList) jaxbUnmarshaller.unmarshal(file);
-            System.out.println("\nloaded players from playerList.xml:");
+            System.out.println("\nfound " + playerList.getPlayerList().size() + " players in playerList.xml:");
             for (int i = 0; i < playerList.getPlayerList().size(); i++) {
-                System.out.println(playerList.getPlayerList().get(i).getLogin());
+                System.out.print(playerList.getPlayerList().get(i).getLogin() + ", ");
                 allPlayersSet.add(playerList.getPlayerList().get(i));
             }
+            System.out.println();
         } catch (JAXBException e) {
             e.printStackTrace();
         }

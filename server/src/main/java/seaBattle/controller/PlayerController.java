@@ -40,6 +40,7 @@ public class PlayerController extends Thread {
     private OutServerXML outServerXML;
     private Player thisPlayer;
     private GameController gc;
+    private boolean waitingForReply;
 
     public OutServerXML getOutServerXML() {
         return outServerXML;
@@ -70,8 +71,6 @@ public class PlayerController extends Thread {
         threadNumber = Server.getCountOfThread();
         try {
             while (!socket.isClosed()){
-                System.out.println("\n\n/receiving from thread #" + threadNumber);
-                //for XML data receiving
                 inServerXML.setReader(inServerXML.getFactory().createXMLStreamReader(inServerXML.getFileReader()));
                 XMLStreamReader reader = inServerXML.getReader();
                 while (reader.hasNext()) {
@@ -79,38 +78,38 @@ public class PlayerController extends Thread {
                         reader.next();
                         switch (inServerXML.checkValue(reader)){
                             case "LOG IN": {
-                                System.out.println("\nxml message with key \"LOG IN\" from thread #" + threadNumber + " detected:");
                                 String login = inServerXML.checkValue(reader);
                                 thisPlayer.setLogin(login);
+                                System.out.println("\n\n\nkey \"LOG IN\" from " + this.getThisPlayer().getLogin() + " detected:");
                                 System.out.println("login = \"" + login + "\"");
                                 String password = inServerXML.checkValue(reader);
                                 thisPlayer.setPassword(password);
-                                System.out.println("password = \"" + password + "\"" + "\n\nSENDING ANSWER:");
-                                outServerXML.send("LOG IN", authResult(login,password));
+                                System.out.println("password = \"" + password + "\"" + "\nSENDING ANSWER:");
+                                outServerXML.send("INFO", authResult(login,password));
                                 Server.updateAllPlayersSet();
                                 Server.updateOnlinePlayersSet();
                                 break;
                             }
                             case "LOG OUT": {
-                                System.out.println("xml message with key \"LOG OUT\" detected");
+                                System.out.println("\n\n\n\nkey \"LOG OUT\" from " + this.getThisPlayer().getLogin() + " detected:");
                                 String login = inServerXML.checkValue(reader);
-                                outServerXML.send("LOG OUT",logoutResult(login));
+                                outServerXML.send("INFO",logoutResult(login));
                                 Server.updateAllPlayersSet();
                                 Server.updateOnlinePlayersSet();
                                 break;
                             }
                             case "REG": {
-                                System.out.println("\nxml message with key \"REG\" from thread #" + threadNumber + " detected:");
+                                System.out.println("\n\n\n\nkey \"REG\" from " + this.getThisPlayer().getLogin() + " detected:");
                                 String login = inServerXML.checkValue(reader);
                                 System.out.println("login = \"" + login + "\"");
                                 String password = inServerXML.checkValue(reader);
-                                System.out.println("password = \"" + password + "\"" + "\n\nSENDING ANSWER:");
-                                outServerXML.send("REG", regResult(login,password));
+                                System.out.println("password = \"" + password + "\"" + "\nSENDING ANSWER:");
+                                outServerXML.send("INFO", regResult(login,password));
                                 Server.updateAllPlayersSet();
                                 break;
                             }
                             case "MSG": {
-                                System.out.println("xml message with key \"MSG\" detected");
+                                System.out.println("\n\n\nkey \"MSG\" from " + this.getThisPlayer().getLogin() + " detected:");
                                 String player = inServerXML.checkValue(reader);
                                 System.out.println("player = \"" + player + "\"");
                                 String msg = inServerXML.checkValue(reader);
@@ -119,7 +118,8 @@ public class PlayerController extends Thread {
                                 break;
                             }
                             case "INVITE": {
-                                System.out.println("xml message with key \"INVITE\" detected");
+                                waitingForReply = true;
+                                System.out.println("\n\n\nkey \"INVITE\" from " + this.getThisPlayer().getLogin() + " detected:");
                                 String player1 = inServerXML.checkValue(reader);
                                 System.out.println("player1 = \"" + player1 + "\"");
                                 String player2 = inServerXML.checkValue(reader);
@@ -129,23 +129,16 @@ public class PlayerController extends Thread {
                             }
                             //можно получить ТОЛЬКО от player2 (от того, кого пригласили)
                             case "REPLY": {
-                                System.out.println("xml message with key \"REPLY\" detected");
+                                System.out.println("\n\n\nkey \"REPLY\" from " + this.getThisPlayer().getLogin() + " detected:");
                                 String player1 = inServerXML.checkValue(reader);
                                 System.out.println("player1 = \"" + player1 + "\"");
                                 String reply = inServerXML.checkValue(reader);
                                 System.out.println("reply = \"" + reply + "\"");
                                 replyResult(player1,reply);
-//                                for (PlayerController pc : Server.getAllPlayersControllerSet()) {
-//                                    if (pc.getThisPlayer().getLogin().equals(player1)) {
-//                                        pc.getOutServerXML().send("START GAME",thisPlayer.getLogin());
-//                                        createGame(pc,this);
-//                                        outServerXML.send("START GAME",player1);
-//                                    }
-//                                }
                                 break;
                             }
                             case "SHIP LOCATION": {
-                                System.out.println("xml message with key \"SHIP LOCATION\" detected");
+                                System.out.println("\n\n\nkey \"SHIP LOCATION\" from " + this.getThisPlayer().getLogin() + " detected:");
                                 String player = inServerXML.checkValue(reader);
                                 System.out.println("player = \"" + player + "\"");
                                 String x1 = inServerXML.checkValue(reader);
@@ -160,7 +153,7 @@ public class PlayerController extends Thread {
                                 break;
                             }
                             case "SHOOT": {
-                                System.out.println("xml message with key \"SHOOT\" detected");
+                                System.out.println("\n\n\nkey \"SHOOT\" from " + this.getThisPlayer().getLogin() + " detected:");
                                 String player = inServerXML.checkValue(reader);
                                 System.out.println("player = \"" + player + "\"");
                                 String x1 = inServerXML.checkValue(reader);
@@ -175,7 +168,7 @@ public class PlayerController extends Thread {
                                 break;
                             }
                             case "SURRENDER": {
-                                System.out.println("xml message with key \"SURRENDER\" detected");
+                                System.out.println("\n\n\nkey \"SURRENDER\" from " + this.getThisPlayer().getLogin() + " detected:");
                                 String player = inServerXML.checkValue(reader);
                                 System.out.println("player = \"" + player + "\"");
                                 surrenderResult(player);
@@ -212,7 +205,7 @@ public class PlayerController extends Thread {
                 pl.getOutServerXML().send("INVITE",player1);
             }
         }
-        outServerXML.send("INVITE","invite send to player: " + player2);
+        outServerXML.send("INFO","invite send to player: " + player2);
     }
 
     //действие на ответ игрока№2 игроку№1 на приглашение в игру
@@ -220,18 +213,18 @@ public class PlayerController extends Thread {
 
         for (PlayerController pc : Server.getAllPlayersControllerSet()) {
             if (pc.getThisPlayer().getLogin().equals(player1)) {
-                gc = new GameController(pc,this);
-                pc.setGc(gc);
-                System.out.println("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLAAAAAAAAAAAAAAAAAAAAAAAUUUUUUUUUUUUUUNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNCHHHHHHHHHHHHHHHHHHHHHH");
-                gc.start();
-                pc.getOutServerXML().send("START GAME",thisPlayer.getLogin());
-                outServerXML.send("START GAME",player1);
+                if (pc.isWaitingForReply()) {
+                    gc = new GameController(pc, this);
+                    pc.setGc(gc);
+                    gc.start();
+                    pc.getOutServerXML().send("START GAME", thisPlayer.getLogin());
+                    System.out.print("\n");
+                    outServerXML.send("START GAME", player1);
+                    break;
+                }
             }
+            System.out.println("ERROR! dude " + pc + " don't wanna play!");
         }
-    }
-
-    public void createGame(PlayerController pc1, PlayerController pc2){
-        System.out.println("THE GAME HAS BEEN CREATED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
     }
 
     //действие на сообщение
@@ -362,6 +355,10 @@ public class PlayerController extends Thread {
 
     //getters and setters
 
+
+    public boolean isWaitingForReply() {
+        return waitingForReply;
+    }
 
     public GameController getGc() {
         return gc;

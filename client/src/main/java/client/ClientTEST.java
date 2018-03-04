@@ -31,8 +31,12 @@ public class ClientTEST {
     }
 
     synchronized public void run() throws IOException, XMLStreamException, InterruptedException {
+        System.out.println("THE CLIENT IS RUNNING\n\nBuild your messages in this way:\n" +
+                "1.key (\"LOG IN\", \"LOG OUT\", \"REG\", \"INVITE\", \"REPLY\" etc.)\n" +
+                "2.value1 ...\n" +
+                "3.value2 ...\n\n" +
+                "now try to write something below, start with \"key\":");
         while (!socket.isClosed()){
-            System.out.println("\nwrite key");
             String key = scanner.nextLine();
             System.out.println("write value1:");
             String value1 = scanner.nextLine();
@@ -41,20 +45,6 @@ public class ClientTEST {
             String value2 = scanner.nextLine();
             System.out.println("SENDING:");
             outClientXML.send(key,value1,value2);
-            System.out.println("\n\nSERVER THREAD ANSWER:");
-
-//            inClientXML.setReader(inClientXML.getFactory().createXMLStreamReader(inClientXML.getFileReader()));
-//            XMLStreamReader reader = inClientXML.getReader();
-//            while (reader.hasNext()) {
-//                System.out.println("key = \"" + inClientXML.checkValue(reader) +"\"");
-//                System.out.println("value = \"" + inClientXML.checkValue(reader) +"\"");
-//                reader.next();
-//                if (reader.isEndElement() && "root".equals(reader.getName().toString())) {
-//                    break;
-//                }else{
-//                    reader.next();
-//                }
-//            }
         }
         System.out.println("\n\nexit");
         outClientXML.getWriter().close();
@@ -74,88 +64,87 @@ public class ClientTEST {
                 XMLStreamReader reader = inClientXML.getReader();
                 try {
                     while (reader.hasNext()) {
-                        /*System.out.println("key = \"" + inClientXML.checkValue(reader) +"\"");
-                        System.out.println("value = \"" + inClientXML.checkValue(reader) +"\"");
-                        reader.next();
-                        if (reader.isEndElement() && "root".equals(reader.getName().toString())) {
-                            break;
-                        }else{
-                            reader.next();
-                        }*/
                         if (reader.getEventType() == 1 && reader.getLocalName().equals("key")) {
                             reader.next();
                             switch (inClientXML.checkValue(reader)) {
                                 case "LOG IN": {
-                                    System.out.println("\nxml message with key \"LOG IN\" received:");
+                                    System.out.println("\n\n\nSERVER:\"LOG IN\"");
                                     String value = inClientXML.checkValue(reader);
-                                    System.out.println("LOG IN server answer = \"" + value + "\"");
+                                    System.out.println("result = \"" + value + "\"");
                                     //реакция в зависимости от ответа. да - ..., ошибка№1 нет такого ни логина ни пароля - ...,
                                     //ошибка№2 пароль или логин не верен - ...
                                     break;
                                 }
                                 case "LOG OUT": {
-                                    System.out.println("xml message with key \"LOG OUT\" received");
+                                    System.out.println("\n\n\nSERVER:\"LOG OUT\"");
                                     String value = inClientXML.checkValue(reader);
-                                    System.out.println("LOG OUT server answer = \"" + value + "\"");
+                                    System.out.println("result = \"" + value + "\"");
                                     //если ответ сервера удовлетворителен - ...
                                     break;
                                 }
                                 case "REG": {
-                                    System.out.println("xml message with key \"REG\" received");
+                                    System.out.println("\n\n\nSERVER:\"REG\"");
                                     String value = inClientXML.checkValue(reader);
-                                    System.out.println("REG server answer = \"" + value + "\"");
+                                    System.out.println("result = \"" + value + "\"");
                                     //если ответ сервера - ...
                                     break;
                                 }
                                 case "MSG": {
                                     //делать в последнюю очередь
-                                    System.out.println("xml message with key \"MSG\" received");
+                                    System.out.println("\n\n\nSERVER:\"MSG\"");
                                     break;
                                 }
                                 case "INVITE": {
-                                    System.out.println("xml message with key \"INVITE\" received");
+                                    System.out.println("\n\n\nSERVER:\"INVITE\"");
                                     String player1 = inClientXML.checkValue(reader);
-                                    System.out.println("value = \"" + player1 + "\"");
-                                    //сделать на клиенте
-//                                    //первый тот кто отвечает - второй тот кому отвечает первый - то что отвечает первый второму
-//                                    String[] list = new String[0];
-//                                    list[0] = login;
-//                                    list[1] = player1;
-//                                    list[2] = valueReq;
-//                                    outClientXML.send("REPLY",list);
-                                    //сообщение от сервера о том что игрок №n предлагает игру
+                                    System.out.println("player \"" + player1 + "\" want to play with you. Use key \" REPLY\" to reply. " +
+                                            "value1 must be " + player1 + ", and value2 is your answer (now it is \"AUTOAGGREE\" MODE)");
                                     break;
                                 }
                                 case "REPLY": {
-                                    System.out.println("xml message with key \"REPLY\" received");
+                                    System.out.println("\n\n\nSERVER:\"REPLY\"");
                                     //сообщение от сервера о том что ответ игрока №n на ваше предложение игры - ...
+                                    String player1 = inClientXML.checkValue(reader);
+                                    System.out.println("player \"" + player1 + "\" rejected your invite");
                                     break;
                                 }
                                 case "START GAME": {
-                                    System.out.println("\nxml message with key \"START GAME\" received:");
+                                    System.out.println("\n\n\nSERVER:\"START GAME\"");
                                     String value = inClientXML.checkValue(reader);
                                     System.out.println("GAME STARTED WITH = \"" + value + "\"");
                                     break;
                                 }
+                                case "PLAYER INFO": {
+                                    System.out.println("\n\n\nSERVER:\"PLAYER INFO\"");
+                                    String value = inClientXML.checkValue(reader);
+                                    System.out.println("You are = \"" + value + "\"");
+                                    break;
+                                }
                                 case "SHIP": {
-                                    System.out.println("xml message with key \"SHIP\" received");
+                                    System.out.println("\n\n\nSERVER:\"SHIP\"");
                                     //сообщение от сервера относительно того как игрок пытается поставить корабль - ...
                                     //(успех / ошибка / все корабли расставлены и идёт ожидание другого игрока или запуск игры)
                                     break;
                                 }
                                 case "SHOOT": {
-                                    System.out.println("xml message with key \"SHOOT\" received");
+                                    System.out.println("\n\n\nSERVER:\"SHOOT\"");
                                     //сообщение сервера о результате выстрела (ранил / убил / мимо)
                                     break;
                                 }
                                 case "SURRENDER": {
-                                    System.out.println("xml message with key \"SURRENDER\" received");
+                                    System.out.println("\n\n\nSERVER:\"SURRENDER\"");
                                     //сообщение сервера о том что соперник сдался
                                     break;
                                 }
                                 case "GAME OVER": {
-                                    System.out.println("xml message with key \"GAME OVER\" received");
+                                    System.out.println("\n\n\nSERVER:\"GAME OVER\"");
                                     //сообщение сервера об окончании игры и выводе результата
+                                    break;
+                                }
+                                case "INFO": {
+                                    System.out.println("\n\n\nSERVER:\"INFO\"");
+                                    String value = inClientXML.checkValue(reader);
+                                    System.out.println("***\"" + value + "\"***");
                                     break;
                                 }
                             }
@@ -172,7 +161,6 @@ public class ClientTEST {
             }
         }
     }
-
 }
 
 
