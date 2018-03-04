@@ -18,6 +18,7 @@ public class Server {
     private static final int PORT = 9001;
 
     private static Set<Player> allPlayersSet = Collections.synchronizedSet(new HashSet<Player>());
+    private static Set<PlayerController> allPlayersControllerSet = Collections.synchronizedSet(new HashSet<PlayerController>());
     private static HashSet<Player> onlinePlayersSet = new HashSet<Player>();
     private static HashSet<Player> ingamePlayersSet = new HashSet<Player>();
 
@@ -41,7 +42,12 @@ public class Server {
 
         try {
             while (true) {
-                new PlayerController(listener.accept()).start();
+                PlayerController pc;
+                pc = new PlayerController();
+                //new PlayerController(listener.accept()).start();
+                pc.setSocket(listener.accept());
+                pc.start();
+                allPlayersControllerSet.add(pc);
                 countOfThread++;
             }
         } finally {
@@ -182,6 +188,10 @@ public class Server {
                 ingamePlayersSet.add(player);
             }
         }
+    }
+
+    public static Set<PlayerController> getAllPlayersControllerSet() {
+        return allPlayersControllerSet;
     }
 
     public static int getPORT() {

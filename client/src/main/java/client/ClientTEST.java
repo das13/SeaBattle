@@ -21,6 +21,7 @@ public class ClientTEST {
         outClientXML = new OutClientXML(socket);
         //console check
         this.scanner = new Scanner(System.in);
+        new ClientTESTThread().start();
     }
 
     public static void main(String[] args) throws  Exception{
@@ -40,23 +41,53 @@ public class ClientTEST {
             outClientXML.send(key,value1,value2);
             System.out.println("\n\nSERVER THREAD ANSWER:");
 
-            inClientXML.setReader(inClientXML.getFactory().createXMLStreamReader(inClientXML.getFileReader()));
-            XMLStreamReader reader = inClientXML.getReader();
-            while (reader.hasNext()) {
-                System.out.println("key = \"" + inClientXML.checkValue(reader) +"\"");
-                System.out.println("value = \"" + inClientXML.checkValue(reader) +"\"");
-                reader.next();
-                if (reader.isEndElement() && "root".equals(reader.getName().toString())) {
-                    break;
-                }else{
-                    reader.next();
-                }
-            }
+//            inClientXML.setReader(inClientXML.getFactory().createXMLStreamReader(inClientXML.getFileReader()));
+//            XMLStreamReader reader = inClientXML.getReader();
+//            while (reader.hasNext()) {
+//                System.out.println("key = \"" + inClientXML.checkValue(reader) +"\"");
+//                System.out.println("value = \"" + inClientXML.checkValue(reader) +"\"");
+//                reader.next();
+//                if (reader.isEndElement() && "root".equals(reader.getName().toString())) {
+//                    break;
+//                }else{
+//                    reader.next();
+//                }
+//            }
         }
         System.out.println("\n\nexit");
         outClientXML.getWriter().close();
         outClientXML.getWriter2().close();
     }
+
+    class ClientTESTThread extends Thread{
+
+        @Override
+        public void run() {
+            while (!socket.isClosed()){
+                try {
+                    inClientXML.setReader(inClientXML.getFactory().createXMLStreamReader(inClientXML.getFileReader()));
+                } catch (XMLStreamException e) {
+                    e.printStackTrace();
+                }
+                XMLStreamReader reader = inClientXML.getReader();
+                try {
+                    while (reader.hasNext()) {
+                        System.out.println("key = \"" + inClientXML.checkValue(reader) +"\"");
+                        System.out.println("value = \"" + inClientXML.checkValue(reader) +"\"");
+                        reader.next();
+                        if (reader.isEndElement() && "root".equals(reader.getName().toString())) {
+                            break;
+                        }else{
+                            reader.next();
+                        }
+                    }
+                } catch (XMLStreamException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
 }
 
 
