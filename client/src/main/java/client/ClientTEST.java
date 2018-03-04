@@ -30,7 +30,7 @@ public class ClientTEST {
         clientTEST.run();
     }
 
-    synchronized public void run() throws IOException, XMLStreamException, InterruptedException {
+    public void run() throws IOException, XMLStreamException, InterruptedException {
         System.out.println("THE CLIENT IS RUNNING\n\nBuild your messages in this way:\n" +
                 "1.key (\"LOG IN\", \"LOG OUT\", \"REG\", \"INVITE\", \"REPLY\" etc.)\n" +
                 "2.value1 ...\n" +
@@ -54,7 +54,7 @@ public class ClientTEST {
     class ClientTESTThread extends Thread{
 
         @Override
-        synchronized public void run() {
+        public void run() {
             while (!socket.isClosed()){
                 try {
                     inClientXML.setReader(inClientXML.getFactory().createXMLStreamReader(inClientXML.getFileReader()));
