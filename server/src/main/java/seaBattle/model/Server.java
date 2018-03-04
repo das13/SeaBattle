@@ -15,18 +15,19 @@ import java.net.ServerSocket;
 import java.util.*;
 
 public class Server {
-    private static final int PORT = 9001;
 
-    private static Set<Player> allPlayersSet = Collections.synchronizedSet(new HashSet<Player>());
-    private static Set<PlayerController> allPlayersControllerSet = Collections.synchronizedSet(new HashSet<PlayerController>());
-    private static HashSet<Player> onlinePlayersSet = new HashSet<Player>();
-    private static HashSet<Player> ingamePlayersSet = new HashSet<Player>();
-
-
-    private static int countOfThread = 0;
     private static File playerListXML = new File("playerList.xml");
     private static File ipBlackListXML = new File("ipBlackList.xml");
     private static File serverConfXML = new File ("serverConf.xml");
+
+    private static SortedSet<Player> allPlayersSet = new TreeSet<>(Comparator.comparing(Player::getLogin));
+    private static SortedSet<Player> onlinePlayersSet = new TreeSet<>(Comparator.comparing(Player::getLogin));
+    private static SortedSet<Player> ingamePlayersSet = new TreeSet<>(Comparator.comparing(Player::getLogin));
+    private static HashSet<PlayerController> allPlayersControllerSet = new HashSet<>();
+
+    private static final int PORT = 9001;
+    private static int countOfThread = 0;
+
 
     public static int getCountOfThread() {
         return countOfThread;
@@ -149,9 +150,9 @@ public class Server {
             Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
             PlayerList playerList = (PlayerList) jaxbUnmarshaller.unmarshal(file);
             System.out.println("\nfound " + playerList.getPlayerList().size() + " players in playerList.xml:");
-            for (int i = 0; i < playerList.getPlayerList().size(); i++) {
-                System.out.print(playerList.getPlayerList().get(i).getLogin() + ", ");
-                allPlayersSet.add(playerList.getPlayerList().get(i));
+            allPlayersSet.addAll(playerList.getPlayerList());
+            for (Player player : allPlayersSet){
+                System.out.print(player.getLogin() + ", ");
             }
             System.out.println();
         } catch (JAXBException e) {
@@ -228,23 +229,23 @@ public class Server {
         return allPlayersSet;
     }
 
-    public static void setAllPlayersSet(Set<Player> allPlayersSet) {
+    public static void setAllPlayersSet(SortedSet<Player> allPlayersSet) {
         Server.allPlayersSet = allPlayersSet;
     }
 
-    public static HashSet<Player> getOnlinePlayersSet() {
+    public static SortedSet<Player> getOnlinePlayersSet() {
         return onlinePlayersSet;
     }
 
-    public static void setOnlinePlayersSet(HashSet<Player> onlinePlayersSet) {
+    public static void setOnlinePlayersSet(SortedSet<Player> onlinePlayersSet) {
         Server.onlinePlayersSet = onlinePlayersSet;
     }
 
-    public static HashSet<Player> getIngamePlayersSet() {
+    public static SortedSet<Player> getIngamePlayersSet() {
         return ingamePlayersSet;
     }
 
-    public static void setIngamePlayersSet(HashSet<Player> ingamePlayersSet) {
+    public static void setIngamePlayersSet(SortedSet<Player> ingamePlayersSet) {
         Server.ingamePlayersSet = ingamePlayersSet;
     }
 }

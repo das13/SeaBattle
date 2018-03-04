@@ -65,8 +65,6 @@ public class PlayerController extends Thread {
         outServerXML = new OutServerXML(socket);
     }
 
-
-
     public void run() {
         threadNumber = Server.getCountOfThread();
         try {
@@ -88,6 +86,12 @@ public class PlayerController extends Thread {
                                 outServerXML.send("INFO", authResult(login,password));
                                 Server.updateAllPlayersSet();
                                 Server.updateOnlinePlayersSet();
+                                if (thisPlayer.getStatus().equals("online")) {
+                                    sleep(10);
+                                    sendOnlinePlayers();
+                                    sleep(10);
+                                    sendIngamePlayers();
+                                }
                                 break;
                             }
                             case "LOG OUT": {
@@ -190,7 +194,11 @@ public class PlayerController extends Thread {
             }
         } catch (XMLStreamException | SAXException | ParserConfigurationException | IOException | TransformerException | BSException e) {
             e.printStackTrace();
-        } finally {
+        }
+        catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        finally {
             try {
                 socket.close();
             } catch (IOException e) {
@@ -227,6 +235,40 @@ public class PlayerController extends Thread {
         }
     }
 
+    public void sendOnlinePlayers() throws XMLStreamException {
+        if (thisPlayer.getStatus().equals("online")) {
+            String[] list = new String[Server.getOnlinePlayersSet().size()+1];
+            str = String.valueOf(Server.getOnlinePlayersSet().size());
+            list[0] = str;
+            int i = 1;
+            System.out.println("\nОТПРАВЛЯЕМ ONLINE ИГРОКОВ");
+            System.out.println("длина сета - " + Server.getOnlinePlayersSet().size());
+            System.out.println("длина массива - " + list.length);
+            for (Player player : Server.getOnlinePlayersSet()) {
+                System.out.println("добавляем в ячейку массива №" + i + " - " + player.getLogin());
+                list[i++] = player.getLogin();
+            }
+            outServerXML.send("ONLINE PLAYERS", list);
+        }
+    }
+    public void sendIngamePlayers() throws XMLStreamException {
+        if (thisPlayer.getStatus().equals("online")) {
+            String[] list = new String[Server.getIngamePlayersSet().size()+1];
+            str = String.valueOf(Server.getIngamePlayersSet().size());
+            list[0] = str;
+            int i = 1;
+            System.out.println("\nОТПРАВЛЯЕМ INGAME ИГРОКОВ");
+            System.out.println("длина сета - " + Server.getIngamePlayersSet().size());
+            System.out.println("длина массива - " + list.length);
+            for (Player player : Server.getIngamePlayersSet()) {
+                System.out.println("добавляем в ячейку массива №" + i + " - " + player.getLogin());
+                list[i++] = player.getLogin();
+            }
+            outServerXML.send("INGAME PLAYERS", list);
+        }
+    }
+
+
     //действие на сообщение
     private void msgResult(String login, String msg) {
     }
@@ -238,6 +280,7 @@ public class PlayerController extends Thread {
             }
             if (player.getLogin().equals(login) && player.getStatus().equals("online")){
                 str = "player with nickname \"" + login + "\" already logged in";
+                thisPlayer.setStatus("online");
                 System.out.println("RESULT = " + str);
                 return str;
             }
@@ -248,6 +291,7 @@ public class PlayerController extends Thread {
             }
             if (player.getLogin().equals(login) && player.getPassword().equals(password)){
                 modifyPlayerInXML(Server.getPlayerListXML(),player,"status", "online");
+                thisPlayer.setStatus("online");
                 str = "success!";
                 System.out.println("RESULT = " + str);
                 return str;

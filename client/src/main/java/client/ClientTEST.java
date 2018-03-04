@@ -54,7 +54,7 @@ public class ClientTEST {
     class ClientTESTThread extends Thread{
 
         @Override
-        public void run() {
+        synchronized public void run() {
             while (!socket.isClosed()){
                 try {
                     inClientXML.setReader(inClientXML.getFactory().createXMLStreamReader(inClientXML.getFileReader()));
@@ -112,6 +112,22 @@ public class ClientTEST {
                                     System.out.println("\n\n\nSERVER:\"START GAME\"");
                                     String value = inClientXML.checkValue(reader);
                                     System.out.println("GAME STARTED WITH = \"" + value + "\"");
+                                    break;
+                                }
+                                case "ONLINE PLAYERS": {
+                                    System.out.println("\n\n\nSERVER:\"ONLINE PLAYERS\"");
+                                    int countOfPlayers = Integer.parseInt(inClientXML.checkValue(reader));
+                                    for (int i = 0; i < countOfPlayers; i++){
+                                        System.out.println("online player#" + i + " - "+ inClientXML.checkValue(reader));
+                                    }
+                                    break;
+                                }
+                                case "INGAME PLAYERS": {
+                                    System.out.println("\n\n\nSERVER:\"INGAME PLAYERS\"");
+                                    int countOfPlayers = Integer.parseInt(inClientXML.checkValue(reader));
+                                    for (int i = 0; i < countOfPlayers; i++){
+                                        System.out.println("online player#" + i + " - "+ inClientXML.checkValue(reader));
+                                    }
                                     break;
                                 }
                                 case "PLAYER INFO": {
