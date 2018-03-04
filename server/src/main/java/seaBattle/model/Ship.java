@@ -9,10 +9,10 @@ public class Ship {
     public Ship(int[] ship) {
         this.ship = ship;
         if (ship[0] == ship[2]) {
-            health = ship[3] - ship[1];
+            health = ship[3] - ship[1]+1;
             vertical = true;
         }else {
-            health = ship[2] - ship[0];
+            health = ship[2] - ship[0]+1;
             vertical = false;
         }
     }
