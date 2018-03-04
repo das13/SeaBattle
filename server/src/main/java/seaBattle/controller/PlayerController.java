@@ -38,14 +38,32 @@ public class PlayerController extends Thread {
     private String str;
     private InServerXML inServerXML;
     private OutServerXML outServerXML;
-    private Player pl;
+    private Player thisPlayer;
+
+    public OutServerXML getOutServerXML() {
+        return outServerXML;
+    }
+
+    public Player getThisPlayer() {
+        return thisPlayer;
+    }
+
+    public void setThisPlayer(Player thisPlayer) {
+        this.thisPlayer = thisPlayer;
+    }
+
+    public PlayerController() {
+        thisPlayer = new Player();
+    }
 
     public PlayerController(Socket socket) throws IOException {
-        pl = new Player();
+        thisPlayer = new Player();
         this.socket = socket;
         inServerXML = new InServerXML(socket);
         outServerXML = new OutServerXML(socket);
     }
+
+
 
     public void run() {
         threadNumber = Server.getCountOfThread();
@@ -62,8 +80,10 @@ public class PlayerController extends Thread {
                             case "LOG IN": {
                                 System.out.println("\nxml message with key \"LOG IN\" from thread #" + threadNumber + " detected:");
                                 String login = inServerXML.checkValue(reader);
+                                thisPlayer.setLogin(login);
                                 System.out.println("login = \"" + login + "\"");
                                 String password = inServerXML.checkValue(reader);
+                                thisPlayer.setPassword(password);
                                 System.out.println("password = \"" + password + "\"" + "\n\nSENDING ANSWER:");
                                 outServerXML.send("LOG IN", authResult(login,password));
                                 Server.updateAllPlayersSet();
@@ -175,6 +195,9 @@ public class PlayerController extends Thread {
             }
         }
     }
+
+
+
     //действие если игрок сдался
     private void surrenderResult(String player) {
     }
@@ -188,7 +211,13 @@ public class PlayerController extends Thread {
     }
 
     //действие на приглашение игроком№1 игрока№2 в игру
-    private void inviteResult(String login, String msg) {
+    private void inviteResult(String player1, String player2) {
+        for (PlayerController pl:Server.getAllPlayersControllerSet()) {
+            if (pl.getThisPlayer().getLogin().equals(player2)) {
+                pl.getOutServerXML().send("INVITE",player1);
+            }
+        }
+        outServerXML.send("INVITE","send success");
     }
 
     //действие на ответ игрока№2 игроку№1 на приглашение в игру
@@ -310,5 +339,14 @@ public class PlayerController extends Thread {
 
     public void saveSetIntoXML(HashSet<Player> players, File file){
 
+    }
+
+    //getters and setters
+
+
+    public void setSocket(Socket socket) {
+        this.socket = socket;
+        inServerXML = new InServerXML(socket);
+        outServerXML = new OutServerXML(socket);
     }
 }
