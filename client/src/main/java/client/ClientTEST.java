@@ -14,6 +14,7 @@ public class ClientTEST {
     private OutClientXML outClientXML;
     private Scanner scanner;
     private Socket socket;
+    private String login;
 
     public ClientTEST() throws IOException, XMLStreamException {
         this.socket = new Socket("localhost", 9001);
@@ -35,6 +36,7 @@ public class ClientTEST {
             String key = scanner.nextLine();
             System.out.println("write value1:");
             String value1 = scanner.nextLine();
+            if(key.equals("LOG IN")) login = value1.toString();
             System.out.println("write value2:");
             String value2 = scanner.nextLine();
             System.out.println("SENDING:");
@@ -72,9 +74,82 @@ public class ClientTEST {
                 XMLStreamReader reader = inClientXML.getReader();
                 try {
                     while (reader.hasNext()) {
-                        System.out.println("key = \"" + inClientXML.checkValue(reader) +"\"");
+                        /*System.out.println("key = \"" + inClientXML.checkValue(reader) +"\"");
                         System.out.println("value = \"" + inClientXML.checkValue(reader) +"\"");
                         reader.next();
+                        if (reader.isEndElement() && "root".equals(reader.getName().toString())) {
+                            break;
+                        }else{
+                            reader.next();
+                        }*/
+                        if (reader.getEventType() == 1 && reader.getLocalName().equals("key")) {
+                            reader.next();
+                            switch (inClientXML.checkValue(reader)) {
+                                case "LOG IN": {
+                                    System.out.println("\nxml message with key \"LOG IN\" received:");
+                                    String value = inClientXML.checkValue(reader);
+                                    System.out.println("LOG IN server answer = \"" + value + "\"");
+                                    //реакция в зависимости от ответа. да - ..., ошибка№1 нет такого ни логина ни пароля - ...,
+                                    //ошибка№2 пароль или логин не верен - ...
+                                    break;
+                                }
+                                case "LOG OUT": {
+                                    System.out.println("xml message with key \"LOG OUT\" received");
+                                    String value = inClientXML.checkValue(reader);
+                                    System.out.println("LOG OUT server answer = \"" + value + "\"");
+                                    //если ответ сервера удовлетворителен - ...
+                                    break;
+                                }
+                                case "REG": {
+                                    System.out.println("xml message with key \"REG\" received");
+                                    String value = inClientXML.checkValue(reader);
+                                    System.out.println("REG server answer = \"" + value + "\"");
+                                    //если ответ сервера - ...
+                                    break;
+                                }
+                                case "MSG": {
+                                    //делать в последнюю очередь
+                                    System.out.println("xml message with key \"MSG\" received");
+                                    break;
+                                }
+                                case "INVITE": {
+                                    System.out.println("xml message with key \"INVITE\" received");
+                                    String player1 = inClientXML.checkValue(reader);
+                                    System.out.println("INVITE from = \"" + player1 + "\"");
+                                    System.out.println("Your answer:");
+                                    String valueReq = new Scanner(System.in).nextLine();
+                                    outClientXML.send("REPLY",valueReq);
+                                    //сообщение от сервера о том что игрок №n предлагает игру
+                                    break;
+                                }
+                                case "REPLY": {
+                                    System.out.println("xml message with key \"REPLY\" received");
+                                    //сообщение от сервера о том что ответ игрока №n на ваше предложение игры - ...
+                                    break;
+                                }
+                                case "SHIP": {
+                                    System.out.println("xml message with key \"SHIP\" received");
+                                    //сообщение от сервера относительно того как игрок пытается поставить корабль - ...
+                                    //(успех / ошибка / все корабли расставлены и идёт ожидание другого игрока или запуск игры)
+                                    break;
+                                }
+                                case "SHOOT": {
+                                    System.out.println("xml message with key \"SHOOT\" received");
+                                    //сообщение сервера о результате выстрела (ранил / убил / мимо)
+                                    break;
+                                }
+                                case "SURRENDER": {
+                                    System.out.println("xml message with key \"SURRENDER\" received");
+                                    //сообщение сервера о том что соперник сдался
+                                    break;
+                                }
+                                case "GAME OVER": {
+                                    System.out.println("xml message with key \"GAME OVER\" received");
+                                    //сообщение сервера об окончании игры и выводе результата
+                                    break;
+                                }
+                            }
+                        }
                         if (reader.isEndElement() && "root".equals(reader.getName().toString())) {
                             break;
                         }else{
