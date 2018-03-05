@@ -6,6 +6,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import seaBattle.model.BSException;
 import seaBattle.model.Player;
+import seaBattle.model.Ship;
 import seaBattle.model.serverFileService.PlayerList;
 import seaBattle.model.Server;
 import seaBattle.xmlservice.InServerXML;
@@ -141,17 +142,19 @@ public class PlayerController extends Thread {
                             }
                             case "SHIP LOCATION": {
                                 System.out.println("\n\n\nkey \"SHIP LOCATION\" from " + this.getThisPlayer().getLogin() + " detected:");
-                                String player = inServerXML.checkValue(reader);
-                                System.out.println("player = \"" + player + "\"");
-                                String x1 = inServerXML.checkValue(reader);
+                                int x1 = Integer.parseInt(inServerXML.checkValue(reader));
                                 System.out.println("x1 = \"" + x1 + "\"");
-                                String y1 = inServerXML.checkValue(reader);
+                                int y1 = Integer.parseInt(inServerXML.checkValue(reader));
                                 System.out.println("y1 = \"" + y1 + "\"");
-                                String x2 = inServerXML.checkValue(reader);
+                                int x2 = Integer.parseInt(inServerXML.checkValue(reader));
                                 System.out.println("x2 = \"" + x2 + "\"");
-                                String y2 = inServerXML.checkValue(reader);
+                                int y2 = Integer.parseInt(inServerXML.checkValue(reader));
                                 System.out.println("y2 = \"" + y2 + "\"");
-                                shipLocationResult(player,x1,y1,x2,y2);
+                                if(!gc.checkStart()) {
+                                    getOutServerXML().send("SHIP LOCATION", gc.setShip(this, new Ship(new int[]{x1, y1, x2, y2})));
+                                }else {
+                                    getOutServerXML().send("SHIP LOCATION", gc.setShip(this, new Ship(new int[]{x1, y1, x2, y2})) + " START GAME");
+                                }
                                 break;
                             }
                             case "SHOOT": {
@@ -355,7 +358,6 @@ public class PlayerController extends Thread {
                 if (pc.isWaitingForReply()) {
                     gc = new GameController(pc, this);
                     pc.setGc(gc);
-                    gc.start();
                     pc.getOutServerXML().send("START GAME", thisPlayer.getLogin());
                     System.out.print("\n");
                     outServerXML.send("START GAME", player1);

@@ -3,6 +3,7 @@ package seaBattle.model;
 public class Field {
     private int [][] field = new int[10][10];
     private int [] countOfShip = new int[4];
+    String str;
 
     public int[] getCountOfShip() {
         return countOfShip;
@@ -17,7 +18,7 @@ public class Field {
         this.field = field;
     }
 
-    public void setShip (Ship ship) {
+    public String setShip (Ship ship) {
         int[] a = ship.getShip();
         if (shipCountChecking(ship)) {
             if (ship.isVertical()) {
@@ -27,6 +28,9 @@ public class Field {
                         setSafeArea(field, a[0], i, ship.isVertical());
                     }
                     countOfShip[ship.getHealth()-1]++;
+                    str = "OK";
+                }else {
+                    str = "PLACE ERROR";
                 }
             } else {
                 if (areaChecking(field, a[0], a[2], ship.isVertical())) {
@@ -35,11 +39,15 @@ public class Field {
                         setSafeArea(field, i, a[1], ship.isVertical());
                     }
                     countOfShip[ship.getHealth()-1]++;
+                    str = "OK";
+                }else {
+                    str = "PLACE ERROR";
                 }
             }
         }else {
-            System.out.println("Count of this type ship is also");
+            str="COUNT ERROR";
         }
+        return str;
     }
 
     public void setSafeArea(int [][]f, int i1,int j1,boolean v) {
