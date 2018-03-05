@@ -54,7 +54,7 @@ public class ClientTEST {
     class ClientTESTThread extends Thread{
 
         @Override
-        synchronized public void run() {
+        public void run() {
             while (!socket.isClosed()){
                 try {
                     inClientXML.setReader(inClientXML.getFactory().createXMLStreamReader(inClientXML.getFileReader()));
