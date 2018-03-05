@@ -117,7 +117,7 @@ public class ClientTEST {
                                 case "ONLINE PLAYERS": {
                                     System.out.println("\n\n\nSERVER:\"ONLINE PLAYERS\"");
                                     int countOfPlayers = Integer.parseInt(inClientXML.checkValue(reader));
-                                    for (int i = 0; i < countOfPlayers; i++){
+                                    for (int i = 1; i <= countOfPlayers; i++){
                                         System.out.println("online player#" + i + " - "+ inClientXML.checkValue(reader));
                                     }
                                     break;
@@ -125,7 +125,7 @@ public class ClientTEST {
                                 case "INGAME PLAYERS": {
                                     System.out.println("\n\n\nSERVER:\"INGAME PLAYERS\"");
                                     int countOfPlayers = Integer.parseInt(inClientXML.checkValue(reader));
-                                    for (int i = 0; i < countOfPlayers; i++){
+                                    for (int i = 1; i <= countOfPlayers; i++){
                                         System.out.println("online player#" + i + " - "+ inClientXML.checkValue(reader));
                                     }
                                     break;

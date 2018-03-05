@@ -6,7 +6,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import seaBattle.model.BSException;
 import seaBattle.model.Player;
-import seaBattle.model.PlayerList;
+import seaBattle.model.serverFileService.PlayerList;
 import seaBattle.model.Server;
 import seaBattle.xmlservice.InServerXML;
 import seaBattle.xmlservice.OutServerXML;
@@ -27,32 +27,16 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Set;
 
 public class PlayerController extends Thread {
     private Socket socket;
-    private BufferedReader in;
-    private PrintWriter out;
-    private int threadNumber;
     private String str;
     private InServerXML inServerXML;
     private OutServerXML outServerXML;
     private Player thisPlayer;
     private GameController gc;
     private boolean waitingForReply;
-
-    public OutServerXML getOutServerXML() {
-        return outServerXML;
-    }
-
-    public Player getThisPlayer() {
-        return thisPlayer;
-    }
-
-    public void setThisPlayer(Player thisPlayer) {
-        this.thisPlayer = thisPlayer;
-    }
 
     public PlayerController() {
         thisPlayer = new Player();
@@ -66,7 +50,8 @@ public class PlayerController extends Thread {
     }
 
     public void run() {
-        threadNumber = Server.getCountOfThread();
+        int threadNumber = Server.getCountOfThread();
+        thisPlayer.setStatus("offline");
         try {
             while (!socket.isClosed()){
                 inServerXML.setReader(inServerXML.getFactory().createXMLStreamReader(inServerXML.getFileReader()));
@@ -112,13 +97,26 @@ public class PlayerController extends Thread {
                                 Server.updateAllPlayersSet();
                                 break;
                             }
-                            case "MSG": {
-                                System.out.println("\n\n\nkey \"MSG\" from " + this.getThisPlayer().getLogin() + " detected:");
-                                String player = inServerXML.checkValue(reader);
-                                System.out.println("player = \"" + player + "\"");
-                                String msg = inServerXML.checkValue(reader);
-                                System.out.println("msg = \"" + msg + "\"");
-                                msgResult(player,msg);
+                            case "BAN PLAYER": {
+                                System.out.println("\n\n\n\nkey \"BAN PLAYER\" from " + this.getThisPlayer().getLogin() + " detected:");
+                                String admin = inServerXML.checkValue(reader);
+                                System.out.println("admin = \"" + admin + "\"");
+                                String playerToBan = inServerXML.checkValue(reader);
+                                System.out.println("player to ban = \"" + playerToBan + "\"" + "\nSENDING ANSWER:");
+                                outServerXML.send("INFO", banPlayerResult(admin,playerToBan));
+                                Server.updateAllPlayersSet();
+                                Server.updateOnlinePlayersSet();
+                                Server.updateIngamePlayersSet();
+                                break;
+                            }
+                            case "BAN IP": {
+                                System.out.println("\n\n\n\nkey \"BAN IP\" from " + this.getThisPlayer().getLogin() + " detected:");
+                                String admin = inServerXML.checkValue(reader);
+                                System.out.println("admin = \"" + admin + "\"");
+                                String ipToBan = inServerXML.checkValue(reader);
+                                System.out.println("ip to ban = \"" + ipToBan + "\"" + "\nSENDING ANSWER:");
+                                outServerXML.send("INFO", banIpResult(admin,ipToBan));
+                                Server.updateBannedIpSet();
                                 break;
                             }
                             case "INVITE": {
@@ -182,6 +180,15 @@ public class PlayerController extends Thread {
                                 //это сервер должен определить когда отсылать гейм овер
                                 System.out.println("xml message with key \"GAME OVER\" detected");
                             }
+                            case "MSG": {
+                                System.out.println("\n\n\nkey \"MSG\" from " + this.getThisPlayer().getLogin() + " detected:");
+                                String player = inServerXML.checkValue(reader);
+                                System.out.println("player = \"" + player + "\"");
+                                String msg = inServerXML.checkValue(reader);
+                                System.out.println("msg = \"" + msg + "\"");
+                                msgResult(player,msg);
+                                break;
+                            }
                         }
                     }
                     if (reader.isEndElement() && "root".equals(reader.getName().toString())) {
@@ -192,13 +199,9 @@ public class PlayerController extends Thread {
                 }
                 reader.close();
             }
-        } catch (XMLStreamException | SAXException | ParserConfigurationException | IOException | TransformerException | BSException e) {
+        } catch (XMLStreamException | SAXException | ParserConfigurationException | IOException | TransformerException | BSException | InterruptedException e) {
             e.printStackTrace();
-        }
-        catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        finally {
+        } finally {
             try {
                 socket.close();
             } catch (IOException e) {
@@ -219,7 +222,6 @@ public class PlayerController extends Thread {
             if (player.getLogin().equals(login) && player.getPassword().equals(password) && player.getStatus().equals("online")){
                 str = "player with nickname \"" + login + "\" already logged in";
                 //удалить после интеграции интерфейса
-                thisPlayer.setStatus("online");
                 System.out.println("RESULT = " + str);
                 return str;
             }
@@ -228,7 +230,7 @@ public class PlayerController extends Thread {
                     str = "MORTAL, YOUR ACCOUNT IS BANNED BY HIGHER POWER!";
                     break;
                 }
-                for (String ip : Server.getIpBlackListSet()){
+                for (String ip : Server.getBannedIpListSet()){
                     if (socket.getInetAddress().equals(ip)){
                         str = "MORTAL, YOUR IP IS BANNED BY HIGHER POWER!";
                         break;
@@ -236,6 +238,7 @@ public class PlayerController extends Thread {
                 }
                 modifyPlayerInXML(Server.getPlayerListXML(),player,"status", "online");
                 thisPlayer.setStatus("online");
+                Server.getOnlinePlayersSet().add(thisPlayer);
                 str = "success!";
                 System.out.println("RESULT = " + str);
                 return str;
@@ -275,10 +278,61 @@ public class PlayerController extends Thread {
 
             //Marshal-им плеерлист в файл
             jaxbMarshaller.marshal(playerList, new File(Server.getPlayerListXML().getPath()));
+            Server.getAllPlayersSet().add(thisPlayer);
             str = "success!";
 
         } catch (JAXBException e) {
             e.printStackTrace();
+        }
+        return str;
+    }
+
+    public String banPlayerResult(String admin,String playerToBan) {
+        str = "something wrong";
+        for (String login : Server.getAdminsSet()) {
+            System.out.println("1. проверка в adminsSet. сравнивается " + admin + " и " + login);
+            if (admin.equals(login)) {
+                System.out.println("СОВПАЛО!");
+                for (Player pl1 : Server.getAllPlayersSet()) {
+                    System.out.println("2. поиск игрока в allPlayersSet. сравниваем " + playerToBan + " и " + pl1.getLogin());
+                    if (pl1.getLogin().equals(playerToBan)) {
+                        System.out.println("НАШЛИ! баним");
+                        pl1.setStatus("banned");
+                        str = "player " + playerToBan + " banned";
+                        System.out.println("нужно ли кикать? смотрим");
+                        break;
+                    }
+                }
+                try {
+                    System.out.println("размер сета контроллеров - " + Server.getAllPlayersControllerSet().size());
+                    for (PlayerController pc1 : Server.getAllPlayersControllerSet()) {
+                        System.out.println("3. поиск контроллера игрока. смотрим на контроллер игрока - " + pc1.getThisPlayer().getLogin());
+                        if (pc1.getThisPlayer().getLogin().equals(playerToBan)) {
+                            System.out.println("НАШЛИ! кикаем");
+                            pc1.socket.close();
+                            str = "player " + playerToBan + " banned and kicked";
+                            return str;
+                        }
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return str;
+    }
+
+    public String banIpResult(String admin,String ipToBan) {
+        for (String login : Server.getAdminsSet()) {
+            if (admin.equals(login)) {
+                for (String ip1 : Server.getBannedIpListSet()) {
+                    if (ip1.equals(ipToBan)) {
+                        str = "ip " + ipToBan + " already banned";
+                        break;
+                    }
+                }
+                Server.getBannedIpListSet().add(ipToBan);
+            }
         }
         return str;
     }
@@ -404,11 +458,20 @@ public class PlayerController extends Thread {
         //throw new BSException("Error with finding player in XML");
     }
 
-    public void saveSetIntoXML(HashSet<Player> players, File file){
 
-    }
 
     //getters and setters
+
+    public OutServerXML getOutServerXML() {
+        return outServerXML;
+    }
+
+    public Player getThisPlayer() {
+        return thisPlayer;
+    }
+    public void setThisPlayer(Player thisPlayer) {
+        this.thisPlayer = thisPlayer;
+    }
 
     public boolean isWaitingForReply() {
         return waitingForReply;

@@ -1,15 +1,15 @@
 package seaBattle.model;
 
 import seaBattle.controller.PlayerController;
+import seaBattle.model.serverFileService.AdminsList;
+import seaBattle.model.serverFileService.BannedIpList;
+import seaBattle.model.serverFileService.PlayerList;
+import seaBattle.model.serverFileService.ServerConf;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.stream.XMLStreamException;
 import java.io.File;
 import java.net.ServerSocket;
@@ -18,29 +18,25 @@ import java.util.*;
 public class Server {
 
     private static File playerListXML = new File("playerList.xml");
-    private static File ipBlackListXML = new File("ipBlackList.xml");
+    private static File bannedIpListXML = new File("bannedIpList.xml");
     private static File serverConfXML = new File ("serverConf.xml");
+    private static File adminsListXML = new File ("adminsList.xml");
 
     private static SortedSet<Player> allPlayersSet = new TreeSet<>(Comparator.comparing(Player::getLogin));
     private static SortedSet<Player> onlinePlayersSet = new TreeSet<>(Comparator.comparing(Player::getLogin));
     private static SortedSet<Player> ingamePlayersSet = new TreeSet<>(Comparator.comparing(Player::getLogin));
-    private static HashSet<String> ipBlackListSet = new HashSet<>();
+    private static SortedSet<String> adminsSet = new TreeSet<>();
+    private static SortedSet<String> bannedIpSet = new TreeSet<>();
     private static HashSet<PlayerController> allPlayersControllerSet = new HashSet<>();
 
     private static final int PORT = 9001;
     private static int countOfThread = 0;
 
 
-    public static int getCountOfThread() {
-        return countOfThread;
-    }
-
     public static void main(String[] args) throws Exception {
         System.out.println("THE SERVER IS RUNNING");
         ServerSocket listener = new ServerSocket(PORT);
-        checkServerXMLfiles();
-        updatePlayersSets();
-        updateIpBlackListSet();
+        serverLaunchPreparation();
 
         try {
             while (true) {
@@ -56,6 +52,20 @@ public class Server {
         } finally {
             listener.close();
         }
+    }
+
+    public static void serverLaunchPreparation(){
+        try {
+            checkServerXMLfiles();
+            updateAllPlayersSet();
+            updateOnlinePlayersSet();
+            updateIngamePlayersSet();
+            updateAdminsSet();
+            updateBannedIpSet();
+        } catch (XMLStreamException | JAXBException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public static void checkServerXMLfiles() throws XMLStreamException, JAXBException {
@@ -93,26 +103,48 @@ public class Server {
             jaxbMarshaller.marshal(playerList, new File(playerListXML.getPath()));
         }
 
-        //проверка наличия ipBlackList.xml и создание при негативном результате
-        if (!ipBlackListXML.exists()) {
+        //проверка наличия bannedIpList.xml и создание при негативном результате
+        if (!bannedIpListXML.exists()) {
 
-            IpBlackList ipBlackList = new IpBlackList();
+            BannedIpList bannedIpList = new BannedIpList();
 
-            ipBlackList.setIpBlackList(new ArrayList<String>());
+            bannedIpList.setBannedIpList(new ArrayList<String>());
             //создаём два айпи
 
-            ipBlackList.getIpBlackList().add("250.250.250.251");
-            ipBlackList.getIpBlackList().add("250.250.250.252");
+            bannedIpList.getBannedIpList().add("250.250.250.251");
+            bannedIpList.getBannedIpList().add("250.250.250.252");
 
-            JAXBContext jaxbContext = JAXBContext.newInstance(IpBlackList.class);
+            JAXBContext jaxbContext = JAXBContext.newInstance(BannedIpList.class);
             Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
             jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
             //Marsha-им лист в консоль
-            jaxbMarshaller.marshal(ipBlackList, System.out);
+            jaxbMarshaller.marshal(bannedIpList, System.out);
 
             //Marshal-им лист в файл
-            jaxbMarshaller.marshal(ipBlackList, new File(ipBlackListXML.getPath()));
+            jaxbMarshaller.marshal(bannedIpList, new File(bannedIpListXML.getPath()));
+        }
+
+        //проверка наличия adminsList.xml и создание при негативном результате
+        if (!adminsListXML.exists()) {
+
+            AdminsList adminsList = new AdminsList();
+
+            adminsList.setAdminList(new ArrayList<String>());
+
+            //создаём два логина
+            adminsList.getAdminList().add("admin");
+            adminsList.getAdminList().add("hacker");
+
+            JAXBContext jaxbContext = JAXBContext.newInstance(AdminsList.class);
+            Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+            jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+            //Marsha-им лист в консоль
+            jaxbMarshaller.marshal(adminsList, System.out);
+
+            //Marshal-им лист в файл
+            jaxbMarshaller.marshal(adminsList, new File(adminsListXML.getPath()));
         }
 
         //проверка наличия serverConf.xml и создание при негативном результате
@@ -141,11 +173,6 @@ public class Server {
         }
     }
 
-    public static void updatePlayersSets(){
-        updateAllPlayersSet();
-        updateOnlinePlayersSet();
-        updateIngamePlayersSet();
-    }
 
     public static void updateAllPlayersSet(){
         try {
@@ -160,6 +187,7 @@ public class Server {
                 System.out.print(player.getLogin() + ", ");
             }
             System.out.println("\nupdated: allPlayersSet");
+            updatePlayerListXML();
         } catch (JAXBException e) {
             e.printStackTrace();
         }
@@ -183,60 +211,154 @@ public class Server {
         System.out.println("updated: ingamePlayersSet");
     }
 
-    public static void updateIpBlackListSet(){
+
+    public static void updateAdminsSet(){
         try {
-            File file = new File(ipBlackListXML.getPath());
-            JAXBContext jaxbContext = JAXBContext.newInstance(IpBlackList.class);
+            File file1 = new File(adminsListXML.getPath());
+            JAXBContext jaxbContext = JAXBContext.newInstance(AdminsList.class);
 
             Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-            IpBlackList ipBlackList = (IpBlackList) jaxbUnmarshaller.unmarshal(file);
-            System.out.println("\nfound " + ipBlackList.getIpBlackList().size() + " ip's in ipBlackList.xml:");
-            for (int i = 0; i < ipBlackList.getIpBlackList().size(); i++){
-                ipBlackListSet.add(ipBlackList.getIpBlackList().get(i));
-                System.out.print(ipBlackList.getIpBlackList().get(i) + ", ");
+            AdminsList adminsList = (AdminsList) jaxbUnmarshaller.unmarshal(file1);
+            System.out.println("\nfound " + adminsList.getAdminList().size() + " admins in adminsList.xml:");
+            for (int i = 0; i < adminsList.getAdminList().size(); i++){
+                adminsSet.add(adminsList.getAdminList().get(i));
+                System.out.print(adminsList.getAdminList().get(i) + ", ");
             }
-            System.out.println("\nupdated: ipBlackListSet");
+            System.out.println("\nupdated: adminsSet");
+            updateAdminsListXML();
         } catch (JAXBException e) {
             e.printStackTrace();
         }
     }
 
-    public static Set<PlayerController> getAllPlayersControllerSet() {
-        return allPlayersControllerSet;
+    public static void updateBannedIpSet(){
+        try {
+            File file = new File(bannedIpListXML.getPath());
+            JAXBContext jaxbContext = JAXBContext.newInstance(BannedIpList.class);
+
+            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+            BannedIpList bannedIpList = (BannedIpList) jaxbUnmarshaller.unmarshal(file);
+            System.out.println("\nfound " + bannedIpList.getBannedIpList().size() + " ip's in bannedIpList.xml:");
+            for (int i = 0; i < bannedIpList.getBannedIpList().size(); i++){
+                bannedIpSet.add(bannedIpList.getBannedIpList().get(i));
+                System.out.print(bannedIpList.getBannedIpList().get(i) + ", ");
+            }
+            System.out.println("\nupdated: bannedIpSet");
+            updateBannedIpListXML();
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        }
     }
+
+
+    public static void updatePlayerListXML(){
+        try {
+            PlayerList playerList = new PlayerList();
+            playerList.setPlayerList(new ArrayList<>());
+            for (Player p1 : Server.getAllPlayersSet()) {
+                playerList.getPlayerList().add(p1);
+            }
+            JAXBContext jaxbContext = null;
+            jaxbContext = JAXBContext.newInstance(PlayerList.class);
+            Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+            jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            //Marsha-им плеерлист в консоль
+//            System.out.println("UPDATING PLAYERLIST XML:");
+//            jaxbMarshaller.marshal(playerList, System.out);
+            //Marshal-им плеерлист в файл
+            jaxbMarshaller.marshal(playerList, new File(Server.getPlayerListXML().getPath()));
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void updateAdminsListXML(){
+        try {
+            AdminsList adminsList = new AdminsList();
+            adminsList.setAdminList(new ArrayList<>());
+            for (String login : Server.getAdminsSet()) {
+                adminsList.getAdminList().add(login);
+            }
+            JAXBContext jaxbContext = null;
+            jaxbContext = JAXBContext.newInstance(AdminsList.class);
+            Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+            jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            //Marsha-им админлист в консоль
+//            System.out.println("UPDATING ADMINSLIST XML:");
+//            jaxbMarshaller.marshal(adminsList, System.out);
+            //Marshal-им админлист в файл
+            jaxbMarshaller.marshal(adminsList, new File(Server.getAdminsListXML().getPath()));
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void updateBannedIpListXML(){
+        try {
+            BannedIpList bannedIpList = new BannedIpList();
+            bannedIpList.setBannedIpList(new ArrayList<>());
+            for (String ip : Server.getBannedIpListSet()) {
+                bannedIpList.getBannedIpList().add(ip);
+            }
+            JAXBContext jaxbContext = null;
+            jaxbContext = JAXBContext.newInstance(BannedIpList.class);
+            Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+            jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            //Marsha-им айпибанлист в консоль
+//            System.out.println("UPDATING BANNEDIPLIST XML:");
+//            jaxbMarshaller.marshal(bannedIpList, System.out);
+            //Marshal-им айпибанлист в файл
+            jaxbMarshaller.marshal(bannedIpList, new File(Server.getBannedIpListXML().getPath()));
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    //gettes and setters
 
     public static int getPORT() {
         return PORT;
     }
 
+    public static int getCountOfThread() {
+        return countOfThread;
+    }
+    public static void setCountOfThread(int countOfThread) {
+        Server.countOfThread = countOfThread;
+    }
+
     public static File getPlayerListXML() {
         return playerListXML;
     }
-
     public static void setPlayerListXML(File playerListXML) {
         Server.playerListXML = playerListXML;
     }
 
-    public static File getIpBlackListXML() {
-        return ipBlackListXML;
+    public static File getBannedIpListXML() {
+        return bannedIpListXML;
     }
-
-    public static void setIpBlackListXML(File ipBlackListXML) {
-        Server.ipBlackListXML = ipBlackListXML;
+    public static void setBannedIpListXML(File bannedIpListXML) {
+        Server.bannedIpListXML = bannedIpListXML;
     }
 
     public static File getServerConfXML() {
         return serverConfXML;
     }
-
     public static void setServerConfXML(File serverConfXML) {
         Server.serverConfXML = serverConfXML;
+    }
+
+    public static File getAdminsListXML() {
+        return adminsListXML;
+    }
+    public static void setAdminsListXML(File adminsListXML) {
+        Server.adminsListXML = adminsListXML;
     }
 
     public static Set<Player> getAllPlayersSet() {
         return allPlayersSet;
     }
-
     public static void setAllPlayersSet(SortedSet<Player> allPlayersSet) {
         Server.allPlayersSet = allPlayersSet;
     }
@@ -244,7 +366,6 @@ public class Server {
     public static SortedSet<Player> getOnlinePlayersSet() {
         return onlinePlayersSet;
     }
-
     public static void setOnlinePlayersSet(SortedSet<Player> onlinePlayersSet) {
         Server.onlinePlayersSet = onlinePlayersSet;
     }
@@ -252,57 +373,29 @@ public class Server {
     public static SortedSet<Player> getIngamePlayersSet() {
         return ingamePlayersSet;
     }
-
     public static void setIngamePlayersSet(SortedSet<Player> ingamePlayersSet) {
         Server.ingamePlayersSet = ingamePlayersSet;
     }
 
-    public static HashSet<String> getIpBlackListSet() {
-        return ipBlackListSet;
+    public static SortedSet<String> getAdminsSet() {
+        return adminsSet;
+    }
+    public static void setAdminsSet(SortedSet<String> adminsSet) {
+        Server.adminsSet = adminsSet;
     }
 
-    public static void setIpBlackListSet(HashSet<String> ipBlackListSet) {
-        Server.ipBlackListSet = ipBlackListSet;
+    public static SortedSet<String> getBannedIpListSet() {
+        return bannedIpSet;
     }
-}
-
-@XmlRootElement(name = "ipBlackList")
-@XmlAccessorType(XmlAccessType.FIELD)
-class IpBlackList
-{
-    @XmlElement(name = "ip")
-    private List<String> ipBlackList = null;
-
-    public List<String> getIpBlackList() {
-        return ipBlackList;
+    public static void setBannedIpListSet(SortedSet<String> bannedIpSet) {
+        Server.bannedIpSet = bannedIpSet;
     }
 
-    public void setIpBlackList(List<String> ipBlackList) {
-        this.ipBlackList = ipBlackList;
+    public static HashSet<PlayerController> getAllPlayersControllerSet() {
+        return allPlayersControllerSet;
+    }
+    public static void setAllPlayersControllerSet(HashSet<PlayerController> allPlayersControllerSet) {
+        Server.allPlayersControllerSet = allPlayersControllerSet;
     }
 }
 
-
-@XmlRootElement(name = "serverConf")
-@XmlAccessorType(XmlAccessType.FIELD)
-class ServerConf{
-
-    String host;
-    int port;
-
-    public String getHost() {
-        return host;
-    }
-
-    public void setHost(String host) {
-        this.host = host;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
-    }
-}
