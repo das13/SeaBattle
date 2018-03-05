@@ -24,7 +24,7 @@ public class OutServerXML {
         }
     }
 
-    public synchronized void send(String key, String value){
+    public void send(String key, String value){
         try {
         writer.writeStartDocument("1.0");
         writer.writeStartElement("root");
@@ -55,6 +55,43 @@ public class OutServerXML {
         }
     }
 
+    //XML with many values
+    public void send(String key, String[] list) {
+        try {
+        writer.writeStartDocument("1.0");
+        writer.writeStartElement("root");
+        writer.writeStartElement("key");
+        writer.writeCharacters(key);
+        writer.writeEndElement();
+
+            for (String aList : list) {
+                writer.writeStartElement("value");
+                writer.writeCharacters(aList);
+                writer.writeEndElement();
+            }
+        writer.writeEndElement();
+        writer.writeEndDocument();
+        writer.flush();
+
+        //console check
+        writer2.writeStartDocument("1.0");
+        writer2.writeStartElement("root");
+        writer2.writeStartElement("key");
+        writer2.writeCharacters(key);
+        writer2.writeEndElement();
+
+            for (String aList : list) {
+                writer2.writeStartElement("value");
+                writer2.writeCharacters(aList);
+                writer2.writeEndElement();
+            }
+        writer2.writeEndElement();
+        writer2.writeEndDocument();
+        writer2.flush();
+        } catch (XMLStreamException e) {
+            e.printStackTrace();
+        }
+    }
 //    public void send(String key, SortedMap <login, rank>){
 //
 //    }
