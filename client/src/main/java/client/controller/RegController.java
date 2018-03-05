@@ -5,7 +5,6 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -13,11 +12,10 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.apache.log4j.Logger;
 
+import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
-import java.net.URL;
-import java.util.ResourceBundle;
 
-public class RegController implements Initializable {
+public class RegController {
     final static Logger logger = Logger.getLogger(ServerListener.class);
 
     @FXML
@@ -32,15 +30,6 @@ public class RegController implements Initializable {
     private Button regButton;
     @FXML
     private Button signButton;
-
-    public void setInputStatus(Label inputStatus) {
-        this.inputStatus = inputStatus;
-    }
-
-    public Label getInputStatus() {
-        return inputStatus;
-    }
-
     @FXML
     private Label inputStatus;
     public static CommonWindowController cwController;
@@ -49,6 +38,16 @@ public class RegController implements Initializable {
     private String username;
     private String password;
     private int port;
+    private Thread serverListenerThread;
+    private ServerListener listener;
+
+    public void setInputStatus(Label inputStatus) {
+        this.inputStatus = inputStatus;
+    }
+
+    public Label getInputStatus() {
+        return inputStatus;
+    }
 
     private static RegController regController;
 
@@ -67,9 +66,7 @@ public class RegController implements Initializable {
         if(isNotEmptyFields()){
             checkStatus();
             initializeUserInput();
-            ServerListener listener = new ServerListener(hostname, port, username, password, cwController, "REG");
-            Thread x = new Thread(listener);
-            x.start();
+            listener = new ServerListener(hostname, port, username, password,  "REG");
         }
     }
 
@@ -78,14 +75,7 @@ public class RegController implements Initializable {
         if(isNotEmptyFields()){
             checkStatus();
             initializeUserInput();
-
-            //FXMLLoader fmxlLoader = new FXMLLoader(getClass().getResource("/views/ChatView.fxml"));
-            //Parent window = (Pane) fmxlLoader.load();
-            //cwController = fmxlLoader.<CommonWindowController>getController();
-            ServerListener listener = new ServerListener(hostname, port, username, password, cwController, "AUTH");
-            Thread x = new Thread(listener);
-            x.start();
-
+            listener = new ServerListener(hostname, port, username, password,  "LOG IN");
         }
     }
     protected void showCommonWindow() {
@@ -100,11 +90,28 @@ public class RegController implements Initializable {
                 logger.error("Can not load commonWindow.fxml", e);
             }
             stage.setOnCloseRequest((WindowEvent e) -> {
+
+                try {
+                    System.out.println("OUT" + ServerListener.getOutClientXML() == null);
+                    System.out.println("key: LOG OUT " + "value " + username);
+                    listener.getOutClientXML().send("LOG OUT", username);
+                    listener.setIsConnect(false);
+                } catch (XMLStreamException e1) {
+                    logger.error("Logout error", e1);
+                }
                 MainLauncher.getPrimaryStageObj().show();
-           });
+
+                /*
+                try {
+                    ServerListener.getOutClientXML().send("LOGOUT", username);
+                    serverListenerThread = null;
+                } catch (XMLStreamException e1) {
+                    logger.error("Logout error", e1);
+                }
+                */
+            });
             stage.setTitle("Sea Battle 2018");
             Scene scene = new Scene(root,640,360);
-            //scene.getStylesheets().add(0, "resources/css/main.css");
             stage.setScene(scene);
             stage.setMinHeight(360);
             stage.setMinWidth(640);
@@ -120,7 +127,10 @@ public class RegController implements Initializable {
             inputStatus.setText(status + "Please, enter the login");
             return false;
         }
-
+        if(loginField.getText().contains(" ")) {
+            inputStatus.setText(status + "Login can not include the space");
+            return false;
+        }
         if(passField.getText().isEmpty()) {
             inputStatus.setText(status + "Please,enter the password");
             return false;
@@ -138,10 +148,6 @@ public class RegController implements Initializable {
 
     private void checkStatus(){
         inputStatus.setText(status + "Cheking your input...");
-    }
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
     }
 
     private void initializeUserInput() {

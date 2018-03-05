@@ -1,4 +1,4 @@
-package client.controller;
+package client.controller.models;
 
 public class Gamer {
     String name;

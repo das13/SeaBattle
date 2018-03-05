@@ -1,15 +1,9 @@
 package client.controller;
 
+import client.controller.models.Cell;
 import javafx.fxml.FXML;
-import javafx.geometry.Pos;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Border;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 
 public class GameController {
 
@@ -37,17 +31,8 @@ public class GameController {
                 enemyPane.add(new Cell(false,i,j), i, j);
             }
         }
+
     }
 
-    public class Cell extends Rectangle{
-        private int x, y;
-        private boolean isUser;
-        public Cell(boolean isUser, int x, int y) {
-            super(19,19);
-            this.x = x;
-            this.y = y;
-            this.isUser = isUser;
-            setFill(Color.LIGHTBLUE);
-        }
-    }
+
 }
