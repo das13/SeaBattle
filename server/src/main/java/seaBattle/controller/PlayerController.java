@@ -206,90 +206,34 @@ public class PlayerController extends Thread {
         }
     }
 
-    //действие на приглашение игроком№1 игрока№2 в игру
-    private void inviteResult(String player1, String player2) {
-        for (PlayerController pl:Server.getAllPlayersControllerSet()) {
-            if (pl.getThisPlayer().getLogin().equals(player2)) {
-                pl.getOutServerXML().send("INVITE",player1);
-            }
-        }
-        outServerXML.send("INFO","invite send to player: " + player2);
-    }
-
-    //действие на ответ игрока№2 игроку№1 на приглашение в игру
-    private void replyResult(String player1, String value) {
-
-        for (PlayerController pc : Server.getAllPlayersControllerSet()) {
-            if (pc.getThisPlayer().getLogin().equals(player1)) {
-                if (pc.isWaitingForReply()) {
-                    gc = new GameController(pc, this);
-                    pc.setGc(gc);
-                    gc.start();
-                    pc.getOutServerXML().send("START GAME", thisPlayer.getLogin());
-                    System.out.print("\n");
-                    outServerXML.send("START GAME", player1);
-                    break;
-                }
-            }
-            System.out.println("ERROR! dude " + pc + " don't wanna play!");
-        }
-    }
-
-    public void sendOnlinePlayers() throws XMLStreamException {
-        if (thisPlayer.getStatus().equals("online")) {
-            String[] list = new String[Server.getOnlinePlayersSet().size()+1];
-            str = String.valueOf(Server.getOnlinePlayersSet().size());
-            list[0] = str;
-            int i = 1;
-            System.out.println("\nОТПРАВЛЯЕМ ONLINE ИГРОКОВ");
-            System.out.println("длина сета - " + Server.getOnlinePlayersSet().size());
-            System.out.println("длина массива - " + list.length);
-            for (Player player : Server.getOnlinePlayersSet()) {
-                System.out.println("добавляем в ячейку массива №" + i + " - " + player.getLogin());
-                list[i++] = player.getLogin();
-            }
-            outServerXML.send("ONLINE PLAYERS", list);
-        }
-    }
-    public void sendIngamePlayers() throws XMLStreamException {
-        if (thisPlayer.getStatus().equals("online")) {
-            String[] list = new String[Server.getIngamePlayersSet().size()+1];
-            str = String.valueOf(Server.getIngamePlayersSet().size());
-            list[0] = str;
-            int i = 1;
-            System.out.println("\nОТПРАВЛЯЕМ INGAME ИГРОКОВ");
-            System.out.println("длина сета - " + Server.getIngamePlayersSet().size());
-            System.out.println("длина массива - " + list.length);
-            for (Player player : Server.getIngamePlayersSet()) {
-                System.out.println("добавляем в ячейку массива №" + i + " - " + player.getLogin());
-                list[i++] = player.getLogin();
-            }
-            outServerXML.send("INGAME PLAYERS", list);
-        }
-    }
-
-
-    //действие на сообщение
-    private void msgResult(String login, String msg) {
-    }
-
     public String authResult(String login, String password) throws ParserConfigurationException, IOException, SAXException, TransformerException, XMLStreamException, BSException {
         for (Player player : Server.getAllPlayersSet()){
-            if (player.getLogin().equals(login) && player.getPassword().equals(password)){
+            if (!player.getLogin().equals(login) && !player.getPassword().equals(password)){
                 str = "player with this login or password not found. register first";
-            }
-            if (player.getLogin().equals(login) && player.getStatus().equals("online")){
-                str = "player with nickname \"" + login + "\" already logged in";
-                thisPlayer.setStatus("online");
-                System.out.println("RESULT = " + str);
-                return str;
             }
             if (!player.getLogin().equals(login) && player.getPassword().equals(password) || player.getLogin().equals(login) && !player.getPassword().equals(password)){
                 str = "login or password is incorrect";
                 System.out.println("RESULT = " + str);
                 return str;
             }
+            if (player.getLogin().equals(login) && player.getPassword().equals(password) && player.getStatus().equals("online")){
+                str = "player with nickname \"" + login + "\" already logged in";
+                //удалить после интеграции интерфейса
+                thisPlayer.setStatus("online");
+                System.out.println("RESULT = " + str);
+                return str;
+            }
             if (player.getLogin().equals(login) && player.getPassword().equals(password)){
+                if (player.getStatus().equals("banned")){
+                    str = "MORTAL, YOUR ACCOUNT IS BANNED BY HIGHER POWER!";
+                    break;
+                }
+                for (String ip : Server.getIpBlackListSet()){
+                    if (socket.getInetAddress().equals(ip)){
+                        str = "MORTAL, YOUR IP IS BANNED BY HIGHER POWER!";
+                        break;
+                    }
+                }
                 modifyPlayerInXML(Server.getPlayerListXML(),player,"status", "online");
                 thisPlayer.setStatus("online");
                 str = "success!";
@@ -337,6 +281,73 @@ public class PlayerController extends Thread {
             e.printStackTrace();
         }
         return str;
+    }
+
+    //действие на приглашение игроком№1 игрока№2 в игру
+    private void inviteResult(String player1, String player2) {
+        for (PlayerController pl:Server.getAllPlayersControllerSet()) {
+            if (pl.getThisPlayer().getLogin().equals(player2)) {
+                pl.getOutServerXML().send("INVITE",player1);
+            }
+        }
+        outServerXML.send("INFO","invite send to player: " + player2);
+    }
+
+    //действие на ответ игрока№2 игроку№1 на приглашение в игру
+    private void replyResult(String player1, String value) {
+
+        for (PlayerController pc : Server.getAllPlayersControllerSet()) {
+            if (pc.getThisPlayer().getLogin().equals(player1)) {
+                if (pc.isWaitingForReply()) {
+                    gc = new GameController(pc, this);
+                    pc.setGc(gc);
+                    gc.start();
+                    pc.getOutServerXML().send("START GAME", thisPlayer.getLogin());
+                    System.out.print("\n");
+                    outServerXML.send("START GAME", player1);
+                    break;
+                }
+            }
+            System.out.println("ERROR! dude " + pc + " don't wanna play!");
+        }
+    }
+
+    public void sendOnlinePlayers() throws XMLStreamException {
+        if (thisPlayer.getStatus().equals("online")) {
+            String[] list = new String[Server.getOnlinePlayersSet().size()+1];
+            str = String.valueOf(Server.getOnlinePlayersSet().size());
+            list[0] = str;
+            int i = 1;
+            System.out.println("\nОТПРАВЛЯЕМ ONLINE ИГРОКОВ");
+            System.out.println("длина сета - " + Server.getOnlinePlayersSet().size());
+            System.out.println("длина массива - " + list.length);
+            for (Player player : Server.getOnlinePlayersSet()) {
+                System.out.println("добавляем в ячейку массива №" + i + " - " + player.getLogin());
+                list[i++] = player.getLogin();
+            }
+            outServerXML.send("ONLINE PLAYERS", list);
+        }
+    }
+
+    public void sendIngamePlayers() throws XMLStreamException {
+        if (thisPlayer.getStatus().equals("online")) {
+            String[] list = new String[Server.getIngamePlayersSet().size()+1];
+            str = String.valueOf(Server.getIngamePlayersSet().size());
+            list[0] = str;
+            int i = 1;
+            System.out.println("\nОТПРАВЛЯЕМ INGAME ИГРОКОВ");
+            System.out.println("длина сета - " + Server.getIngamePlayersSet().size());
+            System.out.println("длина массива - " + list.length);
+            for (Player player : Server.getIngamePlayersSet()) {
+                System.out.println("добавляем в ячейку массива №" + i + " - " + player.getLogin());
+                list[i++] = player.getLogin();
+            }
+            outServerXML.send("INGAME PLAYERS", list);
+        }
+    }
+
+    //действие на сообщение
+    private void msgResult(String login, String msg) {
     }
 
     public String logoutResult(String login) throws BSException, ParserConfigurationException, TransformerException, SAXException, IOException {
@@ -398,7 +409,6 @@ public class PlayerController extends Thread {
     }
 
     //getters and setters
-
 
     public boolean isWaitingForReply() {
         return waitingForReply;
