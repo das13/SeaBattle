@@ -6,6 +6,7 @@ import seaBattle.model.Ship;
 import seaBattle.model.Server;
 import seaBattle.xmlservice.InServerXML;
 import seaBattle.xmlservice.OutServerXML;
+import seaBattle.xmlservice.SaveLoadServerXML;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -100,7 +101,7 @@ public class PlayerController extends Thread {
                                 String ipToBan = inServerXML.checkValue(reader);
                                 System.out.println("ip to ban = \"" + ipToBan + "\"" + "\nSENDING ANSWER:");
                                 outServerXML.send("INFO", banIpResult(admin,ipToBan));
-                                Server.updateBannedIpSet();
+                                SaveLoadServerXML.updateBannedIpSet();
                                 break;
                             }
                             case "INVITE": {
