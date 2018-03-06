@@ -1,34 +1,16 @@
 package seaBattle.controller;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-import seaBattle.model.BSException;
+import org.apache.log4j.Logger;
 import seaBattle.model.Player;
 import seaBattle.model.Ship;
-import seaBattle.model.serverFileService.PlayerList;
 import seaBattle.model.Server;
 import seaBattle.xmlservice.InServerXML;
 import seaBattle.xmlservice.OutServerXML;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import java.io.*;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Set;
 
 public class PlayerController extends Thread {
     private Socket socket;
@@ -38,6 +20,7 @@ public class PlayerController extends Thread {
     private Player thisPlayer;
     private GameController gc;
     private boolean waitingForReply;
+    private final static Logger logger = Logger.getLogger(PlayerController.class);
 
     public PlayerController() {
         thisPlayer = new Player();
@@ -192,6 +175,11 @@ public class PlayerController extends Thread {
                                 msgResult(player,msg);
                                 break;
                             }
+                            default:{
+                                System.out.println("UNKNOWN KEY RECEIVED FROM " + this.getThisPlayer().getLogin());
+                                str = "unknown key";
+                                getOutServerXML().send("INFO", str);
+                            }
                         }
                     }
                     if (reader.isEndElement() && "root".equals(reader.getName().toString())) {
@@ -202,17 +190,18 @@ public class PlayerController extends Thread {
                 }
                 reader.close();
             }
-        } catch (XMLStreamException | SAXException | ParserConfigurationException | IOException | TransformerException | BSException | InterruptedException e) {
-            e.printStackTrace();
+        } catch (XMLStreamException | InterruptedException e) {
+            logger.error("Receive/Send error between thread and client", e);
         } finally {
             try {
                 socket.close();
             } catch (IOException e) {
+                logger.error("Error with clothing thread", e);
             }
         }
     }
 
-    public String authResult(String login, String password) throws ParserConfigurationException, IOException, SAXException, TransformerException, XMLStreamException, BSException {
+    public String authResult(String login, String password) {
         for (Player player : Server.getAllPlayersSet()){
             if (!player.getLogin().equals(login) && !player.getPassword().equals(password)){
                 str = "player with this login or password not found. register first";
@@ -224,7 +213,6 @@ public class PlayerController extends Thread {
             }
             if (player.getLogin().equals(login) && player.getPassword().equals(password) && player.getStatus().equals("online")){
                 str = "player with nickname \"" + login + "\" already logged in";
-                //удалить после интеграции интерфейса
                 System.out.println("RESULT = " + str);
                 return str;
             }
@@ -239,11 +227,14 @@ public class PlayerController extends Thread {
                         break;
                     }
                 }
-                modifyPlayerInXML(Server.getPlayerListXML(),player,"status", "online");
-                thisPlayer.setStatus("online");
-                Server.getOnlinePlayersSet().add(thisPlayer);
-                str = "success!";
-                System.out.println("RESULT = " + str);
+                for (Player player1 : Server.getAllPlayersSet()){
+                    if (player1.getLogin().equals(thisPlayer.getLogin())){
+                        player1.setStatus("online");
+                        thisPlayer.setStatus("online");
+                        str = "success!";
+                        System.out.println("RESULT = " + str);
+                    }
+                }
                 return str;
             }
         }
@@ -252,40 +243,22 @@ public class PlayerController extends Thread {
     }
 
     public String regResult(String login, String password){
-
-        PlayerList playerList = new PlayerList();
-
-        playerList.setPlayerList(new ArrayList<Player>());
-        Set<Player> tempSet = Server.getAllPlayersSet();
-
-        for (Player player : tempSet){
-            playerList.getPlayerList().add(player);
+        str = "";
+        for (Player player : Server.getAllPlayersSet()){
+            if (player.getLogin().equals(login)){
+                str = "this login is already taken";
+                break;
+            }
         }
+        if (str.equals("")){
+            Player player1 = new Player();
+            player1.setLogin(login);
+            player1.setPassword(password);
+            player1.setStatus("offline");
+            player1.setRank(100);
 
-        Player p1 = new Player();
-        p1.setLogin(login);
-        p1.setPassword(password);
-        p1.setStatus("offline");
-        p1.setRank(100);
-
-        playerList.getPlayerList().add(p1);
-
-        try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(PlayerList.class);
-            Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-            jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-
-            //Marshal-им плеерлист в консоль
-            jaxbMarshaller.marshal(playerList, System.out);
-
-
-            //Marshal-им плеерлист в файл
-            jaxbMarshaller.marshal(playerList, new File(Server.getPlayerListXML().getPath()));
-            Server.getAllPlayersSet().add(thisPlayer);
+            Server.getAllPlayersSet().add(player1);
             str = "success!";
-
-        } catch (JAXBException e) {
-            e.printStackTrace();
         }
         return str;
     }
@@ -318,7 +291,7 @@ public class PlayerController extends Thread {
                         }
                     }
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.error("Error with kicking player", e);
                 }
             }
         }
@@ -368,7 +341,7 @@ public class PlayerController extends Thread {
         }
     }
 
-    public void sendOnlinePlayers() throws XMLStreamException {
+    public void sendOnlinePlayers() {
         if (thisPlayer.getStatus().equals("online")) {
             String[] list = new String[Server.getOnlinePlayersSet().size()+1];
             str = String.valueOf(Server.getOnlinePlayersSet().size());
@@ -385,7 +358,7 @@ public class PlayerController extends Thread {
         }
     }
 
-    public void sendIngamePlayers() throws XMLStreamException {
+    public void sendIngamePlayers() {
         if (thisPlayer.getStatus().equals("online")) {
             String[] list = new String[Server.getIngamePlayersSet().size()+1];
             str = String.valueOf(Server.getIngamePlayersSet().size());
@@ -406,16 +379,15 @@ public class PlayerController extends Thread {
     private void msgResult(String login, String msg) {
     }
 
-    public String logoutResult(String login) throws BSException, ParserConfigurationException, TransformerException, SAXException, IOException {
-        for (Player player : Server.getOnlinePlayersSet()){
+    public String logoutResult(String login) {
+        for (Player player : Server.getAllPlayersSet()){
             if (player.getLogin().equals(login) && player.getStatus().equals("online")){
-                modifyPlayerInXML(Server.getPlayerListXML(),player,"status","offline");
+                player.setStatus("offline");
                 str = "success!";
                 return str;
             }
         }
         str = "error, you already logged out";
-        //throw new BSException("Error with logging out player");
         return str;
     }
 
@@ -427,40 +399,6 @@ public class PlayerController extends Thread {
 
     private void shipLocationResult(String player, String x1, String y1, String x2, String y2) {
     }
-
-    public void modifyPlayerInXML (File file, Player player, String nodeName, String newTextContent) throws ParserConfigurationException, IOException, SAXException, TransformerException, BSException {
-        // Строим объектную модель исходного XML файла
-        final String filepath = System.getProperty("user.dir") + File.separator + file;
-        final File xmlFile = new File(filepath);
-        DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-        Document doc = db.parse(xmlFile);
-        doc.normalize();
-
-        // бежим по каждому player в xml
-        NodeList players = doc.getElementsByTagName("player");
-        for (int i = 0; i < players.getLength(); i++) {
-            Node node = players.item(i);
-            //если совпадает и имя и пароль
-            if (node.getChildNodes().item(1).getTextContent().equals(player.getLogin())){
-                for (int j = 0; j < node.getChildNodes().getLength(); j++){
-                    if (node.getChildNodes().item(j).getNodeName().equals(nodeName)){
-                        node.getChildNodes().item(j).setTextContent(newTextContent);
-                    }
-                }
-                // Записываем изменения в XML файл
-                Transformer transformer = TransformerFactory.newInstance().newTransformer();
-                DOMSource source = new DOMSource(doc);
-                StreamResult result = new StreamResult(new File(filepath));
-                transformer.transform(source, result);
-
-                System.out.println("MODIFY XML SUCCESS. In: " + file + ", player: " + player.getLogin() + ", value: " + nodeName + ", new text in value: " + newTextContent);
-                break;
-            }
-        }
-        //throw new BSException("Error with finding player in XML");
-    }
-
-
 
     //getters and setters
 

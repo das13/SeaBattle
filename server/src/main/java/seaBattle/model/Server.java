@@ -1,17 +1,15 @@
 package seaBattle.model;
 
+import org.apache.log4j.Logger;
 import seaBattle.controller.PlayerController;
 import seaBattle.model.serverFileService.AdminsList;
 import seaBattle.model.serverFileService.BannedIpList;
 import seaBattle.model.serverFileService.PlayerList;
 import seaBattle.model.serverFileService.ServerConf;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.stream.XMLStreamException;
+import javax.xml.bind.*;
 import java.io.File;
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.*;
 
@@ -29,13 +27,17 @@ public class Server {
     private static SortedSet<String> bannedIpSet = new TreeSet<>();
     private static HashSet<PlayerController> allPlayersControllerSet = new HashSet<>();
 
+    private final static Logger logger = Logger.getLogger(Server.class);
+
     private static final int PORT = 9001;
     private static int countOfThread = 0;
 
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         System.out.println("THE SERVER IS RUNNING");
-        ServerSocket listener = new ServerSocket(PORT);
+        ServerSocket listener = null;
+        try {
+            listener = new ServerSocket(PORT);
         serverLaunchPreparation();
 
         try {
@@ -52,23 +54,21 @@ public class Server {
         } finally {
             listener.close();
         }
+        } catch (IOException e) {
+            logger.error("Error with starting server", e);
+        }
     }
 
     public static void serverLaunchPreparation(){
-        try {
-            checkServerXMLfiles();
-            updateAllPlayersSet();
-            updateOnlinePlayersSet();
-            updateIngamePlayersSet();
-            updateAdminsSet();
-            updateBannedIpSet();
-        } catch (XMLStreamException | JAXBException e) {
-            e.printStackTrace();
-        }
-
+        checkServerXMLfiles();
+        updateAllPlayersSet();
+        updateOnlinePlayersSet();
+        updateIngamePlayersSet();
+        updateAdminsSet();
+        updateBannedIpSet();
     }
 
-    public static void checkServerXMLfiles() throws XMLStreamException, JAXBException {
+    public static void checkServerXMLfiles() {
         //проверка наличия playerList.xml и создание при негативном результате
         if (!playerListXML.exists()) {
 
@@ -92,15 +92,19 @@ public class Server {
             playerList.getPlayerList().add(p1);
             playerList.getPlayerList().add(p2);
 
-            JAXBContext jaxbContext = JAXBContext.newInstance(PlayerList.class);
-            Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-            jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-
-            //Marsha-им плеерлист в консоль
-            jaxbMarshaller.marshal(playerList, System.out);
-
-            //Marshal-им плеерлист в файл
-            jaxbMarshaller.marshal(playerList, new File(playerListXML.getPath()));
+            JAXBContext jaxbContext = null;
+            try {
+                jaxbContext = JAXBContext.newInstance(PlayerList.class);
+                Marshaller jaxbMarshaller = null;
+                jaxbMarshaller = jaxbContext.createMarshaller();
+                jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+                //Marsha-им плеерлист в консоль
+                jaxbMarshaller.marshal(playerList, System.out);
+                //Marshal-им плеерлист в файл
+                jaxbMarshaller.marshal(playerList, new File(playerListXML.getPath()));
+            } catch (JAXBException e) {
+                logger.error("playerList.xml creation error.", e);
+            }
         }
 
         //проверка наличия bannedIpList.xml и создание при негативном результате
@@ -113,16 +117,19 @@ public class Server {
 
             bannedIpList.getBannedIpList().add("250.250.250.251");
             bannedIpList.getBannedIpList().add("250.250.250.252");
+            try{
+                JAXBContext jaxbContext = JAXBContext.newInstance(BannedIpList.class);
+                Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+                jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
-            JAXBContext jaxbContext = JAXBContext.newInstance(BannedIpList.class);
-            Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-            jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+                //Marsha-им лист в консоль
+                jaxbMarshaller.marshal(bannedIpList, System.out);
 
-            //Marsha-им лист в консоль
-            jaxbMarshaller.marshal(bannedIpList, System.out);
-
-            //Marshal-им лист в файл
-            jaxbMarshaller.marshal(bannedIpList, new File(bannedIpListXML.getPath()));
+                //Marshal-им лист в файл
+                jaxbMarshaller.marshal(bannedIpList, new File(bannedIpListXML.getPath()));
+            } catch (JAXBException e) {
+                logger.error("bannedIpList.xml creation error.", e);
+            }
         }
 
         //проверка наличия adminsList.xml и создание при негативном результате
@@ -135,16 +142,19 @@ public class Server {
             //создаём два логина
             adminsList.getAdminList().add("admin");
             adminsList.getAdminList().add("hacker");
+            try{
+                JAXBContext jaxbContext = JAXBContext.newInstance(AdminsList.class);
+                Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+                jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
-            JAXBContext jaxbContext = JAXBContext.newInstance(AdminsList.class);
-            Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-            jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+                //Marsha-им лист в консоль
+                jaxbMarshaller.marshal(adminsList, System.out);
 
-            //Marsha-им лист в консоль
-            jaxbMarshaller.marshal(adminsList, System.out);
-
-            //Marshal-им лист в файл
-            jaxbMarshaller.marshal(adminsList, new File(adminsListXML.getPath()));
+                //Marshal-им лист в файл
+                jaxbMarshaller.marshal(adminsList, new File(adminsListXML.getPath()));
+            } catch (JAXBException e) {
+                logger.error("adminsList.xml creation error.", e);
+            }
         }
 
         //проверка наличия serverConf.xml и создание при негативном результате
@@ -168,7 +178,7 @@ public class Server {
                 jaxbMarshaller.marshal(serverConf, System.out);
 
             } catch (JAXBException e) {
-                e.printStackTrace();
+                logger.error("serverConf.xml creation error.", e);
             }
         }
     }
@@ -189,7 +199,7 @@ public class Server {
             System.out.println("\nupdated: allPlayersSet");
             updatePlayerListXML();
         } catch (JAXBException e) {
-            e.printStackTrace();
+            logger.error("Updating allPlayersSet error.", e);
         }
     }
 
@@ -227,7 +237,7 @@ public class Server {
             System.out.println("\nupdated: adminsSet");
             updateAdminsListXML();
         } catch (JAXBException e) {
-            e.printStackTrace();
+            logger.error("Updating adminsSet error.", e);
         }
     }
 
@@ -246,7 +256,7 @@ public class Server {
             System.out.println("\nupdated: bannedIpSet");
             updateBannedIpListXML();
         } catch (JAXBException e) {
-            e.printStackTrace();
+            logger.error("Updating bannedIpSet error.", e);
         }
     }
 
@@ -268,7 +278,7 @@ public class Server {
             //Marshal-им плеерлист в файл
             jaxbMarshaller.marshal(playerList, new File(Server.getPlayerListXML().getPath()));
         } catch (JAXBException e) {
-            e.printStackTrace();
+            logger.error("Updating playerList.xml error.", e);
         }
     }
 
@@ -289,7 +299,7 @@ public class Server {
             //Marshal-им админлист в файл
             jaxbMarshaller.marshal(adminsList, new File(Server.getAdminsListXML().getPath()));
         } catch (JAXBException e) {
-            e.printStackTrace();
+            logger.error("Updating adminsList.xml error.", e);
         }
     }
 
@@ -310,7 +320,7 @@ public class Server {
             //Marshal-им айпибанлист в файл
             jaxbMarshaller.marshal(bannedIpList, new File(Server.getBannedIpListXML().getPath()));
         } catch (JAXBException e) {
-            e.printStackTrace();
+            logger.error("Updating bannedIpList.xml error.", e);
         }
     }
 
@@ -398,4 +408,3 @@ public class Server {
         Server.allPlayersControllerSet = allPlayersControllerSet;
     }
 }
-
