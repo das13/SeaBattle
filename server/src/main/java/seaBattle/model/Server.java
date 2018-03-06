@@ -29,11 +29,12 @@ public class Server {
 
     private final static Logger logger = Logger.getLogger(Server.class);
 
-    private static final int PORT = 9001;
+    private static int PORT;
     private static int countOfThread = 0;
 
 
     public static void main(String[] args) {
+        readServerConfig();
         System.out.println("THE SERVER IS RUNNING");
         ServerSocket listener = null;
         try {
@@ -56,6 +57,23 @@ public class Server {
         }
         } catch (IOException e) {
             logger.error("Error with starting server", e);
+        }
+    }
+
+    public static void readServerConfig(){
+        try {
+            File file = new File(serverConfXML.getPath());
+            JAXBContext jaxbContext = JAXBContext.newInstance(ServerConf.class);
+
+            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+            ServerConf serverConf = (ServerConf) jaxbUnmarshaller.unmarshal(file);
+
+            setPORT(serverConf.getPort());
+            //TODO добавить хост?
+            //this.setHOST(serverConf.getPort());
+            System.out.println("\nPort updated from serverConf.xml");
+        } catch (JAXBException e) {
+            logger.error("serverConf.xml reading error.", e);
         }
     }
 
@@ -329,6 +347,9 @@ public class Server {
 
     public static int getPORT() {
         return PORT;
+    }
+    public static void setPORT(int PORT) {
+        Server.PORT = PORT;
     }
 
     public static int getCountOfThread() {
