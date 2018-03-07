@@ -136,8 +136,10 @@ public class ClientTEST {
                                     System.out.println("You are = \"" + value + "\"");
                                     break;
                                 }
-                                case "SHIP": {
-                                    System.out.println("\n\n\nSERVER:\"SHIP\"");
+                                case "SHIP LOCATION": {
+                                    System.out.println("\n\n\nSERVER:\"SHIP LOCATION\"");
+                                    String result = inClientXML.checkValue(reader);
+                                    System.out.println("***\"" + result + "\"***");
                                     //сообщение от сервера относительно того как игрок пытается поставить корабль - ...
                                     //(успех / ошибка / все корабли расставлены и идёт ожидание другого игрока или запуск игры)
                                     break;

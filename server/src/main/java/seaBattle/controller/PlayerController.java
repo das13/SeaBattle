@@ -1,6 +1,7 @@
 package seaBattle.controller;
 
 import org.apache.log4j.Logger;
+import seaBattle.model.Field;
 import seaBattle.model.Player;
 import seaBattle.model.Ship;
 import seaBattle.model.Server;
@@ -126,34 +127,48 @@ public class PlayerController extends Thread {
                             }
                             case "SHIP LOCATION": {
                                 System.out.println("\n\n\nkey \"SHIP LOCATION\" from " + this.getThisPlayer().getLogin() + " detected:");
-                                int x1 = Integer.parseInt(inServerXML.checkValue(reader));
-                                System.out.println("x1 = \"" + x1 + "\"");
-                                int y1 = Integer.parseInt(inServerXML.checkValue(reader));
-                                System.out.println("y1 = \"" + y1 + "\"");
-                                int x2 = Integer.parseInt(inServerXML.checkValue(reader));
-                                System.out.println("x2 = \"" + x2 + "\"");
-                                int y2 = Integer.parseInt(inServerXML.checkValue(reader));
-                                System.out.println("y2 = \"" + y2 + "\"");
-                                if(!gc.checkStart()) {
-                                    getOutServerXML().send("SHIP LOCATION", gc.setShip(this, new Ship(new int[]{x1, y1, x2, y2})));
-                                }else {
-                                    getOutServerXML().send("SHIP LOCATION", gc.setShip(this, new Ship(new int[]{x1, y1, x2, y2})) + " START GAME");
+                                String string1 = InServerXML.checkValue(reader);
+                                String[] arr1 = string1.split(" ");
+                                int x1 = Integer.parseInt(arr1[0]);
+                                System.out.println("x1 = " + x1);
+                                int y1 = Integer.parseInt(arr1[1]);
+                                System.out.println("y1 = " + y1);
+
+                                String string2 = InServerXML.checkValue(reader);
+                                String[] arr2 = string2.split(" ");
+                                int x2 = Integer.parseInt(arr2[0]);
+                                System.out.println("x2 = " + x2);
+                                int y2 = Integer.parseInt(arr2[1]);
+                                System.out.println("y2 = " + y2);
+                                Field f = gc.getField1();
+                                for (int i=0;i<10;i++) {
+                                    for (int j=0;j<10;j++) {
+                                        System.out.print(f.getField()[i][j] + " ");
+                                    }
+                                    System.out.println("");
                                 }
+                                //TODO верхний вариант для контроля через ClientTEST
+                                //TODO нижний вернуть при интеграции в интерфейс
+//                                int x1 = Integer.parseInt(inServerXML.checkValue(reader));
+//                                System.out.println("x1 = \"" + x1 + "\"");
+//                                int y1 = Integer.parseInt(inServerXML.checkValue(reader));
+//                                System.out.println("y1 = \"" + y1 + "\"");
+//                                int x2 = Integer.parseInt(inServerXML.checkValue(reader));
+//                                System.out.println("x2 = \"" + x2 + "\"");
+//                                int y2 = Integer.parseInt(inServerXML.checkValue(reader));
+//                                System.out.println("y2 = \"" + y2 + "\"");
+                                sleep(10);
+                                getOutServerXML().send("SHIP LOCATION", gc.setShip(this, new Ship(new int[]{x1, y1, x2, y2})));
+                                System.out.println();
                                 break;
                             }
                             case "SHOOT": {
                                 System.out.println("\n\n\nkey \"SHOOT\" from " + this.getThisPlayer().getLogin() + " detected:");
-                                String player = inServerXML.checkValue(reader);
-                                System.out.println("player = \"" + player + "\"");
                                 String x1 = inServerXML.checkValue(reader);
                                 System.out.println("x1 = \"" + x1 + "\"");
                                 String y1 = inServerXML.checkValue(reader);
                                 System.out.println("y1 = \"" + y1 + "\"");
-                                String x2 = inServerXML.checkValue(reader);
-                                System.out.println("x2 = \"" + x2 + "\"");
-                                String y2 = inServerXML.checkValue(reader);
-                                System.out.println("y2 = \"" + y2 + "\"");
-                                shootResult(player, x1,y1,x2,y2);
+                                getOutServerXML().send("SHOOT RESULT",shootResult(this, x1,y1));
                                 break;
                             }
                             case "SURRENDER": {
@@ -395,7 +410,8 @@ public class PlayerController extends Thread {
     private void surrenderResult(String player) {
     }
 
-    private void shootResult(String player, String x1, String y1, String x2, String y2) {
+    private String shootResult(PlayerController playerController, String x1, String y1) {
+        return gc.shoot(this,Integer.parseInt(x1),Integer.parseInt(y1));
     }
 
     private void shipLocationResult(String player, String x1, String y1, String x2, String y2) {

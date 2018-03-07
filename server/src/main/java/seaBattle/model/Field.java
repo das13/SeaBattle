@@ -18,6 +18,27 @@ public class Field {
         this.field = field;
     }
 
+    public String shoot (int x, int y) {
+        if (field[x][y] == 1 && checkShipDestroy(x,y)) {
+            field[x][y] = 3;
+            str = "DESTROY";
+        } else if (field[x][y] == 1 && !checkShipDestroy(x,y)) {
+            field[x][y] = 3;
+            str = "HIT";
+        } else {
+            str = "MISS";
+        }
+        return str;
+    }
+
+    public boolean checkShipDestroy(int x,int y) {
+        if (field[x+1][y] != 1 && field[x-1][y] != 1 && field[x][y+1] != 1 && field[x][y-1] != 1 ) {
+            return true;
+        }else {
+            return false;
+        }
+    }
+
     public String setShip (Ship ship) {
         int[] a = ship.getShip();
         if (shipCountChecking(ship)) {
