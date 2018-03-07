@@ -54,14 +54,14 @@ public class GameController extends Thread {
 
     public String shoot(PlayerController playerController,int x ,int y){
         if (playerController.equals(playerController1)){
-            str = field1.shoot(x,y);
-            if (!str.equals("MISS")) {
-                countShips1--;
-            }
-        }else {
             str = field2.shoot(x,y);
             if (!str.equals("MISS")) {
                 countShips2--;
+            }
+        }else {
+            str = field1.shoot(x,y);
+            if (!str.equals("MISS")) {
+                countShips1--;
             }
         }
         if (countShips1 == 0) {
