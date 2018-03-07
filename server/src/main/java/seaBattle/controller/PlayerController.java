@@ -126,26 +126,38 @@ public class PlayerController extends Thread {
                                 break;
                             }
                             case "SHIP LOCATION": {
-                                System.out.println("\n\n\nkey \"SHIP LOCATION\" from " + this.getThisPlayer().getLogin() + " detected:");
-                                String string1 = InServerXML.checkValue(reader);
-                                String[] arr1 = string1.split(" ");
-                                int x1 = Integer.parseInt(arr1[0]);
-                                System.out.println("x1 = " + x1);
-                                int y1 = Integer.parseInt(arr1[1]);
-                                System.out.println("y1 = " + y1);
+                                int x1 = -1;
+                                int y1 = -1;
+                                int x2 = -1;
+                                int y2 = -1;
+                                try {
+                                    System.out.println("\n\n\nkey \"SHIP LOCATION\" from " + this.getThisPlayer().getLogin() + " detected:");
+                                    String string1 = InServerXML.checkValue(reader);
 
-                                String string2 = InServerXML.checkValue(reader);
-                                String[] arr2 = string2.split(" ");
-                                int x2 = Integer.parseInt(arr2[0]);
-                                System.out.println("x2 = " + x2);
-                                int y2 = Integer.parseInt(arr2[1]);
-                                System.out.println("y2 = " + y2);
-                                Field f = gc.getField1();
-                                for (int i=0;i<10;i++) {
-                                    for (int j=0;j<10;j++) {
-                                        System.out.print(f.getField()[i][j] + " ");
+                                    if (string1.contains(" ")) {
+                                        String[] arr1 = string1.split(" ");
+                                        x1 = Integer.parseInt(arr1[0]);
+                                        System.out.println("x1 = " + x1);
+                                        y1 = Integer.parseInt(arr1[1]);
+                                        System.out.println("y1 = " + y1);
                                     }
-                                    System.out.println("");
+                                    else{
+
+                                        getOutServerXML().send("INFO", "KpiB0pY4K@ detected");
+                                    }
+                                    String string2 = InServerXML.checkValue(reader);
+                                    if (string2.contains(" ")) {
+                                        String[] arr2 = string2.split(" ");
+                                        x2 = Integer.parseInt(arr2[0]);
+                                        System.out.println("x2 = " + x2);
+                                        y2 = Integer.parseInt(arr2[1]);
+                                        System.out.println("y2 = " + y2);
+                                    }
+                                    else{
+                                        getOutServerXML().send("INFO", "KpiB0pY4K@ detected");
+                                    }
+                                }catch (ArrayIndexOutOfBoundsException e){
+                                    //TODO удалить parse value с пробелами при интеграции интерфейса
                                 }
                                 //TODO верхний вариант для контроля через ClientTEST
                                 //TODO нижний вернуть при интеграции в интерфейс
@@ -160,6 +172,13 @@ public class PlayerController extends Thread {
                                 sleep(10);
                                 getOutServerXML().send("SHIP LOCATION", gc.setShip(this, new Ship(new int[]{x1, y1, x2, y2})));
                                 System.out.println();
+                                Field f = gc.getField1();
+                                for (int i=0;i<10;i++) {
+                                    for (int j=0;j<10;j++) {
+                                        System.out.print(f.getField()[i][j] + " ");
+                                    }
+                                    System.out.println("");
+                                }
                                 break;
                             }
                             case "SHOOT": {

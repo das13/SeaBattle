@@ -79,7 +79,8 @@ public class Field {
                         f[i][j] = 2;
                     }
                 }catch (ArrayIndexOutOfBoundsException e) {
-                    System.out.println("none");
+
+                    //System.out.println("none");
                 }
             }
         }
