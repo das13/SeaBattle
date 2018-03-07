@@ -65,13 +65,12 @@ public class GameController extends Thread {
             }
         }
         if (countShips1 == 0) {
-            str += " WIN P2";
-            playerController1.getOutServerXML().send("SHOOT RESULT",str);
-            playerController2.getOutServerXML().send("SHOOT RESULT",str);
+            playerController1.getOutServerXML().send("SHOOT RESULT","DEFEAT!");
+            playerController2.getOutServerXML().send("SHOOT RESULT","VICTORY!");
         } else if (countShips2 == 0) {
             str += " WIN P1";
-            playerController1.getOutServerXML().send("SHOOT RESULT",str);
-            playerController2.getOutServerXML().send("SHOOT RESULT",str);
+            playerController1.getOutServerXML().send("SHOOT RESULT","VICTORY!");
+            playerController2.getOutServerXML().send("SHOOT RESULT","DEFEAT!");
         }
         return str;
     }

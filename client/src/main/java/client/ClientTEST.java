@@ -139,14 +139,18 @@ public class ClientTEST {
                                 case "SHIP LOCATION": {
                                     System.out.println("\n\n\nSERVER:\"SHIP LOCATION\"");
                                     String result = inClientXML.checkValue(reader);
-                                    System.out.println("***\"" + result + "\"***");
+                                    System.out.println("\"" + result + "\"");
                                     //сообщение от сервера относительно того как игрок пытается поставить корабль - ...
                                     //(успех / ошибка / все корабли расставлены и идёт ожидание другого игрока или запуск игры)
                                     break;
                                 }
-                                case "SHOOT": {
-                                    System.out.println("\n\n\nSERVER:\"SHOOT\"");
-                                    //сообщение сервера о результате выстрела (ранил / убил / мимо)
+                                case "SHOOT RESULT": {
+                                    System.out.println("\n\n\nSERVER:\"SHOOT RESULT\"");
+                                    String result = inClientXML.checkValue(reader);
+                                    if (result.equals("VICTORY!") || result.equals("DEFEAT!")) {
+                                        System.out.println("GAME OVER. " + result);
+                                    }
+                                    else System.out.println("\"" + result + "\"");
                                     break;
                                 }
                                 case "SURRENDER": {
