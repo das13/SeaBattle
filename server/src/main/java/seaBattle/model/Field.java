@@ -41,34 +41,45 @@ public class Field {
 
     public String setShip (Ship ship) {
         int[] a = ship.getShip();
-        if (shipCountChecking(ship)) {
-            if (ship.isVertical()) {
-                if (areaChecking(field, a[1], a[3], ship.isVertical())) {
-                    for (int i = a[1]; i <= a[3]; i++) {
-                        field[a[0]][i] = 1;
-                        setSafeArea(field, a[0], i, ship.isVertical());
+        if (checkLongShip(ship)) {
+            if (shipCountChecking(ship)) {
+                if (ship.isVertical()) {
+                    if (areaChecking(field, a[0], a[1], a[3], ship.isVertical())) {
+                        for (int i = a[1]; i <= a[3]; i++) {
+                            field[a[0]][i] = 1;
+                            setSafeArea(field, a[0], i, ship.isVertical());
+                        }
+                        countOfShip[ship.getHealth() - 1]++;
+                        return "OK";
+                    } else {
+                        return "PLACE ERROR";
                     }
-                    countOfShip[ship.getHealth()-1]++;
-                    str = "OK";
-                }else {
-                    str = "PLACE ERROR";
+                } else {
+                    if (areaChecking(field, a[1], a[0], a[2], ship.isVertical())) {
+                        for (int i = a[0]; i <= a[2]; i++) {
+                            field[i][a[1]] = 1;
+                            setSafeArea(field, i, a[1], ship.isVertical());
+                        }
+                        countOfShip[ship.getHealth() - 1]++;
+                        return "OK";
+                    } else {
+                        return "PLACE ERROR";
+                    }
                 }
             } else {
-                if (areaChecking(field, a[0], a[2], ship.isVertical())) {
-                    for (int i = a[0]; i <= a[2]; i++) {
-                        field[i][a[1]] = 1;
-                        setSafeArea(field, i, a[1], ship.isVertical());
-                    }
-                    countOfShip[ship.getHealth()-1]++;
-                    str = "OK";
-                }else {
-                    str = "PLACE ERROR";
-                }
+                return "COUNT ERROR";
             }
         }else {
-            str="COUNT ERROR";
+            return "LONG ERROR";
         }
-        return str;
+    }
+
+    public boolean checkLongShip(Ship ship) {
+        if (ship.getHealth() > 4) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     public void setSafeArea(int [][]f, int i1,int j1,boolean v) {
@@ -86,10 +97,10 @@ public class Field {
         }
     }
 
-    public boolean areaChecking(int [][]f,int a,int b,boolean v) {
+    public boolean areaChecking(int [][]f,int stat,int a,int b,boolean v) {
         if (v) {
             for (int i = a; i <= b;i++) {
-                if (field[a][i] != 0) {
+                if (field[stat][i] != 0) {
                     System.out.println("U cant to place ship");
                     return false;
                 }
@@ -97,7 +108,7 @@ public class Field {
             }
         }else {
             for (int i = a; i <=b;i++) {
-                if (field[i][a] != 0) {
+                if (field[i][stat] != 0) {
                     System.out.println("U cant to place ship");
                     return false;
                 }
