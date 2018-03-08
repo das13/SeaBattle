@@ -72,22 +72,7 @@ public class Server {
     }
 
     public static void updateAllPlayersSet(){
-        try {
-            File file = new File(playerListXML.getPath());
-            JAXBContext jaxbContext = JAXBContext.newInstance(PlayerList.class);
-
-            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-            PlayerList playerList = (PlayerList) jaxbUnmarshaller.unmarshal(file);
-            System.out.println("\nfound " + playerList.getPlayerList().size() + " players in playerList.xml:");
-            allPlayersSet.addAll(playerList.getPlayerList());
-            for (Player player : allPlayersSet){
-                System.out.print(player.getLogin() + ", ");
-            }
-            System.out.println("\nupdated: allPlayersSet");
-            SaveLoadServerXML.updatePlayerListXML();
-        } catch (JAXBException e) {
-            logger.error("Updating allPlayersSet error.", e);
-        }
+        SaveLoadServerXML.updateAllPlayersSet();
     }
 
     public static void updateOnlinePlayersSet(){

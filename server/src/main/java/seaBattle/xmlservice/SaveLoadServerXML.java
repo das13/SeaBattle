@@ -1,12 +1,10 @@
 package seaBattle.xmlservice;
 
 import org.apache.log4j.Logger;
+import seaBattle.model.Field;
 import seaBattle.model.Player;
 import seaBattle.model.Server;
-import seaBattle.model.serverFileService.AdminsList;
-import seaBattle.model.serverFileService.BannedIpList;
-import seaBattle.model.serverFileService.PlayerList;
-import seaBattle.model.serverFileService.ServerConf;
+import seaBattle.model.serverFileService.*;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -151,6 +149,25 @@ public class SaveLoadServerXML {
         }
     }
 
+    public static void updateAllPlayersSet() {
+        try {
+            File file = new File(Server.getPlayerListXML().getPath());
+            JAXBContext jaxbContext = JAXBContext.newInstance(PlayerList.class);
+
+            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+            PlayerList playerList = (PlayerList) jaxbUnmarshaller.unmarshal(file);
+            System.out.println("\nfound " + playerList.getPlayerList().size() + " players in playerList.xml:");
+            Server.getAllPlayersSet().addAll(playerList.getPlayerList());
+            for (Player player : Server.getAllPlayersSet()) {
+                System.out.print(player.getLogin() + ", ");
+            }
+            System.out.println("\nupdated: allPlayersSet");
+            SaveLoadServerXML.updatePlayerListXML();
+        } catch (JAXBException e) {
+            logger.error("Updating allPlayersSet error.", e);
+        }
+    }
+
     public static void updatePlayerListXML(){
         try {
             PlayerList playerList = new PlayerList();
@@ -249,6 +266,54 @@ public class SaveLoadServerXML {
             updateBannedIpListXML();
         } catch (JAXBException e) {
             logger.error("Updating bannedIpSet error.", e);
+        }
+    }
+
+    public static void saveGame(String player1, Field field1, String player2, Field field2){
+        if (!new File("game-" + player1 +"VS"+ player2 + ".xml").exists()){
+
+            GameCondition gameCondition = new GameCondition();
+            int[] rows1 = new int[9];
+            int[] rows2 = new int[9];
+            gameCondition.serAllRows1(rows1);
+            gameCondition.serAllRows2(rows2);
+            int[][] allRows = new int[][] {rows1, rows2};
+
+            Field[] fields = new Field[1];
+            fields[0] = field1;
+            fields[1] = field2;
+
+            gameCondition.setPlayer1(player1);
+            gameCondition.setPlayer2(player2);
+            StringBuilder sb = new StringBuilder();
+
+            for (int f = 0; f <2 ; f++) {
+                for (int i = 0; i <= 10; i++) {
+                    for (int j = 0; j <= 10; j++) {
+                        sb.append(fields[f].getField()[i][j]);
+                    }
+                    String str = sb.toString();
+                    int row = Integer.getInteger(str);
+                    sb.delete(0,10);
+                    allRows[f]
+                    [i] = row;
+                }
+            }
+
+            try {
+                File file = new File(new File("game-" + player1 +"VS"+ player2 + ".xml").getPath());
+                JAXBContext jaxbContext = JAXBContext.newInstance(GameCondition.class);
+                Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+
+                // pretty print
+                jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+                jaxbMarshaller.marshal(gameCondition, file);
+                jaxbMarshaller.marshal(gameCondition, System.out);
+
+            } catch (JAXBException e) {
+                logger.error("serverConf.xml creation error.", e);
+            }
         }
     }
 }

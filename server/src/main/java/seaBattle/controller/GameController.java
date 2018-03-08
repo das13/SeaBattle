@@ -2,7 +2,9 @@ package seaBattle.controller;
 
 import seaBattle.model.Field;
 import seaBattle.model.Ship;
+import seaBattle.xmlservice.SaveLoadServerXML;
 
+import java.io.File;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -17,10 +19,7 @@ public class GameController extends Thread {
     private int countShips1;
     private int countShips2;
     private Timer timer;
-
-    public Field getField1() {
-        return field1;
-    }
+    private File thisGame;
 
     public GameController(PlayerController playerController1, PlayerController playerController2) {
         this.playerController1 = playerController1;
@@ -29,6 +28,7 @@ public class GameController extends Thread {
         field1 = new Field();
         field2 = new Field();
         firstPlayerTurn = true;
+        thisGame = new File("game-" + playerController1.getThisPlayer().getLogin() +"VS"+ playerController2.getThisPlayer().getLogin() + ".xml");
     }
 
     public void run() {
@@ -39,6 +39,7 @@ public class GameController extends Thread {
         if (countShips1+countShips2 < 40) {
             return false;
         } else {
+            saveGame();
             return true;
         }
     }
@@ -64,13 +65,18 @@ public class GameController extends Thread {
                 countShips1--;
             }
         }
-        if (countShips1 == 0) {
-            playerController1.getOutServerXML().send("SHOOT RESULT","DEFEAT!");
-            playerController2.getOutServerXML().send("SHOOT RESULT","VICTORY!");
-        } else if (countShips2 == 0) {
-            str += " WIN P1";
-            playerController1.getOutServerXML().send("SHOOT RESULT","VICTORY!");
-            playerController2.getOutServerXML().send("SHOOT RESULT","DEFEAT!");
+        try {
+            if (countShips1 == 0) {
+                playerController1.getOutServerXML().send("SHOOT RESULT","DEFEAT!");
+                playerController2.getOutServerXML().send("SHOOT RESULT","VICTORY!");
+                sleep(10);
+            } else if (countShips2 == 0) {
+                playerController1.getOutServerXML().send("SHOOT RESULT","VICTORY!");
+                playerController2.getOutServerXML().send("SHOOT RESULT","DEFEAT!");
+                sleep(10);
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
         return str;
     }
@@ -96,4 +102,86 @@ public class GameController extends Thread {
 
         return str;
     }
+
+    public void saveGame(){
+        SaveLoadServerXML.saveGame(playerController1.getThisPlayer().getLogin(), field1, playerController2.getThisPlayer().getLogin(),field2);
+    }
+
+    public PlayerController getPlayerController1() {
+        return playerController1;
+    }
+    public void setPlayerController1(PlayerController playerController1) {
+        this.playerController1 = playerController1;
+    }
+
+    public PlayerController getPlayerController2() {
+        return playerController2;
+    }
+    public void setPlayerController2(PlayerController playerController2) {
+        this.playerController2 = playerController2;
+    }
+
+    public PlayerController getCurrentPlayerController() {
+        return currentPlayerController;
+    }
+    public void setCurrentPlayerController(PlayerController currentPlayerController) {
+        this.currentPlayerController = currentPlayerController;
+    }
+
+    public Field getField1() {
+        return field1;
+    }
+    public void setField1(Field field1) {
+        this.field1 = field1;
+    }
+
+    public Field getField2() {
+        return field2;
+    }
+    public void setField2(Field field2) {
+        this.field2 = field2;
+    }
+
+    public boolean isFirstPlayerTurn() {
+        return firstPlayerTurn;
+    }
+    public void setFirstPlayerTurn(boolean firstPlayerTurn) {
+        this.firstPlayerTurn = firstPlayerTurn;
+    }
+
+    public String getStr() {
+        return str;
+    }
+    public void setStr(String str) {
+        this.str = str;
+    }
+
+    public int getCountShips1() {
+        return countShips1;
+    }
+    public void setCountShips1(int countShips1) {
+        this.countShips1 = countShips1;
+    }
+
+    public int getCountShips2() {
+        return countShips2;
+    }
+    public void setCountShips2(int countShips2) {
+        this.countShips2 = countShips2;
+    }
+
+    public Timer getTimer() {
+        return timer;
+    }
+    public void setTimer(Timer timer) {
+        this.timer = timer;
+    }
+
+    public File getThisGame() {
+        return thisGame;
+    }
+    public void setThisGame(File thisGame) {
+        this.thisGame = thisGame;
+    }
+
 }
