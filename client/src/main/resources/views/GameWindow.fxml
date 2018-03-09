@@ -1,74 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
+<?import java.lang.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 
-<HBox fx:id="gameWindow" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.controller.GameController">
-   <children>
-      <AnchorPane prefHeight="400.0" prefWidth="600.0">
-         <children>
-            <GridPane fx:id="userPane" focusTraversable="true" gridLinesVisible="true" layoutX="56.0" layoutY="120.0" maxHeight="200.0" maxWidth="200.0" minHeight="200.0" minWidth="200.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.leftAnchor="50.0" AnchorPane.topAnchor="100.0">
-              <columnConstraints>
-                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="10.0" />
-                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="10.0" />
-                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="10.0" />
-                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="10.0" />
-                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="10.0" />
-                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="10.0" />
-                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="10.0" />
-                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="10.0" />
-                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="10.0" />
-                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="10.0" />
-              </columnConstraints>
-              <rowConstraints>
-                  <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
-              </rowConstraints>
-            </GridPane>
-            <GridPane fx:id="enemyPane" focusTraversable="true" gridLinesVisible="true" layoutX="351.0" layoutY="120.0" maxHeight="200.0" maxWidth="200.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="100.0">
-               <columnConstraints>
-                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="10.0" />
-                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="10.0" />
-                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="10.0" />
-                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="10.0" />
-                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="10.0" />
-                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="10.0" />
-                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="10.0" />
-                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="10.0" />
-                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="10.0" />
-                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="10.0" />
-               </columnConstraints>
-               <rowConstraints>
-                  <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
-               </rowConstraints>
-            </GridPane>
-            <Label layoutX="50.0" layoutY="344.0" text="Status:" />
-            <Label layoutX="94.0" layoutY="344.0" wrapText="true" />
-         </children>
-      </AnchorPane>
-   </children>
+<HBox fx:id="gameHBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="250.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.controller.GameController">
+    <children>
+        <Pane fx:id="userPane" prefHeight="250.0" prefWidth="250.0" />
+        <Pane fx:id="shipsPane" prefHeight="250.0" prefWidth="100.0">
+            <children>
+                <RadioButton fx:id="rb_ship1p" layoutX="8.0" layoutY="33.0" mnemonicParsing="false" onAction="#selectShip1p" selected="true" text="Ship 1p x">
+                    <toggleGroup>
+                        <ToggleGroup fx:id="ship" />
+                    </toggleGroup>
+                </RadioButton>
+                <Label fx:id="countShip1p" layoutX="86.0" layoutY="33.0" text="4" />
+                <RadioButton fx:id="rb_ship2p" layoutX="8.0" layoutY="63.0" mnemonicParsing="false" onAction="#selectShip2p" text="Ship 2p x" toggleGroup="$ship" />
+                <RadioButton fx:id="rb_ship3p" layoutX="8.0" layoutY="93.0" mnemonicParsing="false" onAction="#selectShip3p" text="Ship 3p x" toggleGroup="$ship" />
+                <RadioButton fx:id="rb_ship4p" layoutX="8.0" layoutY="123.0" mnemonicParsing="false" onAction="#selectShip4p" text="Ship 4p x" toggleGroup="$ship" />
+                <Label fx:id="countShip2p" layoutX="86.0" layoutY="63.0" text="3" />
+                <Label fx:id="countShip3p" layoutX="86.0" layoutY="93.0" text="2" />
+                <Label fx:id="countShip4p" layoutX="86.0" layoutY="123.0" text="1" />
+                <Label layoutX="20.0" layoutY="6.0" text="Select ship:" />
+                <Label layoutX="2.0" layoutY="157.0" text="Select orientation:" />
+                <RadioButton fx:id="rb_horizontally" layoutX="7.0" layoutY="180.0" mnemonicParsing="false" onAction="#selectHorizontally" selected="true" text="horizontally">
+                    <toggleGroup>
+                        <ToggleGroup fx:id="orientation" />
+                    </toggleGroup>
+                </RadioButton>
+                <RadioButton fx:id="rb_verically" layoutX="7.0" layoutY="210.0" mnemonicParsing="false" onAction="#selectVerically" text="vertically" toggleGroup="$orientation" />
+            </children>
+        </Pane>
+        <Pane fx:id="enemyPane" prefHeight="250.0" prefWidth="250.0" />
+    </children>
 </HBox>

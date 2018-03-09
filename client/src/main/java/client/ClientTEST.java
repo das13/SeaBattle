@@ -1,13 +1,13 @@
 package client;
 
+import client.xmlservice.InClientXML;
+import client.xmlservice.OutClientXML;
+
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Scanner;
-
-import client.xmlservice.InClientXML;
-import client.xmlservice.OutClientXML;
 
 public class ClientTEST {
     private InClientXML inClientXML;
@@ -136,21 +136,15 @@ public class ClientTEST {
                                     System.out.println("You are = \"" + value + "\"");
                                     break;
                                 }
-                                case "SHIP LOCATION": {
-                                    System.out.println("\n\n\nSERVER:\"SHIP LOCATION\"");
-                                    String result = inClientXML.checkValue(reader);
-                                    System.out.println("\"" + result + "\"");
+                                case "SHIP": {
+                                    System.out.println("\n\n\nSERVER:\"SHIP\"");
                                     //сообщение от сервера относительно того как игрок пытается поставить корабль - ...
                                     //(успех / ошибка / все корабли расставлены и идёт ожидание другого игрока или запуск игры)
                                     break;
                                 }
-                                case "SHOOT RESULT": {
-                                    System.out.println("\n\n\nSERVER:\"SHOOT RESULT\"");
-                                    String result = inClientXML.checkValue(reader);
-                                    if (result.equals("VICTORY!") || result.equals("DEFEAT!")) {
-                                        System.out.println("GAME OVER. " + result);
-                                    }
-                                    else System.out.println("\"" + result + "\"");
+                                case "SHOOT": {
+                                    System.out.println("\n\n\nSERVER:\"SHOOT\"");
+                                    //сообщение сервера о результате выстрела (ранил / убил / мимо)
                                     break;
                                 }
                                 case "SURRENDER": {
@@ -167,6 +161,7 @@ public class ClientTEST {
                                     System.out.println("\n\n\nSERVER:\"INFO\"");
                                     String value = inClientXML.checkValue(reader);
                                     System.out.println("***\"" + value + "\"***");
+
                                     break;
                                 }
                             }

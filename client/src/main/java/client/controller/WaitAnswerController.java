@@ -1,13 +1,9 @@
 package client.controller;
 
-import javafx.event.ActionEvent;
+import client.controller.utils.ProgressAnimation;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
-
-
-import javax.xml.stream.XMLStreamException;
 
 public class WaitAnswerController {
 
@@ -16,8 +12,6 @@ public class WaitAnswerController {
 
     @FXML
     private Label lblStatus;
-
-    private String enemyName;
 
     private static WaitAnswerController waitAnswerController;
 
@@ -31,28 +25,15 @@ public class WaitAnswerController {
 
     @FXML
     private void initialize(){
-        lblStatus.setText("Waiting for answer from " + CommonWindowController.getEnemy());
+
+        lblStatus.setText("Waiting for answer from " + CommonWindowController.getCwController().getEnemy());
+        ProgressAnimation progressAnimation = new ProgressAnimation();
+
         progressBar.setProgress(0.0);
-        Thread th = new Thread(new ProgressBarTh());
-    }
+        progressBar.progressProperty().bind(progressAnimation.progressProperty());
+
+        new Thread(progressAnimation).start();
 
 
-
-    class ProgressBarTh implements Runnable {
-        public ProgressBarTh(){
-            new Thread(this).start();
-        }
-        @Override
-        public void run(){
-            for (int i = 0; i <= 100; i++) {
-                progressBar.setProgress(i/100.0);
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-
-        }
     }
 }

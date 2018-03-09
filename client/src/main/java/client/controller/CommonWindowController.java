@@ -3,23 +3,20 @@ package client.controller;
 
 import client.controller.models.Gamer;
 import javafx.animation.PauseTransition;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.control.SelectionMode;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.stage.Modality;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javafx.stage.Window;
+import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 import org.apache.log4j.Logger;
 
@@ -50,16 +47,23 @@ public class CommonWindowController{
     private Label lblWins;
     @FXML
     private Label lblLoses;
+    @FXML
+    private TextArea txtMassage;
+    @FXML
+    private TextArea txaChat;
+    Stage gameWindow;
+    private boolean isEnemySurrender = false;
     private static Stage waitAnswerWindow;
     private String key;
     private String value;
-
+    private static ServerListener listener;
     private static String enemy;
+    private final static String WAITANSWERFORM = "/views/WaitAnswer.fxml";
+    protected final static String ANSWERFORM = "/views/Answer.fxml";
+    public RegController regController;
 
-
-    private ObservableList<Gamer> gamerActiveList = FXCollections.observableArrayList(createActiveList());
-
-    private ObservableList<Gamer> gamerPassiveList = FXCollections.observableArrayList(createPassiveList());
+    private List<Gamer> onlineGamers = new ArrayList<>();
+    private List<Gamer> inGamePlayers = new ArrayList<>();
 
     private static CommonWindowController cwController;
 
@@ -78,14 +82,17 @@ public class CommonWindowController{
 
     @FXML
     private void initialize(){
+        listener = ServerListener.getListener();
+        regController = RegController.getRegController();
         tblActiveGamers.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         colActiveNicks.setCellValueFactory(new PropertyValueFactory<Gamer, String>("name"));
         colActiveWins.setCellValueFactory(new PropertyValueFactory<Gamer, Integer>("wins"));
         colActiveLoses.setCellValueFactory(new PropertyValueFactory<Gamer, Integer>("loses"));
         colPassiveNicks.setCellValueFactory(new PropertyValueFactory<Gamer, String>("name"));
-        tblActiveGamers.setItems(gamerActiveList);
-        tblPassiveGamers.setItems(gamerPassiveList);
-        lblLogin.setText(ServerListener.getUsername());
+        tblActiveGamers.setItems(FXCollections.observableArrayList(onlineGamers));
+        tblPassiveGamers.setItems(FXCollections.observableArrayList(inGamePlayers));
+        lblLogin.setText(regController.getUsername());
+        listener.setCommonWindowController(this);
     }
 
     @FXML
@@ -94,98 +101,144 @@ public class CommonWindowController{
         if (selectedGamer == null) return;
         key = "INVITE";
         enemy = selectedGamer.getName();
+
         try {
-            ServerListener.getOutClientXML().send(key, ServerListener.getUsername(), enemy);
+            listener.getOutClientXML().send(key, listener.getUsername(), enemy);
         } catch (XMLStreamException e) {
             logger.error("INVITE error", e);
         }
-        showWaitAnswerWindow(event);
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+
+                showWaitAnswerWindow(event, WAITANSWERFORM);
+            }
+        });
     }
 
-    private void showWaitAnswerWindow(ActionEvent event) {
+    protected void showWaitAnswerWindow(ActionEvent event, String form) {
         Stage stage = new Stage();
         waitAnswerWindow = stage;
         Parent root = null;
         try {
-            root = FXMLLoader.load(getClass().getResource("/views/WaitAnswer.fxml"));
-            logger.info("Load WaitAnswer.fxml is successfully");
+            root = FXMLLoader.load(getClass().getResource(form));
+            logger.info("Load " + form + "is successfully");
         } catch (IOException e) {
-            logger.info("Can not load WaitAnswer.fxml", e);
-            logger.error("Can not load WaitAnswer.fxml", e);
+            logger.info("Can not load " + form, e);
+            logger.error("Can not load " + form, e);
         }
         stage.setTitle("Sea Battle 2018");
         Scene scene = new Scene(root,300,200);
         stage.setScene(scene);
-        stage.initModality(Modality.WINDOW_MODAL);
-        stage.initOwner(((Node)event.getSource()).getScene().getWindow());
+        stage.setX(RegController.getRegController().comWindow.getX() + 200);
+        stage.setY(RegController.getRegController().comWindow.getY() + 100);
+
         stage.initStyle(StageStyle.UNDECORATED);
-        PauseTransition delay = new PauseTransition(Duration.seconds(10));
+        PauseTransition delay = new PauseTransition(Duration.seconds(11));
         delay.setOnFinished( event1 -> stage.close() );
         delay.play();
         stage.show();
     }
-    public static void hideWaitAnswerWindow() {
+
+    public void hideWaitAnswerWindow(){
         waitAnswerWindow.hide();
     }
-    /*
-    @FXML
-    public void pressBtnAtack(ActionEvent event) {
-        Gamer selectedGamer = (Gamer) tblActiveGamers.getSelectionModel().getSelectedItem();
-        if (selectedGamer == null) return;
-        key = "INVITE";
-        value = selectedGamer.getName();
-        try {
-            ServerListener.getOutClientXML().send(key, value);
-        } catch (XMLStreamException e) {
-            logger.error("INVITE error", e);
+
+    public void sendButtonAction(){
+        String msg = txtMassage.getText();
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+
+                    if (!txtMassage.getText().isEmpty()) {
+                        try {
+                            listener.getOutClientXML().send("MSG", msg);
+                        } catch (XMLStreamException e) {
+                            e.printStackTrace();
+                        }
+
+                    //    txaChat.appendText(regController.getUsername() + ":" + msg);
+                    }
+                }
+            });
+            txtMassage.setText("");
+    }
+
+    public void sendMethod(KeyEvent event) throws IOException {
+        if (event.getCode() == KeyCode.ENTER) {
+            sendButtonAction();
         }
-        Stage stage = new Stage();
-        Parent root = null;
-        try {
-            root = FXMLLoader.load(getClass().getResource("/views/GameWindow.fxml"));
-            logger.info("Load GameWindow.fxml is successfully");
-        } catch (IOException e) {
-            logger.info("Can not load GameWindow.fxml", e);
-            logger.error("Can not load GameWindow.fxml", e);
-        }
-        stage.setTitle("Sea Battle 2018");
-        Scene scene = new Scene(root,600,400);
-        stage.setScene(scene);
-        stage.initModality(Modality.WINDOW_MODAL);
-        stage.initOwner(((Node)event.getSource()).getScene().getWindow());
-        stage.show();
-    }
-*/
-
-    public List<Gamer> createActiveList() {
-        List<Gamer> gamers = new ArrayList<>();
-        gamers.add(new Gamer("Ivan", 1, 2));
-        gamers.add(new Gamer("Ivan2", 4, 2));
-        gamers.add(new Gamer("Ivan", 1, 2));
-        gamers.add(new Gamer("Ivan2", 4, 2));
-        gamers.add(new Gamer("Ivan", 1, 2));
-        gamers.add(new Gamer("Ivan2", 4, 2));
-        gamers.add(new Gamer("Ivan", 1, 2));
-        gamers.add(new Gamer("Ivan2", 4, 2));
-
-        return gamers;
     }
 
-    public List<Gamer> createPassiveList() {
-        List<Gamer> gamers = new ArrayList();
-        gamers.add(new Gamer("Ivan", 1, 2));
-        gamers.add(new Gamer("Ivan2", 4, 2));
-        gamers.add(new Gamer("Ivan", 1, 2));
-        gamers.add(new Gamer("Ivan2", 4, 2));
-        gamers.add(new Gamer("Ivan", 1, 2));
-        gamers.add(new Gamer("Ivan2", 4, 2));
-        gamers.add(new Gamer("Ivan", 1, 2));
-        gamers.add(new Gamer("Ivan2", 4, 2));
-        return gamers;
+    public void createActiveList(List onlineGamersFromListener) {
+
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                tblActiveGamers.getItems().clear();
+                tblActiveGamers.getItems().addAll(onlineGamersFromListener);
+            }
+        });
     }
-    public static String getEnemy() {
+
+    public void createPassiveList(List onGameGamersFromListener) {
+
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                tblPassiveGamers.getItems().clear();
+                tblPassiveGamers.getItems().addAll(onGameGamersFromListener);
+            }
+        });
+    }
+
+    public String getEnemy() {
         return enemy;
     }
+
+    public void showGameWindow(String enemy) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                Stage stage = new Stage();
+                Parent root = null;
+                gameWindow = stage;
+                try {
+                    root = FXMLLoader.load(getClass().getResource("/views/GameWindow.fxml"));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                stage.setOnCloseRequest((WindowEvent e) -> {
+                    try {
+                        if (isEnemySurrender()) {
+
+                            ServerListener.getListener().getOutClientXML().send("SURRENDER", enemy);
+                        }
+                        setEnemySurrender(false);
+                    } catch (XMLStreamException e1) {
+                        logger.error("SURRENDER error", e1);
+                    }
+                    RegController.getRegController().comWindow.show();
+                });
+                stage.setTitle("Sea battle");
+                stage.setScene(new Scene(root, 600, 350));
+                stage.setResizable(false);
+                RegController.getRegController().comWindow.hide();
+                stage.show();
+
+            }
+        });
+    }
+
+    public void setEnemySurrender(boolean enemySurrender) {
+        isEnemySurrender = enemySurrender;
+    }
+
+    public boolean isEnemySurrender() {
+        return isEnemySurrender;
+    }
+
+
 
 }
 

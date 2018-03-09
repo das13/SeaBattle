@@ -12,7 +12,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
 
-<VBox fx:id="regFormWindow" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="540.0" prefWidth="300.0" styleClass="mainBackGround" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.controller.RegController">
+<VBox fx:id="regFormWindow" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="640.0" prefWidth="300.0" styleClass="mainBackGround" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.controller.RegController">
    <children>
       <HBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0" prefWidth="200.0">
          <children>
@@ -37,66 +37,17 @@
       </HBox>
       <HBox prefHeight="30.0" prefWidth="200.0">
          <children>
-            <Label alignment="CENTER" contentDisplay="CENTER" prefWidth="300.0" text="User INFO:">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Label>
-         </children>
-      </HBox>
-      <HBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0">
-         <children>
-            <Label prefHeight="20.0" prefWidth="60.0" text="Login">
-               <HBox.margin>
-                  <Insets bottom="10.0" left="20.0" right="10.0" top="10.0" />
-               </HBox.margin>
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Label>
-            <TextField fx:id="loginField" prefWidth="180.0" promptText="Login">
-               <HBox.margin>
-                  <Insets bottom="10.0" left="10.0" top="10.0" />
-               </HBox.margin>
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </TextField>
-         </children>
-      </HBox>
-      <HBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="300.0">
-         <children>
-            <Label prefHeight="20.0" prefWidth="70.0" text="Password">
-               <HBox.margin>
-                  <Insets bottom="10.0" left="20.0" right="10.0" top="10.0" />
-               </HBox.margin>
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Label>
-            <PasswordField fx:id="passField" minHeight="-Infinity" minWidth="-Infinity" prefWidth="180.0" promptText="Password">
-               <HBox.margin>
-                  <Insets bottom="10.0" top="10.0" />
-               </HBox.margin>
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </PasswordField>
-         </children>
-      </HBox>
-      <HBox prefHeight="40.0" prefWidth="200.0">
-         <children>
             <Label alignment="CENTER" contentDisplay="CENTER" nodeOrientation="LEFT_TO_RIGHT" prefWidth="300.0" text="Server INFO:">
                <font>
                   <Font size="14.0" />
                </font>
                <HBox.margin>
-                  <Insets left="5.0" right="5.0" top="10.0" />
+                  <Insets left="5.0" right="5.0" top="5.0" />
                </HBox.margin>
             </Label>
          </children>
       </HBox>
-      <HBox prefHeight="40.0" prefWidth="200.0">
+      <HBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0">
          <children>
             <Label prefHeight="20.0" prefWidth="70.0" text="Hostname">
                <HBox.margin>
@@ -115,11 +66,8 @@
                </HBox.margin>
             </TextField>
          </children>
-         <VBox.margin>
-            <Insets top="10.0" />
-         </VBox.margin>
       </HBox>
-      <HBox prefHeight="40.0" prefWidth="200.0">
+      <HBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="300.0">
          <children>
             <Label prefHeight="20.0" prefWidth="70.0" text="Port">
                <font>
@@ -139,9 +87,73 @@
             </TextField>
          </children>
       </HBox>
-      <HBox prefHeight="100.0" prefWidth="200.0">
+      <HBox alignment="CENTER" prefHeight="60.0" prefWidth="200.0">
          <children>
-            <Button fx:id="regButton" mnemonicParsing="false" onAction="#pressRegButton" prefHeight="30.0" prefWidth="125.0" text="Registration">
+            <Button fx:id="btnConnect" mnemonicParsing="false" onAction="#pressConnectBtn" prefHeight="30.0" prefWidth="264.0" text="Connect">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Button>
+         </children>
+      </HBox>
+      <HBox>
+         <children>
+            <Label alignment="CENTER" contentDisplay="CENTER" prefWidth="300.0" text="User INFO:">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <HBox.margin>
+                  <Insets top="10.0" />
+               </HBox.margin>
+            </Label>
+         </children>
+      </HBox>
+      <HBox prefHeight="40.0" prefWidth="200.0">
+         <children>
+            <Label prefHeight="20.0" prefWidth="60.0" text="Login">
+               <HBox.margin>
+                  <Insets bottom="10.0" left="20.0" right="10.0" />
+               </HBox.margin>
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <TextField fx:id="loginField" prefWidth="180.0" promptText="Login">
+               <HBox.margin>
+                  <Insets bottom="10.0" left="10.0" />
+               </HBox.margin>
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </TextField>
+         </children>
+         <VBox.margin>
+            <Insets top="10.0" />
+         </VBox.margin>
+      </HBox>
+      <HBox prefHeight="40.0" prefWidth="200.0">
+         <children>
+            <Label prefHeight="20.0" prefWidth="70.0" text="Password">
+               <HBox.margin>
+                  <Insets bottom="10.0" left="20.0" right="10.0" top="10.0" />
+               </HBox.margin>
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <PasswordField fx:id="passField" minHeight="-Infinity" minWidth="-Infinity" prefWidth="180.0" promptText="Password">
+               <HBox.margin>
+                  <Insets bottom="10.0" top="10.0" />
+               </HBox.margin>
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </PasswordField>
+         </children>
+      </HBox>
+      <HBox prefHeight="50.0" prefWidth="200.0">
+         <children>
+            <Button fx:id="regButton" disable="true" mnemonicParsing="false" onAction="#pressRegButton" prefHeight="30.0" prefWidth="125.0" text="Registration">
                <HBox.margin>
                   <Insets bottom="20.0" left="20.0" right="5.0" top="20.0" />
                </HBox.margin>
@@ -149,7 +161,7 @@
                   <Font size="14.0" />
                </font>
             </Button>
-            <Button fx:id="signButton" mnemonicParsing="false" onAction="#pressSignButton" prefHeight="30.0" prefWidth="125.0" text="Sign in">
+            <Button fx:id="signButton" disable="true" mnemonicParsing="false" onAction="#pressSignButton" prefHeight="30.0" prefWidth="125.0" text="Sign in">
                <HBox.margin>
                   <Insets bottom="20.0" left="5.0" top="20.0" />
                </HBox.margin>
@@ -159,7 +171,7 @@
             </Button>
          </children>
       </HBox>
-      <HBox prefHeight="100.0" prefWidth="200.0">
+      <HBox prefHeight="50.0" prefWidth="200.0">
          <children>
             <Label fx:id="inputStatus" text="Input status: ">
                <HBox.margin>

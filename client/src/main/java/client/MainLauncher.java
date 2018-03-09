@@ -1,5 +1,6 @@
 package client;
 
+import client.controller.ServerListener;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -7,16 +8,18 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
 import javafx.stage.WindowEvent;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainLauncher extends Application {
 
     final static Logger logger = Logger.getLogger(MainLauncher.class);
     private static Stage primaryStageObj;
+    private List<Parent> parents = new ArrayList<>();
 
     public static Stage getPrimaryStageObj() {
         return primaryStageObj;
@@ -25,10 +28,13 @@ public class MainLauncher extends Application {
     @Override
     public void start(Stage primaryStage){
         primaryStageObj = primaryStage;
-
+        ServerListener listener = ServerListener.getListener();
         Parent root = null;
         try {
-            root = FXMLLoader.load(getClass().getResource("/views/regForm.fxml"));
+            parents.add(FXMLLoader.load(getClass().getResource("/views/regForm.fxml")));
+            parents.add(FXMLLoader.load(getClass().getResource("/views/commonWindow.fxml")));
+            parents.add(FXMLLoader.load(getClass().getResource("/views/GameWindow.fxml")));
+            root = parents.get(0);
             logger.info("Load regForm.fxml is successfully");
 
         } catch (IOException e) {
@@ -36,7 +42,7 @@ public class MainLauncher extends Application {
             logger.error("Can not load regForm.fxml", e);
         }
         primaryStage.setTitle("Sea Battle 2018");
-        Scene scene = new Scene(root,300,550);
+        Scene scene = new Scene(root,300,640);
         scene.getStylesheets().add(0, "css/main.css");
         scene.setRoot(root);
         primaryStage.setScene(scene);

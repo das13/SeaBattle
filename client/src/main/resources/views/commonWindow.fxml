@@ -1,16 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
+<?import java.lang.*?>
 <?import javafx.scene.text.*?>
-
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
-
 <?import javafx.scene.layout.*?>
 
-
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="360.0" minWidth="640.0" prefHeight="360.0" prefWidth="640.0"
-      xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.controller.CommonWindowController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="360.0" minWidth="640.0" prefHeight="360.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.controller.CommonWindowController">
    <children>
       <HBox id="InfoPanel" maxHeight="40.0" minHeight="40.0" prefHeight="40.0" prefWidth="640.0">
          <children>
@@ -124,7 +120,7 @@
       </HBox>
       <AnchorPane prefHeight="60.0" prefWidth="360.0">
          <children>
-            <TextArea fx:id="txtMassage" nodeOrientation="LEFT_TO_RIGHT" prefHeight="50.0" prefWidth="620.0" promptText="Print your message here..." wrapText="true" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="5.0" />
+            <TextArea fx:id="txtMassage" nodeOrientation="LEFT_TO_RIGHT" onKeyPressed="#sendMethod" prefHeight="50.0" prefWidth="620.0" promptText="Print your message here..." scaleShape="false" wrapText="true" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="5.0" />
          </children>
          <VBox.margin>
             <Insets left="10.0" right="10.0" top="5.0" />

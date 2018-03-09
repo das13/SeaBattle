@@ -11,6 +11,10 @@ public class Gamer {
         this.loses = loses;
     }
 
+    public Gamer (String name) {
+        this.name = name;
+    }
+
     public String getName() {
         return name;
     }

@@ -1,8 +1,8 @@
 package client.controller;
 
+import client.controller.utils.ProgressAnimation;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 
@@ -13,7 +13,7 @@ public class AnswerController {
     private ProgressBar progressBar;
     @FXML
     private Label lblStatus;
-
+    private ServerListener listener;
     private static AnswerController answerController;
     public AnswerController() {
         answerController = this;
@@ -24,31 +24,39 @@ public class AnswerController {
     }
     @FXML
     public void initialize(){
-        lblStatus.setText("You are attacked from " + ServerListener.getEnemy());
+        listener = ServerListener.getListener();
+        lblStatus.setText("You are attacked from " + ServerListener.getListener().getEnemy());
+        ProgressAnimation progressAnimation = new ProgressAnimation();
+
         progressBar.setProgress(0.0);
-        Thread th = new Thread(new ProgressBarTh());
+        progressBar.progressProperty().bind(progressAnimation.progressProperty());
+
+        new Thread(progressAnimation).start();
+        //new Thread(new ProgressBarTh());
+
     }
 
     public void btnAcceptPressed(ActionEvent event) {
         try {
             CommonWindowController.getCwController().hideWaitAnswerWindow();
-            ServerListener.getOutClientXML().send("REPLY","OK");
+            ServerListener.getListener().getOutClientXML().send("REPLY", ServerListener.getListener().getEnemy(),
+                    ServerListener.getListener().getUsername());
         } catch (XMLStreamException e) {
             e.printStackTrace();
         }
     }
 
     public void btnIgnorePressed(ActionEvent event) {
-        try {
-            CommonWindowController.getCwController().hideWaitAnswerWindow();
-            ServerListener.getOutClientXML().send("REPLY","CANCEL");
-        } catch (XMLStreamException e) {
-            e.printStackTrace();
-        }
+
+        CommonWindowController.getCwController().hideWaitAnswerWindow();
+        //ServerListener.getListener().getOutClientXML().send("REPLY","CANCEL");
+
     }
     public Label getLblStatus() {
         return lblStatus;
     }
+
+
 
     class ProgressBarTh implements Runnable {
         public ProgressBarTh(){
@@ -65,7 +73,7 @@ public class AnswerController {
                 }
             }
             try {
-                ServerListener.getOutClientXML().send("REPLY","CANCEL");
+                listener.getOutClientXML().send("REPLY","CANCEL");
             } catch (XMLStreamException e) {
                 e.printStackTrace();
             }
