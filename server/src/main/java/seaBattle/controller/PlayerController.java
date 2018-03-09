@@ -12,6 +12,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.SortedSet;
 
 public class PlayerController extends Thread {
     private Socket socket;
@@ -56,11 +57,10 @@ public class PlayerController extends Thread {
                                 outServerXML.send("LOG IN", authResult(login,password));
                                 Server.updateAllPlayersSet();
                                 Server.updateOnlinePlayersSet();
-                                if (thisPlayer.getStatus().equals("online")) {
+                                for (PlayerController pc : Server.getAllPlayersControllerSet()){
+                                    pc.sendOnlinePlayers();
                                     sleep(10);
-                                    sendOnlinePlayers();
-                                    sleep(10);
-                                    sendIngamePlayers();
+                                    pc.sendIngamePlayers();
                                 }
                                 break;
                             }
@@ -70,6 +70,11 @@ public class PlayerController extends Thread {
                                 outServerXML.send("LOG OUT",logoutResult(login));
                                 Server.updateAllPlayersSet();
                                 Server.updateOnlinePlayersSet();
+                                for (PlayerController pc : Server.getAllPlayersControllerSet()){
+                                    pc.sendOnlinePlayers();
+                                    sleep(10);
+                                    pc.sendIngamePlayers();
+                                }
                                 break;
                             }
                             case "REG": {
@@ -90,8 +95,16 @@ public class PlayerController extends Thread {
                                 System.out.println("player to ban = \"" + playerToBan + "\"" + "\nSENDING ANSWER:");
                                 outServerXML.send("BAN PLAYER", banPlayerResult(admin,playerToBan));
                                 Server.updateAllPlayersSet();
+                                SortedSet<Player> temSet= Server.getOnlinePlayersSet();
                                 Server.updateOnlinePlayersSet();
-                                Server.updateIngamePlayersSet();
+                                if (!temSet.equals(Server.getOnlinePlayersSet())) {
+                                    Server.updateIngamePlayersSet();
+                                    for (PlayerController pc : Server.getAllPlayersControllerSet()){
+                                        pc.sendOnlinePlayers();
+                                        sleep(10);
+                                        pc.sendIngamePlayers();
+                                    }
+                                }
                                 break;
                             }
                             case "BAN IP": {

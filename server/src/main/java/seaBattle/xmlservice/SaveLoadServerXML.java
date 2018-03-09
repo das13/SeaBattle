@@ -273,32 +273,35 @@ public class SaveLoadServerXML {
         if (!new File("game-" + player1 +"VS"+ player2 + ".xml").exists()){
 
             GameCondition gameCondition = new GameCondition();
-            int[] rows1 = new int[10];
-            int[] rows2 = new int[10];
-            gameCondition.serAllRows1(rows1);
-            gameCondition.serAllRows2(rows2);
-            int[][] allRows = new int[][] {rows1, rows2};
 
-            Field[] fields = new Field[1];
-            fields[0] = field1;
-            fields[1] = field2;
+            gameCondition.setPlayerInGameList(new ArrayList<PlayerInGame>());
 
-            gameCondition.setPlayer1(player1);
-            gameCondition.setPlayer2(player2);
+            PlayerInGame playerInGame1 = new PlayerInGame();
+            PlayerInGame playerInGame2 = new PlayerInGame();
+
+            playerInGame1.setLogin(player1);
+            playerInGame2.setLogin(player2);
+
+            String[][] tempList = new String[2][];
+            tempList[0] = playerInGame1.getRow();
+            tempList[1] = playerInGame2.getRow();
+
             StringBuilder sb = new StringBuilder();
 
-            for (int f = 0; f <2 ; f++) {
-                for (int i = 0; i <= 10; i++) {
-                    for (int j = 0; j <= 10; j++) {
-                        sb.append(fields[f].getField()[i][j]);
+            for (int t = 0; t < 2; t++) {
+                for (int i = 0; i < 10; i++) {
+                    for (int j = 0; j < 10; j++) {
+                        sb.append(String.valueOf(field1.getField()[i][j]));
                     }
-                    String str = sb.toString();
-                    int row = Integer.getInteger(str);
-                    sb.delete(0,10);
-                    allRows[f]
-                    [i] = row;
+                    tempList[t][i] = String.valueOf(sb);
+                    System.out.println("SB = " + sb);
+                    System.out.println("SB TOSTRING = " + sb.toString());
+                    sb.delete(0, 10);
                 }
             }
+
+            gameCondition.getPlayerInGameList().add(playerInGame1);
+            gameCondition.getPlayerInGameList().add(playerInGame2);
 
             try {
                 File file = new File(new File("game-" + player1 +"VS"+ player2 + ".xml").getPath());
