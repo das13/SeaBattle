@@ -105,7 +105,6 @@ public class Field {
                     }
                 }catch (ArrayIndexOutOfBoundsException e) {
 
-                    //System.out.println("none");
                 }
             }
         }
