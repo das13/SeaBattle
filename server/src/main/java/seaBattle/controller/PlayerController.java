@@ -1,17 +1,16 @@
 package seaBattle.controller;
 
 import org.apache.log4j.Logger;
-import seaBattle.model.Field;
 import seaBattle.model.Player;
-import seaBattle.model.Ship;
 import seaBattle.model.Server;
+import seaBattle.model.Ship;
 import seaBattle.xmlservice.InServerXML;
 import seaBattle.xmlservice.OutServerXML;
 import seaBattle.xmlservice.SaveLoadServerXML;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import java.io.*;
+import java.io.IOException;
 import java.net.Socket;
 
 public class PlayerController extends Thread {
@@ -54,7 +53,7 @@ public class PlayerController extends Thread {
                                 String password = inServerXML.checkValue(reader);
                                 thisPlayer.setPassword(password);
                                 System.out.println("password = \"" + password + "\"" + "\nSENDING ANSWER:");
-                                outServerXML.send("INFO", authResult(login,password));
+                                outServerXML.send("LOG IN", authResult(login,password));
                                 Server.updateAllPlayersSet();
                                 Server.updateOnlinePlayersSet();
                                 if (thisPlayer.getStatus().equals("online")) {
@@ -68,7 +67,7 @@ public class PlayerController extends Thread {
                             case "LOG OUT": {
                                 System.out.println("\n\n\n\nkey \"LOG OUT\" from " + this.getThisPlayer().getLogin() + " detected:");
                                 String login = inServerXML.checkValue(reader);
-                                outServerXML.send("INFO",logoutResult(login));
+                                outServerXML.send("LOG OUT",logoutResult(login));
                                 Server.updateAllPlayersSet();
                                 Server.updateOnlinePlayersSet();
                                 break;
@@ -79,7 +78,7 @@ public class PlayerController extends Thread {
                                 System.out.println("login = \"" + login + "\"");
                                 String password = inServerXML.checkValue(reader);
                                 System.out.println("password = \"" + password + "\"" + "\nSENDING ANSWER:");
-                                outServerXML.send("INFO", regResult(login,password));
+                                outServerXML.send("REG", regResult(login,password));
                                 Server.updateAllPlayersSet();
                                 break;
                             }
@@ -89,7 +88,7 @@ public class PlayerController extends Thread {
                                 System.out.println("admin = \"" + admin + "\"");
                                 String playerToBan = inServerXML.checkValue(reader);
                                 System.out.println("player to ban = \"" + playerToBan + "\"" + "\nSENDING ANSWER:");
-                                outServerXML.send("INFO", banPlayerResult(admin,playerToBan));
+                                outServerXML.send("BAN PLAYER", banPlayerResult(admin,playerToBan));
                                 Server.updateAllPlayersSet();
                                 Server.updateOnlinePlayersSet();
                                 Server.updateIngamePlayersSet();
@@ -101,7 +100,7 @@ public class PlayerController extends Thread {
                                 System.out.println("admin = \"" + admin + "\"");
                                 String ipToBan = inServerXML.checkValue(reader);
                                 System.out.println("ip to ban = \"" + ipToBan + "\"" + "\nSENDING ANSWER:");
-                                outServerXML.send("INFO", banIpResult(admin,ipToBan));
+                                outServerXML.send("BAN IP", banIpResult(admin,ipToBan));
                                 SaveLoadServerXML.updateBannedIpSet();
                                 break;
                             }
@@ -126,52 +125,21 @@ public class PlayerController extends Thread {
                                 break;
                             }
                             case "SHIP LOCATION": {
-                                int x1 = -1;
-                                int y1 = -1;
-                                int x2 = -1;
-                                int y2 = -1;
-                                try {
-                                    System.out.println("\n\n\nkey \"SHIP LOCATION\" from " + this.getThisPlayer().getLogin() + " detected:");
-                                    String string1 = InServerXML.checkValue(reader);
+                                /*
+                                System.out.println("\n\n\nkey \"SHIP LOCATION\" from " + this.getThisPlayer().getLogin() + " detected:");
+                                String string1 = InServerXML.checkValue(reader);
+                                String[] arr1 = string1.split(" ");
+                                int x1 = Integer.parseInt(arr1[0]);
+                                System.out.println("x1 = " + x1);
+                                int y1 = Integer.parseInt(arr1[1]);
+                                System.out.println("y1 = " + y1);
 
-                                    if (string1.contains(" ")) {
-                                        String[] arr1 = string1.split(" ");
-                                        x1 = Integer.parseInt(arr1[0]);
-                                        System.out.println("x1 = " + x1);
-                                        y1 = Integer.parseInt(arr1[1]);
-                                        System.out.println("y1 = " + y1);
-                                    }
-                                    else{
-
-                                        getOutServerXML().send("INFO", "KpiB0pY4K@ detected");
-                                    }
-                                    String string2 = InServerXML.checkValue(reader);
-                                    if (string2.contains(" ")) {
-                                        String[] arr2 = string2.split(" ");
-                                        x2 = Integer.parseInt(arr2[0]);
-                                        System.out.println("x2 = " + x2);
-                                        y2 = Integer.parseInt(arr2[1]);
-                                        System.out.println("y2 = " + y2);
-                                    }
-                                    else{
-                                        getOutServerXML().send("INFO", "KpiB0pY4K@ detected");
-                                    }
-                                }catch (ArrayIndexOutOfBoundsException e){
-                                    //TODO удалить parse value с пробелами при интеграции интерфейса
-                                }
-                                //TODO верхний вариант для контроля через ClientTEST
-                                //TODO нижний вернуть при интеграции в интерфейс
-//                                int x1 = Integer.parseInt(inServerXML.checkValue(reader));
-//                                System.out.println("x1 = \"" + x1 + "\"");
-//                                int y1 = Integer.parseInt(inServerXML.checkValue(reader));
-//                                System.out.println("y1 = \"" + y1 + "\"");
-//                                int x2 = Integer.parseInt(inServerXML.checkValue(reader));
-//                                System.out.println("x2 = \"" + x2 + "\"");
-//                                int y2 = Integer.parseInt(inServerXML.checkValue(reader));
-//                                System.out.println("y2 = \"" + y2 + "\"");
-                                sleep(10);
-                                getOutServerXML().send("SHIP LOCATION", gc.setShip(this, new Ship(new int[]{x1, y1, x2, y2})));
-                                System.out.println();
+                                String string2 = InServerXML.checkValue(reader);
+                                String[] arr2 = string2.split(" ");
+                                int x2 = Integer.parseInt(arr2[0]);
+                                System.out.println("x2 = " + x2);
+                                int y2 = Integer.parseInt(arr2[1]);
+                                System.out.println("y2 = " + y2);
                                 Field f = gc.getField1();
                                 for (int i=0;i<10;i++) {
                                     for (int j=0;j<10;j++) {
@@ -179,6 +147,20 @@ public class PlayerController extends Thread {
                                     }
                                     System.out.println("");
                                 }
+                                */
+                                //TODO верхний вариант для контроля через ClientTEST
+                                //TODO нижний вернуть при интеграции в интерфейс
+                                int x1 = Integer.parseInt(inServerXML.checkValue(reader));
+                                System.out.println("x1 = \"" + x1 + "\"");
+                                int y1 = Integer.parseInt(inServerXML.checkValue(reader));
+                                System.out.println("y1 = \"" + y1 + "\"");
+                                int x2 = Integer.parseInt(inServerXML.checkValue(reader));
+                                System.out.println("x2 = \"" + x2 + "\"");
+                                int y2 = Integer.parseInt(inServerXML.checkValue(reader));
+                                System.out.println("y2 = \"" + y2 + "\"");
+                                sleep(10);
+                                getOutServerXML().send("SHIP LOCATION", gc.setShip(this, new Ship(new int[]{x1, y1, x2, y2})));
+                                System.out.println();
                                 break;
                             }
                             case "SHOOT": {
@@ -350,7 +332,7 @@ public class PlayerController extends Thread {
 
     //действие на приглашение игроком№1 игрока№2 в игру
     private void inviteResult(String player1, String player2) {
-        for (PlayerController pl:Server.getAllPlayersControllerSet()) {
+        for (PlayerController pl: Server.getAllPlayersControllerSet()) {
             if (pl.getThisPlayer().getLogin().equals(player2)) {
                 pl.getOutServerXML().send("INVITE",player1);
             }
