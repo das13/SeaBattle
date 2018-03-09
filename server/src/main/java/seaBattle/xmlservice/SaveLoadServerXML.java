@@ -273,8 +273,8 @@ public class SaveLoadServerXML {
         if (!new File("game-" + player1 +"VS"+ player2 + ".xml").exists()){
 
             GameCondition gameCondition = new GameCondition();
-            int[] rows1 = new int[9];
-            int[] rows2 = new int[9];
+            int[] rows1 = new int[10];
+            int[] rows2 = new int[10];
             gameCondition.serAllRows1(rows1);
             gameCondition.serAllRows2(rows2);
             int[][] allRows = new int[][] {rows1, rows2};

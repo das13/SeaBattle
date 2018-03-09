@@ -207,6 +207,7 @@ public class PlayerController extends Thread {
                 }
                 reader.close();
             }
+            logoutResult(thisPlayer.getLogin());
         } catch (XMLStreamException | InterruptedException e) {
             logger.error("Receive/Send error between thread and client", e);
         } finally {
@@ -236,12 +237,12 @@ public class PlayerController extends Thread {
             if (player.getLogin().equals(login) && player.getPassword().equals(password)){
                 if (player.getStatus().equals("banned")){
                     str = "MORTAL, YOUR ACCOUNT IS BANNED BY HIGHER POWER!";
-                    break;
+                    return str;
                 }
                 for (String ip : Server.getBannedIpListSet()){
                     if (socket.getInetAddress().equals(ip)){
                         str = "MORTAL, YOUR IP IS BANNED BY HIGHER POWER!";
-                        break;
+                        return str;
                     }
                 }
                 for (Player player1 : Server.getAllPlayersSet()){

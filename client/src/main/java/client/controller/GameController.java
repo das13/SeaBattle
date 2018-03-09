@@ -92,10 +92,10 @@ public class GameController implements Initializable {
         y2 = (position == 0 ? y1 : y1 + length - 1);
         System.out.println("Ship" + x1 + y1 +x2 +y2);
         String[] location = new String[4];
-        location[0] = "" + x1; //x1
-        location[1] = "" + y1; //y1
-        location[2] = "" + x2; //x2
-        location[3] = "" + y2; //y2
+        location[1] = "" + x1; //x1                       /*CHANGED x-y*/
+        location[0] = "" + y1; //y1
+        location[3] = "" + x2; //x2
+        location[2] = "" + y2; //y2
         try {
             System.out.println("socket "+ ServerListener.getListener().getSocket().isConnected());
             outClientXML.send("SHIP LOCATION", location);

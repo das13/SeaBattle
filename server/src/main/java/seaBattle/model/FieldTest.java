@@ -3,7 +3,7 @@ package seaBattle.model;
 public class FieldTest {
     public static void main(String [] args) {
         Field field = new Field();
-        field.setShip(new Ship(new int[]{0,2,0,4}));
+        field.setShip(new Ship(new int[]{0,9,0,10}));
         field.setShip(new Ship(new int[]{2,2,4,2}));
         field.setShip(new Ship(new int[]{2,5,4,5}));
         for (int i=0;i<10;i++) {
