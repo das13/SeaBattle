@@ -291,7 +291,12 @@ public class SaveLoadServerXML {
             for (int t = 0; t < 2; t++) {
                 for (int i = 0; i < 10; i++) {
                     for (int j = 0; j < 10; j++) {
-                        sb.append(String.valueOf(field1.getField()[i][j]));
+                        if (t == 0){
+                            sb.append(String.valueOf(field1.getField()[i][j]));
+                        }
+                        else {
+                            sb.append(String.valueOf(field2.getField()[i][j]));
+                        }
                     }
                     tempList[t][i] = String.valueOf(sb);
                     System.out.println("SB = " + sb);
