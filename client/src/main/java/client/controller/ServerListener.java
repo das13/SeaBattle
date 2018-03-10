@@ -133,6 +133,13 @@ public class ServerListener implements Runnable{
                            case "MSG": {
                                //делать в последнюю очередь
                                System.out.println("\n\n\nSERVER:\"MSG\"");
+                               String value = inClientXML.checkValue(reader);
+                               Platform.runLater(new Runnable() {
+                                   @Override
+                                   public void run() {
+                                       commonWindowController.getTxaChat().appendText(value);
+                                   }
+                               });
                                break;
                            }
                            case "INVITE": {
@@ -265,6 +272,19 @@ public class ServerListener implements Runnable{
                                }
                                break;
                            }
+                           case "SHOOT MY SIDE": {
+                               System.out.println("\n\n\nSERVER:\"SHOOT\"");
+                               String result = inClientXML.checkValue(reader);
+                               int x1 = Integer.parseInt(inClientXML.checkValue(reader));
+                               int y1 = Integer.parseInt(inClientXML.checkValue(reader));
+                               Platform.runLater(new Runnable() {
+                                   @Override
+                                   public void run() {
+                                       gameController.setShootbyEnemy(result, x1, y1);
+                                   }
+                               });
+                           }
+
                            case "SHOOT RESULT": {
                                System.out.println("\n\n\nSERVER:\"SHOOT\"");
                                String value = inClientXML.checkValue(reader);
@@ -284,7 +304,14 @@ public class ServerListener implements Runnable{
 
                            case "SURRENDER": {
                                System.out.println("\n\n\nSERVER:\"SURRENDER\"");
+                               String value = inClientXML.checkValue(reader);
                                commonWindowController.setEnemySurrender(true);
+                               Platform.runLater(new Runnable() {
+                                   @Override
+                                   public void run() {
+                                       DialogManager.showInfoDialog("SURRENDER", value);
+                                   }
+                               });
                                break;
                            }
                            case "GAME OVER": {

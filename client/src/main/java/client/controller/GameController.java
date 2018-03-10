@@ -160,6 +160,26 @@ public class GameController implements Initializable {
 
     }
 
+    public void setShootbyEnemy(String result, int x1, int y1) {
+        if (result.equals("HIT")){
+            Cell cell = new Cell(x1, y1, false);
+            cell.border.setFill(Color.BLACK);
+            userPane.getChildren().add(cell);
+        }
+        if (result.equals("MISS")){
+            Cell cell = new Cell(x1, y1, false);
+            cell.border.setFill(Color.LIGHTBLUE);
+            userPane.getChildren().add(cell);
+        }
+
+        if (result.equals("DESTROY")){
+            Cell cell = new Cell(x1, y1, false);
+            cell.border.setFill(Color.GOLD);
+            userPane.getChildren().add(cell);
+        }
+
+    }
+
     public void selectShip1p(ActionEvent event) {
         length = 1;
     }
@@ -199,4 +219,6 @@ public class GameController implements Initializable {
     public void setGameStart(boolean gameStart) {
         isGameStart = gameStart;
     }
+
+
 }

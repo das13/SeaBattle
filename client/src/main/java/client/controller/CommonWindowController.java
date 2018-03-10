@@ -51,13 +51,13 @@ public class CommonWindowController{
     private TextArea txtMassage;
     @FXML
     private TextArea txaChat;
-    Stage gameWindow;
+    private Stage gameWindow;
     private boolean isEnemySurrender = false;
     private static Stage waitAnswerWindow;
     private String key;
     private String value;
-    private static ServerListener listener;
-    private static String enemy;
+    private  ServerListener listener;
+    private  String enemy;
     private final static String WAITANSWERFORM = "/views/WaitAnswer.fxml";
     protected final static String ANSWERFORM = "/views/Answer.fxml";
     public RegController regController;
@@ -146,22 +146,20 @@ public class CommonWindowController{
 
     public void sendButtonAction(){
         String msg = txtMassage.getText();
-            Platform.runLater(new Runnable() {
+        if (!txtMassage.getText().isEmpty()) {
+            try {
+                listener.getOutClientXML().send("MSG", msg);
+            } catch (XMLStreamException e) {
+                e.printStackTrace();
+            }
+        }
+        Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
-
-                    if (!txtMassage.getText().isEmpty()) {
-                        try {
-                            listener.getOutClientXML().send("MSG", msg);
-                        } catch (XMLStreamException e) {
-                            e.printStackTrace();
-                        }
-
-                    //    txaChat.appendText(regController.getUsername() + ":" + msg);
-                    }
+                    txtMassage.setText("");
                 }
             });
-            txtMassage.setText("");
+
     }
 
     public void sendMethod(KeyEvent event) throws IOException {
@@ -210,9 +208,9 @@ public class CommonWindowController{
                 }
                 stage.setOnCloseRequest((WindowEvent e) -> {
                     try {
-                        if (isEnemySurrender()) {
+                        if (!isEnemySurrender()) {
 
-                            ServerListener.getListener().getOutClientXML().send("SURRENDER", enemy);
+                            ServerListener.getListener().getOutClientXML().send("SURRENDER", lblLogin.getText());
                         }
                         setEnemySurrender(false);
                     } catch (XMLStreamException e1) {
@@ -228,6 +226,10 @@ public class CommonWindowController{
 
             }
         });
+    }
+
+    public TextArea getTxaChat() {
+        return txaChat;
     }
 
     public void setEnemySurrender(boolean enemySurrender) {
