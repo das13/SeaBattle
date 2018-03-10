@@ -58,7 +58,7 @@ public class GameController extends Thread {
             str = field2.shoot(x,y);
             String y1 = String.valueOf(y);
             String x1 = String.valueOf(x);
-            playerController2.getOutServerXML().send("SHOOT MY SIDE", y1,x1);
+            playerController2.getOutServerXML().send("SHOOT MY SIDE", str, y1,x1);
             if (!str.equals("MISS")) {
                 countShips2--;
             }
@@ -66,7 +66,7 @@ public class GameController extends Thread {
             str = field1.shoot(x,y);
             String y1 = String.valueOf(y);
             String x1 = String.valueOf(x);
-            playerController1.getOutServerXML().send("SHOOT MY SIDE", y1,x1);
+            playerController1.getOutServerXML().send("SHOOT MY SIDE", str, y1,x1);
             if (!str.equals("MISS")) {
                 countShips1--;
             }

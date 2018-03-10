@@ -55,12 +55,15 @@ public class OutServerXML {
         }
     }
 
-    public void send(String key, String value1, String value2){
+    public void send(String key,String shootResult, String value1, String value2){
         try {
             writer.writeStartDocument("1.0");
             writer.writeStartElement("root");
             writer.writeStartElement("key");
             writer.writeCharacters(key);
+            writer.writeEndElement();
+            writer.writeStartElement("value");
+            writer.writeCharacters(shootResult);
             writer.writeEndElement();
             writer.writeStartElement("value");
             writer.writeCharacters(value1);
@@ -78,6 +81,9 @@ public class OutServerXML {
             writer2.writeStartElement("key");
             writer2.writeCharacters(key);
             writer2.writeEndElement();
+            writer.writeStartElement("value");
+            writer.writeCharacters(shootResult);
+            writer.writeEndElement();
             writer2.writeStartElement("value");
             writer2.writeCharacters(value1);
             writer2.writeEndElement();
