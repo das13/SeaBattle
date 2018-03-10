@@ -237,7 +237,7 @@ public class PlayerController extends Thread {
             if (!player.getLogin().equals(login) && !player.getPassword().equals(password)){
                 str = "player with this login or password not found. register first";
             }
-            if (!player.getLogin().equals(login) && player.getPassword().equals(password) || player.getLogin().equals(login) && !player.getPassword().equals(password)){
+            if ((!player.getLogin().equals(login) && player.getPassword().equals(password)) || (player.getLogin().equals(login) && !player.getPassword().equals(password))){
                 str = "login or password is incorrect";
                 System.out.println("RESULT = " + str);
                 return str;
