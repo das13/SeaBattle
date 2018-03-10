@@ -38,6 +38,13 @@ public class PlayerController extends Thread {
     public void run() {
         int threadNumber = Server.getCountOfThread();
         thisPlayer.setStatus("offline");
+        System.out.println(socket.getChannel() + "socket.getChannel()");
+        System.out.println(socket.getInetAddress() + "socket.getInetAddress()");
+        System.out.println(socket.getLocalAddress() + "socket.getLocalAddress()");
+        System.out.println(socket.getLocalPort() + "socket.getLocalPort()");
+        System.out.println(socket.getLocalSocketAddress() + "socket.getLocalSocketAddress()");
+        System.out.println(socket.getPort() + "socket.getPort()");
+
         try {
             while (!socket.isClosed()){
                 inServerXML.setReader(inServerXML.getFactory().createXMLStreamReader(inServerXML.getFileReader()));
@@ -164,13 +171,13 @@ public class PlayerController extends Thread {
                                 //TODO верхний вариант для контроля через ClientTEST
                                 //TODO нижний вернуть при интеграции в интерфейс
                                 int x1 = Integer.parseInt(inServerXML.checkValue(reader));
-                                System.out.println("x1 = \"" + x1 + "\"");
+                                System.out.println("y1 = \"" + x1 + "\"");
                                 int y1 = Integer.parseInt(inServerXML.checkValue(reader));
-                                System.out.println("y1 = \"" + y1 + "\"");
+                                System.out.println("x1 = \"" + y1 + "\"");
                                 int x2 = Integer.parseInt(inServerXML.checkValue(reader));
-                                System.out.println("x2 = \"" + x2 + "\"");
+                                System.out.println("y2 = \"" + x2 + "\"");
                                 int y2 = Integer.parseInt(inServerXML.checkValue(reader));
-                                System.out.println("y2 = \"" + y2 + "\"");
+                                System.out.println("x2 = \"" + y2 + "\"");
                                 sleep(10);
                                 getOutServerXML().send("SHIP LOCATION", gc.setShip(this, new Ship(new int[]{x1, y1, x2, y2})));
                                 System.out.println();

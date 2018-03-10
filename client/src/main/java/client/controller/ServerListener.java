@@ -220,7 +220,8 @@ public class ServerListener implements Runnable{
                            case "SHIP LOCATION": {
                                System.out.println("\n\n\nSERVER:\"SHIP\"");
                                String value = inClientXML.checkValue(reader);
-                               if (value.equals("OK")) {
+                               if (value.equals("OK") || value.equals("GAME STARTED, you are PLAYER ONE") ||
+                                       value.equals("GAME STARTED, you are PLAYER TWO")) {
 
                                    Platform.runLater(new Runnable() {
                                        @Override
@@ -235,11 +236,23 @@ public class ServerListener implements Runnable{
                                }
                                break;
                            }
-                           case "SHOOT": {
+                           case "SHOOT RESULT": {
                                System.out.println("\n\n\nSERVER:\"SHOOT\"");
-                               //сообщение сервера о результате выстрела (ранил / убил / мимо)
+                               String value = inClientXML.checkValue(reader);
+
+                               Platform.runLater(new Runnable() {
+                                   @Override
+                                   public void run() {
+                                       gameController.setShoot(value);
+                                   }
+                               });
+
+
+                               showDialogInfo("SHIP LOCATION", value);
                                break;
                            }
+                               //сообщение сервера о результате выстрела (ранил / убил / мимо)
+
                            case "SURRENDER": {
                                System.out.println("\n\n\nSERVER:\"SURRENDER\"");
                                commonWindowController.setEnemySurrender(true);

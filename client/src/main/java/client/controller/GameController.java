@@ -9,6 +9,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import org.apache.log4j.Logger;
 
 import javax.xml.stream.XMLStreamException;
@@ -91,6 +92,9 @@ public class GameController implements Initializable {
     }
 
     public void shoot(int x1, int y1) {
+
+        this.x1 = x1;
+        this.y1 = y1;
         try {
             ServerListener.getListener().getOutClientXML().send("SHOOT" , ""+y1, ""+x1);
         } catch (XMLStreamException e) {
@@ -99,6 +103,26 @@ public class GameController implements Initializable {
         System.out.println("SHOOT");
     }
 
+
+    public void setShoot(String result) {
+        if (result.equals("HIT")){
+            Cell cell = new Cell(x1, y1, true);
+            cell.border.setFill(Color.BLACK);
+            enemyPane.getChildren().add(cell);
+        }
+        if (result.equals("MISS")){
+            Cell cell = new Cell(x1, y1, true);
+            cell.border.setFill(Color.LIGHTBLUE);
+            enemyPane.getChildren().add(cell);
+        }
+        if (result.equals("DESTROY")){
+            Cell cell = new Cell(x1, y1, true);
+            cell.border.setFill(Color.GOLD);
+            enemyPane.getChildren().add(cell);
+        }
+
+
+    }
 
     public void sendAnswer(int x1, int y1) {
         this.x1 = x1;
@@ -113,7 +137,7 @@ public class GameController implements Initializable {
         location[2] = "" + y2; //y2
         try {
             System.out.println("socket "+ ServerListener.getListener().getSocket().isConnected());
-            outClientXML.send("SHIP LOCATION", location);
+            outClientXML.send("SHIP LOCATION", y1, x1, y2, x2);
         } catch (XMLStreamException e) {
             logger.error("SHIP LOCATION error",e);
             System.out.println("socket closed:"+ ServerListener.getListener().getSocket().isClosed());

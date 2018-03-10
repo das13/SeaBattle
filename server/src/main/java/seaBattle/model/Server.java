@@ -53,7 +53,12 @@ public class Server {
                 allPlayersControllerSet.add(pc);
                 countOfThread++;
                 System.out.println("\n/ thread #" + countOfThread + " now is listening /");
-            }
+                System.out.println("#" + listener.getLocalPort() + " listener.getLocalPort()");
+                System.out.println("#" + listener.getInetAddress() + " listener.getInetAddress()");
+                System.out.println("#" + listener.getChannel() + " listener.getChannel()");
+                System.out.println("#" + listener.getLocalSocketAddress() + " listener..getLocalSocketAddress()");
+                System.out.println("#" + listener.getReuseAddress() + " listener.getReuseAddress()");
+                      }
         } finally {
             listener.close();
         }

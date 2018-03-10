@@ -84,17 +84,17 @@ public class GameController extends Thread {
     public String setShip(PlayerController playerController, Ship ship) {
         if (playerController.equals(playerController1)){
             str = field1.setShip(ship);
-
-
-
-            // а если эррор?..
-            countShips1 += ship.getHealth();
+            if(str.equals("OK")) {
+                countShips1 += ship.getHealth();
+            }
             if (checkStart()) {
                 str ="GAME STARTED, you are PLAYER ONE";
             }
         }else {
             str = field2.setShip(ship);
-            countShips2 += ship.getHealth();
+            if(str.equals("OK")) {
+                countShips2 += ship.getHealth();
+            }
             if (checkStart()) {
                 str ="GAME STARTED, you are PLAYER TWO";
             }

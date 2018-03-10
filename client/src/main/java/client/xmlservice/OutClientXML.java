@@ -121,6 +121,45 @@ public class OutClientXML {
         writer2.flush();
     }
 
+    public void send(String key, int y1, int x1, int y2, int x2) throws XMLStreamException {
+        writer.writeStartDocument("1.0");
+        writer.writeStartElement("root");
+        writer.writeStartElement("key");
+        writer.writeCharacters(key);
+        writer.writeEndElement();
+        writer.writeStartElement("value");
+        writer.writeCharacters(String.valueOf(y1));
+        writer.writeEndElement();
+        writer.writeStartElement("value");
+        writer.writeCharacters(String.valueOf(x1));
+        writer.writeEndElement();
+        writer.writeStartElement("value");
+        writer.writeCharacters(String.valueOf(y2));
+        writer.writeEndElement();
+        writer.writeStartElement("value");
+        writer.writeCharacters(String.valueOf(x2));
+        writer.writeEndElement();
+        writer.writeEndElement();
+        writer.writeEndDocument();
+        writer.flush();
+/*
+        //console check
+        writer2.writeStartDocument("1.0");
+        writer2.writeStartElement("root");
+        writer2.writeStartElement("key");
+        writer2.writeCharacters(key);
+        writer2.writeEndElement();
+        writer2.writeStartElement("value");
+        writer2.writeCharacters(value1);
+        writer2.writeEndElement();
+        writer2.writeStartElement("value");
+        writer2.writeCharacters(value2);
+        writer2.writeEndElement();
+        writer2.writeEndElement();
+        writer2.writeEndDocument();
+        writer2.flush();*/
+    }
+
     public XMLOutputFactory getFactory() {
         return factory;
     }

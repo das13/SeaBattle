@@ -32,9 +32,38 @@ public class Field {
     }
 
     public boolean checkShipDestroy(int x,int y) {
-        if (field[x+1][y] != 1 && field[x-1][y] != 1 && field[x][y+1] != 1 && field[x][y-1] != 1 ) {
+        int c = 0;
+        try {
+            if (field[x + 1][y] != 1) {
+                c++;
+            }
+        }catch (ArrayIndexOutOfBoundsException e){
+            c++;
+        }
+        try {
+            if (field[x - 1][y] != 1) {
+                c++;
+            }
+        }catch (ArrayIndexOutOfBoundsException e){
+            c++;
+        }
+        try {
+            if (field[x][y + 1] != 1) {
+                c++;
+            }
+        }catch (ArrayIndexOutOfBoundsException e){
+            c++;
+        }
+        try {
+            if (field[x][y - 1] != 1) {
+                c++;
+            }
+        }catch (ArrayIndexOutOfBoundsException e){
+            c++;
+        }
+        if (c == 4) {
             return true;
-        }else {
+        } else {
             return false;
         }
     }
@@ -111,21 +140,25 @@ public class Field {
     }
 
     public boolean areaChecking(int [][]f,int stat,int a,int b,boolean v) {
-        if (v) {
-            for (int i = a; i <= b;i++) {
-                if (field[stat][i] != 0) {
-                    System.out.println("U cant to place ship");
-                    return false;
-                }
+        try {
+            if (v) {
+                for (int i = a; i <= b; i++) {
+                    if (field[stat][i] != 0) {
+                        System.out.println("U cant to place ship");
+                        return false;
+                    }
 
-            }
-        }else {
-            for (int i = a; i <=b;i++) {
-                if (field[i][stat] != 0) {
-                    System.out.println("U cant to place ship");
-                    return false;
+                }
+            } else {
+                for (int i = a; i <= b; i++) {
+                    if (field[i][stat] != 0) {
+                        System.out.println("U cant to place ship");
+                        return false;
+                    }
                 }
             }
+        }catch (ArrayIndexOutOfBoundsException e) {
+            return false;
         }
         return true;
     }
