@@ -7,7 +7,7 @@ import javafx.scene.shape.Rectangle;
 
 public class Cell extends StackPane {
     public static final int TILE_SIZE = 25;
-    private int x, y;
+    public int x, y;
     private boolean isEnemy;
 
     public Rectangle border = new Rectangle(TILE_SIZE - 2, TILE_SIZE - 2);
@@ -21,10 +21,17 @@ public class Cell extends StackPane {
         getChildren().add(border);
         setTranslateX(x * TILE_SIZE);
         setTranslateY(y * TILE_SIZE);
-        setOnMouseClicked(e -> GameController.getCwController().sendAnswer(x, y));
+
     }
 
-/*    public void set() {
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+    /*    public void set() {
         if (!isEnemy) {
             int length = GameController.getCwController().getLength();
             int position = GameController.getCwController().getPosition();

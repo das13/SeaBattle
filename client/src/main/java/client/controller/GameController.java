@@ -63,7 +63,7 @@ public class GameController implements Initializable {
         gameController = this;
     }
 
-    public static GameController getCwController() {
+    public static GameController getGameController() {
         return gameController;
     }
 
@@ -81,9 +81,24 @@ public class GameController implements Initializable {
             for (int x = 0; x < X_TILES; x++) {
                 Cell cell = new Cell(x,y, isEnemy);
                 pane.getChildren().add(cell);
+                if (!isEnemy) {
+                    cell.setOnMouseClicked(e -> sendAnswer(cell.getX(), cell.getY()));
+                } else {
+                    cell.setOnMouseClicked(e -> shoot(cell.getX(), cell.getY()));
+                }
             }
         }
     }
+
+    public void shoot(int x1, int y1) {
+        try {
+            ServerListener.getListener().getOutClientXML().send("SHOOT" , ""+y1, ""+x1);
+        } catch (XMLStreamException e) {
+            e.printStackTrace();
+        }
+        System.out.println("SHOOT");
+    }
+
 
     public void sendAnswer(int x1, int y1) {
         this.x1 = x1;
