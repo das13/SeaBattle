@@ -42,22 +42,14 @@ public class Server {
         try {
             listener = new ServerSocket(PORT);
 
-
         try {
             while (true) {
                 PlayerController pc;
                 pc = new PlayerController();
-                //new PlayerController(listener.accept()).start();
                 pc.setSocket(listener.accept());
                 pc.start();
                 allPlayersControllerSet.add(pc);
                 countOfThread++;
-                System.out.println("\n/ thread #" + countOfThread + " now is listening /");
-                System.out.println("#" + listener.getLocalPort() + " listener.getLocalPort()");
-                System.out.println("#" + listener.getInetAddress() + " listener.getInetAddress()");
-                System.out.println("#" + listener.getChannel() + " listener.getChannel()");
-                System.out.println("#" + listener.getLocalSocketAddress() + " listener..getLocalSocketAddress()");
-                System.out.println("#" + listener.getReuseAddress() + " listener.getReuseAddress()");
                       }
         } finally {
             listener.close();

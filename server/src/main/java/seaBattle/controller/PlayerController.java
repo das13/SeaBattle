@@ -38,13 +38,6 @@ public class PlayerController extends Thread {
     public void run() {
         int threadNumber = Server.getCountOfThread();
         thisPlayer.setStatus("offline");
-        System.out.println(socket.getChannel() + "socket.getChannel()");
-        System.out.println(socket.getInetAddress() + "socket.getInetAddress()");
-        System.out.println(socket.getLocalAddress() + "socket.getLocalAddress()");
-        System.out.println(socket.getLocalPort() + "socket.getLocalPort()");
-        System.out.println(socket.getLocalSocketAddress() + "socket.getLocalSocketAddress()");
-        System.out.println(socket.getPort() + "socket.getPort()");
-
         try {
             while (!socket.isClosed()){
                 inServerXML.setReader(inServerXML.getFactory().createXMLStreamReader(inServerXML.getFileReader()));
