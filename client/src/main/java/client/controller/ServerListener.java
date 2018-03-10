@@ -220,8 +220,7 @@ public class ServerListener implements Runnable{
                            case "SHIP LOCATION": {
                                System.out.println("\n\n\nSERVER:\"SHIP\"");
                                String value = inClientXML.checkValue(reader);
-                               if (value.equals("OK") || value.equals("GAME STARTED, you are PLAYER ONE") ||
-                                       value.equals("GAME STARTED, you are PLAYER TWO")) {
+                               if (value.equals("OK")) {
 
                                    Platform.runLater(new Runnable() {
                                        @Override
@@ -230,8 +229,38 @@ public class ServerListener implements Runnable{
                                        }
                                    });
                                    break;
-                               } else {
-                                   showDialogInfo("SHIP LOCATION", value);
+                               }
+                                if (value.equals("GAME STARTED, you are PLAYER ONE")) {
+
+                                   Platform.runLater(new Runnable() {
+                                       @Override
+                                       public void run() {
+                                           gameController.setShip();
+                                           gameController.setGameStart(true);
+                                           DialogManager.showInfoDialog("SERVER INFO", value);
+                                       }
+                                   });
+                                   break;
+                               }
+                               if (value.equals("GAME STARTED, you are PLAYER TWO")) {
+
+                                   Platform.runLater(new Runnable() {
+                                       @Override
+                                       public void run() {
+                                           gameController.setGameStart(true);
+                                           DialogManager.showInfoDialog("SERVER INFO", value);
+                                       }
+                                   });
+                                   break;
+                               }
+
+                               else {
+                                   Platform.runLater(new Runnable() {
+                                       @Override
+                                       public void run() {
+                                            DialogManager.showInfoDialog("SHIP LOCATION", value);
+                                       }
+                                   });
 
                                }
                                break;
@@ -282,25 +311,7 @@ public class ServerListener implements Runnable{
                logger.error("Error in ServerListenerThread run() XMLStreamException e");
            }
        }
-
-       /* if(outClientXML.getWriter() != null) {
-                try {
-                    outClientXML.getWriter().close();
-                    outClientXML.getWriter2().close();
-            } catch (XMLStreamException e) {
-                e.printStackTrace();
-            }
-        }
-
-        if (socket != null) {
-            try {
-                socket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }*/
         System.out.println("RUN IS ENDED");
-
     }
 
     private void showDialogInfo(String key, String value) {
@@ -331,8 +342,7 @@ public class ServerListener implements Runnable{
             }
         }
         isConnect = false;
-            System.out.println("Server is disconnected");
-    }
+        }
     }
 
     public String getEnemy() {
