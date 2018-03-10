@@ -55,6 +55,43 @@ public class OutServerXML {
         }
     }
 
+    public void send(String key, String value1, String value2){
+        try {
+            writer.writeStartDocument("1.0");
+            writer.writeStartElement("root");
+            writer.writeStartElement("key");
+            writer.writeCharacters(key);
+            writer.writeEndElement();
+            writer.writeStartElement("value");
+            writer.writeCharacters(value1);
+            writer.writeEndElement();
+            writer.writeStartElement("value");
+            writer.writeCharacters(value2);
+            writer.writeEndElement();
+            writer.writeEndElement();
+            writer.writeEndDocument();
+            writer.flush();
+
+            //console check
+            writer2.writeStartDocument("1.0");
+            writer2.writeStartElement("root");
+            writer2.writeStartElement("key");
+            writer2.writeCharacters(key);
+            writer2.writeEndElement();
+            writer2.writeStartElement("value");
+            writer2.writeCharacters(value1);
+            writer2.writeEndElement();
+            writer.writeStartElement("value");
+            writer.writeCharacters(value2);
+            writer.writeEndElement();
+            writer2.writeEndElement();
+            writer2.writeEndDocument();
+            writer2.flush();
+        } catch (XMLStreamException e) {
+            e.printStackTrace();
+        }
+    }
+
     //XML with many values
     public void send(String key, String[] list) {
         try {
