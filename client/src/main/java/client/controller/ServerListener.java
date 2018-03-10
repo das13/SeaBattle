@@ -225,7 +225,7 @@ public class ServerListener implements Runnable{
                                break;
                            }
                            case "SHIP LOCATION": {
-                               System.out.println("\n\n\nSERVER:\"SHIP\"");
+                               System.out.println("\n\n\nSERVER:\"SHIP LOCATION\"");
                                String value = inClientXML.checkValue(reader);
                                if (value.equals("OK")) {
 
@@ -273,7 +273,7 @@ public class ServerListener implements Runnable{
                                break;
                            }
                            case "SHOOT MY SIDE": {
-                               System.out.println("\n\n\nSERVER:\"SHOOT\"");
+                               System.out.println("\n\n\nSERVER:\"SHOOT MY SIDE\"");
                                String result = inClientXML.checkValue(reader);
                                int x1 = Integer.parseInt(inClientXML.checkValue(reader));
                                int y1 = Integer.parseInt(inClientXML.checkValue(reader));
@@ -286,7 +286,7 @@ public class ServerListener implements Runnable{
                            }
 
                            case "SHOOT RESULT": {
-                               System.out.println("\n\n\nSERVER:\"SHOOT\"");
+                               System.out.println("\n\n\nSERVER:\"SHOOT RESULT\"");
                                String value = inClientXML.checkValue(reader);
 
                                Platform.runLater(new Runnable() {
