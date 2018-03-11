@@ -216,12 +216,12 @@ public class CommonWindowController{
                         logger.error("SURRENDER error", e1);
                     }
                     btnAtack.setDisable(false);
-                   // RegController.getRegController().comWindow.show();
+                    RegController.getRegController().comWindow.show();
                 });
                 stage.setTitle("Sea battle");
                 stage.setScene(new Scene(root, 700, 400));
                 stage.setResizable(false);
-                //RegController.getRegController().comWindow.hide();
+                RegController.getRegController().comWindow.hide();
                 btnAtack.setDisable(true);
                 stage.show();
 

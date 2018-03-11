@@ -75,9 +75,8 @@ public class GameController implements Initializable {
     private OutClientXML outClientXML;
     private ServerListener listener;
     private boolean isGameStart;
-
     private static GameController gameController;
-    private boolean startgame = false;
+    private boolean isFinishSet;
     private int x1, y1, y2, x2;
 
     public GameController() {
@@ -101,8 +100,7 @@ public class GameController implements Initializable {
 
 
     private void createField(Pane pane, boolean isEnemy) {
-        char row = 65;
-        char col = '0';
+        char row = 65; // 'A'
         for (int i = 0; i < 10; i++) {
             if (!isEnemy) {
                 paneColumn1.getChildren().add(new FieldDesignation(String.valueOf(i+1), i, 0));
@@ -113,10 +111,9 @@ public class GameController implements Initializable {
             }
 
         }
-
         for (int y = 0; y < Y_TILES; y++) {
             for (int x = 0; x < X_TILES; x++) {
-                Cell cell = new Cell(x,y, isEnemy);
+                Cell cell = new Cell(x, y);
                 pane.getChildren().add(cell);
                 if (!isEnemy) {
                     cell.setOnMouseClicked(e -> sendAnswer(cell.getX(), cell.getY()));
@@ -142,23 +139,6 @@ public class GameController implements Initializable {
         }
     }
 
-
-    public void setShoot(String result) {
-        Cell cell = new Cell(x1, y1, true);
-        enemyPane.getChildren().add(cell);
-        if (result.equals("HIT")){
-            cell.border.setFill(Color.BLACK);
-       }
-        if (result.equals("MISS")){
-            cell.border.setFill(Color.LIGHTBLUE);
-        }
-        if (result.equals("DESTROY")){
-            cell.border.setFill(Color.GOLD);
-        }
-
-
-    }
-
     public void sendAnswer(int x1, int y1) {
         System.out.println(lblEnemyLogin.getText() + lblUserLogin.getText());
         this.x1 = x1;
@@ -166,11 +146,6 @@ public class GameController implements Initializable {
         x2 = (position == 0 ? x1 + length - 1: x1);
         y2 = (position == 0 ? y1 : y1 + length - 1);
         System.out.println("Ship" + x1 + y1 +x2 +y2);
-        String[] location = new String[4];
-        location[1] = "" + x1; //x1                       /*CHANGED x-y*/
-        location[0] = "" + y1; //y1
-        location[3] = "" + x2; //x2
-        location[2] = "" + y2; //y2
         try {
             System.out.println("socket "+ ServerListener.getListener().getSocket().isConnected());
             outClientXML.send("SHIP LOCATION", y1, x1, y2, x2);
@@ -181,19 +156,18 @@ public class GameController implements Initializable {
     }
 
     public void setShip(){
-        if (!isGameStart) {
-            Ship ship = new Ship(x1, y1,length ,position);
+        if (!isFinishSet) {
+            Ship ship = new Ship(x1, y1, length, position);
             ship.setShip();
         }
         else {
-            DialogManager.showInfoDialog("GAME INFO", "Game is started");
+            DialogManager.showInfoDialog("GAME INFO", "you have already arranged all the ships");
         }
 
     }
 
-    public void setShootbyEnemy(String result, int x1, int y1) {
-        Cell cell = new Cell(x1, y1, false);
-        userPane.getChildren().add(cell);
+    private Cell createNewCell(String result, int x1, int y1){
+        Cell cell = new Cell(x1, y1);
         if (result.equals("HIT")){
             cell.border.setFill(Color.BLACK);
         }
@@ -204,6 +178,15 @@ public class GameController implements Initializable {
         if (result.equals("DESTROY")){
             cell.border.setFill(Color.GOLD);
         }
+        return cell;
+    }
+
+    public void setShoot(String result) {
+        enemyPane. getChildren().add(createNewCell(result, x1, y1));
+    }
+
+    public void setShootbyEnemy(String result, int x1, int y1) {
+        userPane.getChildren().add(createNewCell(result, x1, y1));
     }
 
     public void selectShip1p(ActionEvent event) {
@@ -246,14 +229,6 @@ public class GameController implements Initializable {
         isGameStart = gameStart;
     }
 
-    public Label getEnemyLogin() {
-        return lblEnemyLogin;
-    }
-
-    public Label getUserLogin() {
-        return lblUserLogin;
-    }
-
     public void pressBtnSurrender(ActionEvent event) {
         try {
             ServerListener.getListener().getOutClientXML().send("SURRENDER", listener.getUsername());
@@ -266,11 +241,7 @@ public class GameController implements Initializable {
         return btnSurrender;
     }
 
-    public void setLabelUser(String username) {
-        lblUserLogin.setText(username);
-    }
-
-    public void setLabelEnemy(String enemy) {
-        lblEnemyLogin.setText(enemy);
+    public void setFinishSet(boolean finishSet) {
+        isFinishSet = finishSet;
     }
 }
