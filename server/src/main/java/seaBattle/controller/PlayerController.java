@@ -92,33 +92,33 @@ public class PlayerController extends Thread {
                                 break;
                             }
                             case "BAN PLAYER": {
-                                System.out.println("\n\n\n\nkey \"BAN PLAYER\" from " + this.getThisPlayer().getLogin() + " detected:");
-                                String admin = inServerXML.checkValue(reader);
-                                System.out.println("admin = \"" + admin + "\"");
-                                String playerToBan = inServerXML.checkValue(reader);
-                                System.out.println("player to ban = \"" + playerToBan + "\"" + "\nSENDING ANSWER:");
-                                outServerXML.send("BAN PLAYER", banPlayerResult(admin,playerToBan));
-                                Server.updateAllPlayersSet();
-                                SortedSet<Player> temSet= Server.getOnlinePlayersSet();
-                                Server.updateOnlinePlayersSet();
-                                if (!temSet.equals(Server.getOnlinePlayersSet())) {
-                                    Server.updateIngamePlayersSet();
-                                    for (PlayerController pc : Server.getAllPlayersControllerSet()){
-                                        pc.sendOnlinePlayers();
-                                        sleep(10);
-                                        pc.sendIngamePlayers();
-                                    }
-                                }
+//                                System.out.println("\n\n\n\nkey \"BAN PLAYER\" from " + this.getThisPlayer().getLogin() + " detected:");
+//                                String admin = inServerXML.checkValue(reader);
+//                                System.out.println("admin = \"" + admin + "\"");
+//                                String playerToBan = inServerXML.checkValue(reader);
+//                                System.out.println("player to ban = \"" + playerToBan + "\"" + "\nSENDING ANSWER:");
+//                                outServerXML.send("BAN PLAYER", banPlayerResult(admin,playerToBan));
+//                                Server.updateAllPlayersSet();
+//                                SortedSet<Player> temSet= Server.getOnlinePlayersSet();
+//                                Server.updateOnlinePlayersSet();
+//                                if (!temSet.equals(Server.getOnlinePlayersSet())) {
+//                                    Server.updateIngamePlayersSet();
+//                                    for (PlayerController pc : Server.getAllPlayersControllerSet()){
+//                                        pc.sendOnlinePlayers();
+//                                        sleep(10);
+//                                        pc.sendIngamePlayers();
+//                                    }
+//                                }
                                 break;
                             }
                             case "BAN IP": {
-                                System.out.println("\n\n\n\nkey \"BAN IP\" from " + this.getThisPlayer().getLogin() + " detected:");
-                                String admin = inServerXML.checkValue(reader);
-                                System.out.println("admin = \"" + admin + "\"");
-                                String ipToBan = inServerXML.checkValue(reader);
-                                System.out.println("ip to ban = \"" + ipToBan + "\"" + "\nSENDING ANSWER:");
-                                outServerXML.send("BAN IP", banIpResult(admin,ipToBan));
-                                SaveLoadServerXML.updateBannedIpSet();
+//                                System.out.println("\n\n\n\nkey \"BAN IP\" from " + this.getThisPlayer().getLogin() + " detected:");
+//                                String admin = inServerXML.checkValue(reader);
+//                                System.out.println("admin = \"" + admin + "\"");
+//                                String ipToBan = inServerXML.checkValue(reader);
+//                                System.out.println("ip to ban = \"" + ipToBan + "\"" + "\nSENDING ANSWER:");
+//                                outServerXML.send("BAN IP", banIpResult(admin,ipToBan));
+//                                SaveLoadServerXML.updateBannedIpSet();
                                 break;
                             }
                             case "INVITE": {
@@ -193,7 +193,33 @@ public class PlayerController extends Thread {
                                 System.out.println("\n\n\nkey \"MSG\" from " + this.getThisPlayer().getLogin() + " detected:");
                                 String msg = inServerXML.checkValue(reader);
                                 System.out.println("msg = \"" + msg + "\"");
-                                msgResult(thisPlayer.getLogin(),msg);
+                                if (msg.contains("/BAN PLAYER")){
+                                    System.out.println("\nkey \"BAN PLAYER\" from " + this.getThisPlayer().getLogin() + " detected:");
+                                    String playerToBan = msg.substring(12);
+                                    System.out.println("player to ban = \"" + playerToBan + "\"" + "\nSENDING ANSWER:");
+                                    outServerXML.send("BAN PLAYER", banPlayerResult(thisPlayer.getLogin(),playerToBan));
+                                    Server.updateAllPlayersSet();
+                                    SortedSet<Player> temSet= Server.getOnlinePlayersSet();
+                                    Server.updateOnlinePlayersSet();
+                                    if (!temSet.equals(Server.getOnlinePlayersSet())) {
+                                        Server.updateIngamePlayersSet();
+                                        for (PlayerController pc : Server.getAllPlayersControllerSet()){
+                                            pc.sendOnlinePlayers();
+                                            sleep(10);
+                                            pc.sendIngamePlayers();
+                                        }
+                                    }
+                                }
+                                if (msg.contains("/BAN IP")){
+                                    System.out.println("\nkey \"BAN IP\" from " + this.getThisPlayer().getLogin() + " detected:");
+                                    String ipToBan = msg.substring(8);
+                                    System.out.println("ip to ban = \"" + ipToBan + "\"" + "\nSENDING ANSWER:");
+                                    outServerXML.send("BAN IP", banIpResult(thisPlayer.getLogin(),ipToBan));
+                                    SaveLoadServerXML.updateBannedIpSet();
+                                }
+                                if (!msg.contains("/BAN IP") && !msg.contains("/BAN PLAYER")){
+                                    msgResult(thisPlayer.getLogin(),msg);
+                                }
                                 break;
                             }
                             default:{
@@ -211,6 +237,7 @@ public class PlayerController extends Thread {
                 }
                 reader.close();
             }
+            Server.getAllPlayersControllerSet().remove(this);
             logoutResult(thisPlayer.getLogin());
         } catch (XMLStreamException | InterruptedException e) {
             logger.error("Receive/Send error between thread and client", e);
@@ -308,6 +335,7 @@ public class PlayerController extends Thread {
                         if (pc1.getThisPlayer().getLogin().equals(playerToBan)) {
                             System.out.println("НАШЛИ! кикаем");
                             pc1.socket.close();
+                            Server.getAllPlayersControllerSet().remove(this);
                             str = "player " + playerToBan + " banned and kicked";
                             return str;
                         }
@@ -375,6 +403,20 @@ public class PlayerController extends Thread {
         return str;
     }
 
+
+    //TODO доделать и заменить
+    public void updateAndSendPlayersInfo(){
+        Server.updateAllPlayersSet();
+        Server.updateOnlinePlayersSet();
+        Server.updateIngamePlayersSet();
+        for (PlayerController pc : Server.getAllPlayersControllerSet()){
+            if (!pc.socket.isClosed()){
+                pc.sendOnlinePlayers();
+                pc.sendIngamePlayers();
+            }
+        }
+    }
+
     public void sendOnlinePlayers() {
         String[] list = new String[((Server.getOnlinePlayersSet().size())*2)+1];
         str = String.valueOf(Server.getOnlinePlayersSet().size());
@@ -418,6 +460,7 @@ public class PlayerController extends Thread {
             if (player.getLogin().equals(login) && player.getStatus().equals("online")){
                 player.setStatus("offline");
                 str = "success!";
+                Server.getAllPlayersControllerSet().remove(this);
                 return str;
             }
         }
