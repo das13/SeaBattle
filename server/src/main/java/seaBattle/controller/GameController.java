@@ -73,6 +73,8 @@ public class GameController extends TimerTask {
             }*/
             if (!str.equals("MISS")) {
                 countShips2--;
+            } else {
+                changeCurrentPlayer();
             }
         }else {
             str = field1.shoot(x,y);
@@ -86,6 +88,8 @@ public class GameController extends TimerTask {
             }*/
             if (!str.equals("MISS")) {
                 countShips1--;
+            } else {
+                changeCurrentPlayer();
             }
         }
        // try {
@@ -101,15 +105,8 @@ public class GameController extends TimerTask {
         /*} catch (InterruptedException e) {
             e.printStackTrace();
         }*/
-        changeCurrentPlayer();
-        timer.cancel();
-        GameController gc = null;
-        try {
-            gc = (GameController) this.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
-        timer.schedule(gc,0,30000);
+
+
         return str;
     }
 

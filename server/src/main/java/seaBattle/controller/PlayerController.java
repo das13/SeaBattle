@@ -163,8 +163,6 @@ public class PlayerController extends Thread {
                                 if (gc.checkStartGame()) {
                                     gc.getPlayerController1().getOutServerXML().send("START GAME","READY");
                                     gc.getPlayerController2().getOutServerXML().send("START GAME","READY");
-                                    Timer timer = gc.getTimer();
-                                    timer.schedule(gc,0,30000);
                                 }
                                 System.out.println();
                                 break;
