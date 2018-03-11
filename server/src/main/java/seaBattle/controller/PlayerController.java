@@ -133,7 +133,17 @@ public class PlayerController extends Thread {
                                 System.out.println("player1 = \"" + player1 + "\"");
                                 String reply = inServerXML.checkValue(reader);
                                 System.out.println("reply = \"" + reply + "\"");
-                                replyResult(player1,reply);
+                                str = replyResult(player1,reply);
+                                if (str.equals("OK")) {
+                                    Server.updateAllPlayersSet();
+                                    Server.updateOnlinePlayersSet();
+                                    Server.updateIngamePlayersSet();
+                                    for (PlayerController pc : Server.getAllPlayersControllerSet()) {
+                                        pc.sendOnlinePlayers();
+                                        sleep(10);
+                                        pc.sendIngamePlayers();
+                                    }
+                                }
                                 break;
                             }
                             case "SHIP LOCATION": {
@@ -327,21 +337,33 @@ public class PlayerController extends Thread {
     }
 
     //действие на ответ игрока№2 игроку№1 на приглашение в игру
-    private void replyResult(String player1, String value) {
+    private String replyResult(String player1, String value) {
 
         for (PlayerController pc : Server.getAllPlayersControllerSet()) {
             if (pc.getThisPlayer().getLogin().equals(player1)) {
                 if (pc.isWaitingForReply()) {
                     gc = new GameController(pc, this);
                     pc.setGc(gc);
+                    //sets manipulation
+                    for (Player player : Server.getAllPlayersSet()){
+                        if (player.getLogin().equals(pc.getThisPlayer().getLogin())){
+                            player.setStatus("ingame");
+                        }
+                        if (player.getLogin().equals(thisPlayer.getLogin())){
+                            player.setStatus("ingame");
+                        }
+                    }
                     pc.getOutServerXML().send("START GAME", thisPlayer.getLogin());
                     System.out.print("\n");
                     outServerXML.send("START GAME", player1);
+                    str = "OK";
                     break;
                 }
                 System.out.println("ERROR! dude " + pc.getThisPlayer().getLogin() + " don't wanna play!");
+                str = "ERROR! dude " + pc.getThisPlayer().getLogin() + " don't wanna play!";
             }
         }
+        return str;
     }
 
     public void sendOnlinePlayers() {
