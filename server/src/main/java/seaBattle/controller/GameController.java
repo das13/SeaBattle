@@ -8,7 +8,7 @@ import java.io.File;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class GameController extends Thread {
+public class GameController extends TimerTask {
     private PlayerController playerController1;
     private PlayerController playerController2;
     private PlayerController currentPlayerController;
@@ -42,6 +42,9 @@ public class GameController extends Thread {
     }
 
     public void run() {
+        currentPlayerController.getOutServerXML().send("TURN","NOT");
+        changeCurrentPlayer();
+        currentPlayerController.getOutServerXML().send("TURN","YES");
 
     }
 
@@ -62,11 +65,11 @@ public class GameController extends Thread {
             String y1 = String.valueOf(y);
             String x1 = String.valueOf(x);
             playerController2.getOutServerXML().send("SHOOT MY SIDE", str, y1,x1);
-            try {
+            /*try {
                 sleep(10);
             } catch (InterruptedException e) {
                 e.printStackTrace();
-            }
+            }*/
             if (!str.equals("MISS")) {
                 countShips2--;
             }
@@ -75,28 +78,28 @@ public class GameController extends Thread {
             String y1 = String.valueOf(y);
             String x1 = String.valueOf(x);
             playerController1.getOutServerXML().send("SHOOT MY SIDE", str, y1,x1);
-            try {
+            /*try {
                 sleep(10);
             } catch (InterruptedException e) {
                 e.printStackTrace();
-            }
+            }*/
             if (!str.equals("MISS")) {
                 countShips1--;
             }
         }
-        try {
+       // try {
             if (countShips1 == 0) {
                 playerController1.getOutServerXML().send("SHOOT RESULT","DEFEAT!");
                 playerController2.getOutServerXML().send("SHOOT RESULT","VICTORY!");
-                sleep(10);
+                //sleep(10);
             } else if (countShips2 == 0) {
                 playerController1.getOutServerXML().send("SHOOT RESULT","VICTORY!");
                 playerController2.getOutServerXML().send("SHOOT RESULT","DEFEAT!");
-                sleep(10);
+                //sleep(10);
             }
-        } catch (InterruptedException e) {
+        /*} catch (InterruptedException e) {
             e.printStackTrace();
-        }
+        }*/
         changeCurrentPlayer();
         return str;
     }

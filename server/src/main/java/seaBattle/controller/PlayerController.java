@@ -12,6 +12,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Date;
 import java.util.SortedSet;
 
 public class PlayerController extends Thread {
@@ -161,6 +162,7 @@ public class PlayerController extends Thread {
                                 if (gc.checkStartGame()) {
                                     gc.getPlayerController1().getOutServerXML().send("START GAME","READY");
                                     gc.getPlayerController2().getOutServerXML().send("START GAME","READY");
+                                    gc.getTimer().schedule(gc,new Date(),30000);
                                 }
                                 System.out.println();
                                 break;
