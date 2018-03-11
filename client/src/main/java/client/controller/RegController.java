@@ -155,6 +155,7 @@ public class RegController{
         });
     }
 
+    
     private boolean isValidServerInfo() {
         port = -1;
         try {

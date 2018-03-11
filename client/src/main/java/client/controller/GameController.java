@@ -85,7 +85,6 @@ public class GameController implements Initializable {
         listener.setGameController(this);
         outClientXML = ServerListener.getListener().getOutClientXML();
         lblEnemyLogin.setText(CommonWindowController.getCwController().getEnemy());
-
     }
 
     private void createField(Pane pane, boolean isEnemy) {

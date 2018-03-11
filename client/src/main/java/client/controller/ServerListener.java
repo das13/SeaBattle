@@ -236,7 +236,6 @@ public class ServerListener implements Runnable{
                                System.out.println("\n\n\nSERVER:\"LOCATION\"");
                                String value = inClientXML.checkValue(reader);
                                if (value.equals("OK")) {
-
                                    Platform.runLater(new Runnable() {
                                        @Override
                                        public void run() {
