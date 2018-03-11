@@ -194,7 +194,7 @@ public class CommonWindowController{
         return enemy;
     }
 
-    public void showGameWindow(String enemy) {
+    public void showGameWindow() {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
@@ -227,6 +227,8 @@ public class CommonWindowController{
             }
         });
     }
+
+
 
     public TextArea getTxaChat() {
         return txaChat;

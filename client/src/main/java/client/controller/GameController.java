@@ -4,9 +4,11 @@ import client.controller.models.Cell;
 import client.controller.models.Ship;
 import client.controller.utils.DialogManager;
 import client.xmlservice.OutClientXML;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.layout.Pane;
@@ -19,6 +21,10 @@ import java.util.ResourceBundle;
 
 public class GameController implements Initializable {
 
+    @FXML
+    public Label lblEnemyLogin;
+    @FXML
+    public Label lblUserLogin;
     @FXML
     public Label countShip1p;
     @FXML
@@ -43,6 +49,7 @@ public class GameController implements Initializable {
     public Pane userPane;
     @FXML
     public Pane enemyPane;
+    public Button btnSurrender;
     @FXML
     private Label enemyLogin;
 
@@ -77,6 +84,8 @@ public class GameController implements Initializable {
         createField(enemyPane, true);
         listener.setGameController(this);
         outClientXML = ServerListener.getListener().getOutClientXML();
+        lblEnemyLogin.setText(CommonWindowController.getCwController().getEnemy());
+
     }
 
     private void createField(Pane pane, boolean isEnemy) {
@@ -130,6 +139,7 @@ public class GameController implements Initializable {
     }
 
     public void sendAnswer(int x1, int y1) {
+        System.out.println(lblEnemyLogin.getText() + lblUserLogin.getText());
         this.x1 = x1;
         this.y1 = y1;
         x2 = (position == 0 ? x1 + length - 1: x1);
@@ -220,5 +230,31 @@ public class GameController implements Initializable {
         isGameStart = gameStart;
     }
 
+    public Label getEnemyLogin() {
+        return lblEnemyLogin;
+    }
 
+    public Label getUserLogin() {
+        return lblUserLogin;
+    }
+
+    public void pressBtnSurrender(ActionEvent event) {
+        try {
+            ServerListener.getListener().getOutClientXML().send("SURRENDER", listener.getUsername());
+        } catch (XMLStreamException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Button getBtnSurrender() {
+        return btnSurrender;
+    }
+
+    public void setLabelUser(String username) {
+        lblUserLogin.setText(username);
+    }
+
+    public void setLabelEnemy(String enemy) {
+        lblEnemyLogin.setText(enemy);
+    }
 }

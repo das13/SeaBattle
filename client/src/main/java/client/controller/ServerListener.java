@@ -173,9 +173,17 @@ public class ServerListener implements Runnable{
                                    @Override
                                    public void run() {
                                        commonWindowController.hideWaitAnswerWindow();
-                                       commonWindowController.showGameWindow(enemy);
+                                       commonWindowController.showGameWindow();
                                    }
                                });
+                               Platform.runLater(new Runnable() {
+                               @Override
+                                   public void run() {
+                                       gameController.setLabelUser(username);
+                                       gameController.setLabelEnemy(enemy);
+                                }
+                                });
+
                                break;
                            }
                            case "ONLINE PLAYERS": {
@@ -225,7 +233,7 @@ public class ServerListener implements Runnable{
                                break;
                            }
                            case "SHIP LOCATION": {
-                               System.out.println("\n\n\nSERVER:\"SHIP\"");
+                               System.out.println("\n\n\nSERVER:\"LOCATION\"");
                                String value = inClientXML.checkValue(reader);
                                if (value.equals("OK")) {
 
@@ -273,7 +281,7 @@ public class ServerListener implements Runnable{
                                break;
                            }
                            case "SHOOT MY SIDE": {
-                               System.out.println("\n\n\nSERVER:\"SHOOT\"");
+                               System.out.println("\n\n\nSERVER:\"MY SIDE\"");
                                String result = inClientXML.checkValue(reader);
                                int x1 = Integer.parseInt(inClientXML.checkValue(reader));
                                int y1 = Integer.parseInt(inClientXML.checkValue(reader));
@@ -286,7 +294,7 @@ public class ServerListener implements Runnable{
                            }
 
                            case "SHOOT RESULT": {
-                               System.out.println("\n\n\nSERVER:\"SHOOT\"");
+                               System.out.println("\n\n\nSERVER:\"RESULT\"");
                                String value = inClientXML.checkValue(reader);
 
                                Platform.runLater(new Runnable() {
@@ -295,9 +303,6 @@ public class ServerListener implements Runnable{
                                        gameController.setShoot(value);
                                    }
                                });
-
-
-                               showDialogInfo("SHIP LOCATION", value);
                                break;
                            }
                                //сообщение сервера о результате выстрела (ранил / убил / мимо)
@@ -306,6 +311,7 @@ public class ServerListener implements Runnable{
                                System.out.println("\n\n\nSERVER:\"SURRENDER\"");
                                String value = inClientXML.checkValue(reader);
                                commonWindowController.setEnemySurrender(true);
+                               gameController.getBtnSurrender().setDisable(true);
                                Platform.runLater(new Runnable() {
                                    @Override
                                    public void run() {
@@ -316,8 +322,14 @@ public class ServerListener implements Runnable{
                            }
                            case "GAME OVER": {
                                System.out.println("\n\n\nSERVER:\"GAME OVER\"");
-                               //сообщение сервера об окончании игры и выводе результата
-                               break;
+                               String value = inClientXML.checkValue(reader);
+
+                               Platform.runLater(new Runnable() {
+                                   @Override
+                                   public void run() {
+                                       DialogManager.showInfoDialog("GAME OVER", value);
+                                   }
+                               });                               break;
                            }
                            case "INFO": {
                                System.out.println("\n\n\nSERVER:\"INFO\"");
