@@ -30,6 +30,7 @@ public class CommonWindowController{
     final static Logger logger = Logger.getLogger(ServerListener.class);
     @FXML
     public Button btnAtack;
+    public Label lblMyRank;
     @FXML
     private TableView tblActiveGamers;
     @FXML
@@ -42,10 +43,6 @@ public class CommonWindowController{
     private TableColumn<Gamer, String> colPassiveNicks;
     @FXML
     private Label lblLogin;
-    @FXML
-    private Label lblWins;
-    @FXML
-    private Label lblLoses;
     @FXML
     private TextArea txtMassage;
     @FXML
@@ -245,6 +242,10 @@ public class CommonWindowController{
 
     public Button getBtnAtack() {
         return btnAtack;
+    }
+
+    public Label getLblMyRank() {
+        return lblMyRank;
     }
 }
 

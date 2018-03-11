@@ -218,9 +218,19 @@ public class ServerListener implements Runnable{
                                listOnline.clear();
                                for (int i = 1; i <= countOfPlayers; i++) {
                                    String name = inClientXML.checkValue(reader);
+                                   int rank = Integer.parseInt(inClientXML.checkValue(reader));
                                    System.out.println("online player#" + i + " - " + name);
                                    if (!name.equals(username)) {
-                                       listOnline.add(new Gamer(name, 0));
+                                       listOnline.add(new Gamer(name, rank));
+                                   } else {
+                                       Platform.runLater(new Runnable() {
+                                           @Override
+                                           public void run() {
+                                               commonWindowController.getLblMyRank().setText(String.valueOf(rank));
+
+                                           }
+                                       });
+
                                    }
                                }
 
@@ -307,6 +317,38 @@ public class ServerListener implements Runnable{
                            case "SHOOT RESULT": {
                                System.out.println("\n\n\nSERVER:\"RESULT\"");
                                String value = inClientXML.checkValue(reader);
+
+                               if (value.equals("VICTORY!")) {
+                                   Platform.runLater(new Runnable() {
+                                       @Override
+                                       public void run() {
+                                           gameController.setGameFinish(true);
+                                           gameController.setGameStart(false);
+
+                                           gameController.getLblResultGameUser().setText("WINNER");
+                                           gameController.getLblResultGameEnemy().setText("LOSER");
+                                           commonWindowController.getBtnAtack().setDisable(true);
+                                           DialogManager.showInfoDialog("SHOOT RESULT", "Game over");
+                                       }
+                                   });
+                                   break;
+                               }
+
+                               if (value.equals("DEFEAT!")) {
+                                   Platform.runLater(new Runnable() {
+                                       @Override
+                                       public void run() {
+                                           gameController.setGameFinish(true);
+                                           gameController.setGameStart(false);
+                                           gameController.getLblResultGameUser().setText("LOSER");
+                                           gameController.getLblResultGameEnemy().setText("WINNER");
+                                           commonWindowController.getBtnAtack().setDisable(true);
+                                           DialogManager.showInfoDialog("SHOOT RESULT","Game over");
+
+                                       }
+                                   });
+                                   break;
+                               }
 
                                Platform.runLater(new Runnable() {
                                    @Override

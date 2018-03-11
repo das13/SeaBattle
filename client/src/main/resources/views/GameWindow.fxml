@@ -85,25 +85,48 @@
             </GridPane>
           </children>
       </HBox>
-      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+      <HBox alignment="CENTER" maxHeight="100.0" prefHeight="100.0" prefWidth="200.0">
          <children>
-            <HBox alignment="CENTER" prefWidth="300.0">
+            <HBox alignment="CENTER" maxHeight="100.0" prefHeight="100.0" prefWidth="300.0">
                <children>
-                  <Label fx:id="lblUserLogin" text="MyLogin" textFill="#a44040">
+                  <Label fx:id="lblUserLogin" text="MyLogin" textFill="#a44040" wrapText="true">
                      <font>
                         <Font size="18.0" />
                      </font>
                   </Label>
                </children>
             </HBox>
-            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="100.0">
+            <HBox alignment="CENTER" maxHeight="100.0" prefHeight="100.0" prefWidth="100.0">
                <children>
                   <Button id="btnSurrender" fx:id="btnSurrender" mnemonicParsing="false" onAction="#pressBtnSurrender" text="SURRENDER" />
                </children>
             </HBox>
-            <HBox alignment="CENTER" prefWidth="300.0">
+            <HBox alignment="CENTER" maxHeight="100.0" prefHeight="100.0" prefWidth="300.0">
                <children>
-                  <Label fx:id="lblEnemyLogin" text="EnemyLogin" textFill="#291bae">
+                  <Label fx:id="lblEnemyLogin" text="EnemyLogin" textFill="#291bae" wrapText="true">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+         </children>
+      </HBox>
+      <HBox prefHeight="100.0" prefWidth="200.0">
+         <children>
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="300.0">
+               <children>
+                  <Label fx:id="lblResultGameUser" wrapText="true">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+            <HBox prefHeight="100.0" prefWidth="100.0" />
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="300.0">
+               <children>
+                  <Label fx:id="lblResultGameEnemy" wrapText="true">
                      <font>
                         <Font size="18.0" />
                      </font>

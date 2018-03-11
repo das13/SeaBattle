@@ -60,6 +60,8 @@ public class GameController implements Initializable {
     public Pane paneColumn2;
     @FXML
     public Pane paneRow2;
+    public Label lblResultGameUser;
+    public Label lblResultGameEnemy;
 
     @FXML
     private Label enemyLogin;
@@ -77,6 +79,7 @@ public class GameController implements Initializable {
     private boolean isGameStart;
     private static GameController gameController;
     private boolean isFinishSet;
+    private boolean isGameFinish;
     private int x1, y1, y2, x2;
 
     public GameController() {
@@ -125,6 +128,10 @@ public class GameController implements Initializable {
     }
 
     public void shoot(int x1, int y1) {
+        if (isGameFinish) {
+            DialogManager.showInfoDialog("GAME INFO", "Game OVER");
+            return;
+        }
         if (isGameStart) {
             this.x1 = x1;
             this.y1 = y1;
@@ -167,26 +174,30 @@ public class GameController implements Initializable {
     }
 
     private Cell createNewCell(String result, int x1, int y1){
-        Cell cell = new Cell(x1, y1);
-        if (result.equals("HIT")){
-            cell.border.setFill(Color.BLACK);
-        }
-        if (result.equals("MISS")){
-            cell.border.setFill(Color.LIGHTBLUE);
-        }
+            Cell cell = new Cell(x1, y1);
+            if (result.equals("HIT")){
+                cell.border.setFill(Color.BLACK);
+            }
+            if (result.equals("MISS")){
+                cell.border.setFill(Color.LIGHTBLUE);
+            }
 
-        if (result.equals("DESTROY")){
-            cell.border.setFill(Color.GOLD);
-        }
-        return cell;
+            if (result.equals("DESTROY")){
+                cell.border.setFill(Color.GOLD);
+            }
+            return cell;
     }
 
     public void setShoot(String result) {
-        enemyPane. getChildren().add(createNewCell(result, x1, y1));
+        if (result.equals("HIT") || result.equals("MISS") || result.equals("DESTROY")) {
+            enemyPane.getChildren().add(createNewCell(result, x1, y1));
+        }
     }
 
     public void setShootbyEnemy(String result, int x1, int y1) {
-        userPane.getChildren().add(createNewCell(result, x1, y1));
+        if (result.equals("HIT") || result.equals("MISS") || result.equals("DESTROY")) {
+            userPane.getChildren().add(createNewCell(result, x1, y1));
+        }
     }
 
     public void selectShip1p(ActionEvent event) {
@@ -243,5 +254,17 @@ public class GameController implements Initializable {
 
     public void setFinishSet(boolean finishSet) {
         isFinishSet = finishSet;
+    }
+
+    public Label getLblResultGameUser() {
+        return lblResultGameUser;
+    }
+
+    public Label getLblResultGameEnemy() {
+        return lblResultGameEnemy;
+    }
+
+    public void setGameFinish(boolean gameFinish) {
+        isGameFinish = gameFinish;
     }
 }
