@@ -1,6 +1,8 @@
 package seaBattle.controller;
 
 import seaBattle.model.Field;
+import seaBattle.model.Player;
+import seaBattle.model.Server;
 import seaBattle.model.Ship;
 import seaBattle.xmlservice.SaveLoadServerXML;
 
@@ -96,17 +98,32 @@ public class GameController extends TimerTask {
             if (countShips1 == 0) {
                 playerController1.getOutServerXML().send("SHOOT RESULT","DEFEAT!");
                 playerController2.getOutServerXML().send("SHOOT RESULT","VICTORY!");
-                //sleep(10);
+                for (Player player : Server.getAllPlayersSet()){
+                    if (player.getLogin().equals(playerController2.getThisPlayer().getLogin())){
+                        player.setRank(player.getRank()+10);
+                    }
+                    if (player.getLogin().equals(playerController1.getThisPlayer().getLogin())){
+                        player.setRank(player.getRank()-5);
+                    }
+                }
+                Server.updateAllPlayersSet();
+                Server.updateOnlinePlayersSet();
+                Server.updateIngamePlayersSet();
             } else if (countShips2 == 0) {
                 playerController1.getOutServerXML().send("SHOOT RESULT","VICTORY!");
                 playerController2.getOutServerXML().send("SHOOT RESULT","DEFEAT!");
-                //sleep(10);
+                for (Player player : Server.getAllPlayersSet()){
+                    if (player.getLogin().equals(playerController1.getThisPlayer().getLogin())){
+                        player.setRank(player.getRank()+10);
+                    }
+                    if (player.getLogin().equals(playerController2.getThisPlayer().getLogin())){
+                        player.setRank(player.getRank()-5);
+                    }
+                }
+                Server.updateAllPlayersSet();
+                Server.updateOnlinePlayersSet();
+                Server.updateIngamePlayersSet();
             }
-        /*} catch (InterruptedException e) {
-            e.printStackTrace();
-        }*/
-
-
         return str;
     }
 

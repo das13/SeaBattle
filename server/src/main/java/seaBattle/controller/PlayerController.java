@@ -59,6 +59,7 @@ public class PlayerController extends Thread {
                                 outServerXML.send("LOG IN", authResult(login,password));
                                 Server.updateAllPlayersSet();
                                 Server.updateOnlinePlayersSet();
+                                Server.updateIngamePlayersSet();
                                 for (PlayerController pc : Server.getAllPlayersControllerSet()){
                                     pc.sendOnlinePlayers();
                                     sleep(10);
@@ -72,6 +73,7 @@ public class PlayerController extends Thread {
                                 outServerXML.send("LOG OUT",logoutResult(login));
                                 Server.updateAllPlayersSet();
                                 Server.updateOnlinePlayersSet();
+                                Server.updateIngamePlayersSet();
                                 for (PlayerController pc : Server.getAllPlayersControllerSet()){
                                     pc.sendOnlinePlayers();
                                     sleep(10);
@@ -374,38 +376,34 @@ public class PlayerController extends Thread {
     }
 
     public void sendOnlinePlayers() {
-        if (thisPlayer.getStatus().equals("online")) {
-            String[] list = new String[((Server.getOnlinePlayersSet().size())*2)+1];
-            str = String.valueOf(Server.getOnlinePlayersSet().size());
-            list[0] = str;
-            int i = 1;
-            System.out.println("\nОТПРАВЛЯЕМ ONLINE ИГРОКОВ");
-            System.out.println("длина сета - " + Server.getOnlinePlayersSet().size());
-            System.out.println("длина массива - " + list.length);
-            for (Player player : Server.getOnlinePlayersSet()) {
-                System.out.println("добавляем в ячейку массива №" + i + " - " + player.getLogin());
-                list[i++] = player.getLogin();
-                list[i++] = String.valueOf(player.getRank());
-            }
-            outServerXML.send("ONLINE PLAYERS", list);
+        String[] list = new String[((Server.getOnlinePlayersSet().size())*2)+1];
+        str = String.valueOf(Server.getOnlinePlayersSet().size());
+        list[0] = str;
+        int i = 1;
+        System.out.println("\nОТПРАВЛЯЕМ ONLINE ИГРОКОВ");
+        System.out.println("длина сета - " + Server.getOnlinePlayersSet().size());
+        System.out.println("длина массива - " + list.length);
+        for (Player player : Server.getOnlinePlayersSet()) {
+            System.out.println("добавляем в ячейку массива №" + i + " - " + player.getLogin());
+            list[i++] = player.getLogin();
+            list[i++] = String.valueOf(player.getRank());
         }
+        outServerXML.send("ONLINE PLAYERS", list);
     }
 
     public void sendIngamePlayers() {
-        if (thisPlayer.getStatus().equals("online")) {
-            String[] list = new String[Server.getIngamePlayersSet().size()+1];
-            str = String.valueOf(Server.getIngamePlayersSet().size());
-            list[0] = str;
-            int i = 1;
-            System.out.println("\nОТПРАВЛЯЕМ INGAME ИГРОКОВ");
-            System.out.println("длина сета - " + Server.getIngamePlayersSet().size());
-            System.out.println("длина массива - " + list.length);
-            for (Player player : Server.getIngamePlayersSet()) {
-                System.out.println("добавляем в ячейку массива №" + i + " - " + player.getLogin());
-                list[i++] = player.getLogin();
-            }
-            outServerXML.send("INGAME PLAYERS", list);
+        String[] list = new String[Server.getIngamePlayersSet().size()+1];
+        str = String.valueOf(Server.getIngamePlayersSet().size());
+        list[0] = str;
+        int i = 1;
+        System.out.println("\nОТПРАВЛЯЕМ INGAME ИГРОКОВ");
+        System.out.println("длина сета - " + Server.getIngamePlayersSet().size());
+        System.out.println("длина массива - " + list.length);
+        for (Player player : Server.getIngamePlayersSet()) {
+            System.out.println("добавляем в ячейку массива №" + i + " - " + player.getLogin());
+            list[i++] = player.getLogin();
         }
+        outServerXML.send("INGAME PLAYERS", list);
     }
 
     //действие на сообщение
