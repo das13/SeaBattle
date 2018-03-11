@@ -375,7 +375,7 @@ public class PlayerController extends Thread {
 
     public void sendOnlinePlayers() {
         if (thisPlayer.getStatus().equals("online")) {
-            String[] list = new String[Server.getOnlinePlayersSet().size()+1];
+            String[] list = new String[((Server.getOnlinePlayersSet().size())*2)+1];
             str = String.valueOf(Server.getOnlinePlayersSet().size());
             list[0] = str;
             int i = 1;
