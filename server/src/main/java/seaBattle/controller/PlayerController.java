@@ -339,8 +339,8 @@ public class PlayerController extends Thread {
                     outServerXML.send("START GAME", player1);
                     break;
                 }
+                System.out.println("ERROR! dude " + pc.getThisPlayer().getLogin() + " don't wanna play!");
             }
-            System.out.println("ERROR! dude " + pc + " don't wanna play!");
         }
     }
 

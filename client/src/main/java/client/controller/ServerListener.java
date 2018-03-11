@@ -290,6 +290,7 @@ public class ServerListener implements Runnable{
                                        gameController.setShootbyEnemy(result, x1, y1);
                                    }
                                });
+                               break;
                            }
 
                            case "SHOOT RESULT": {
