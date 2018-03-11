@@ -20,6 +20,8 @@ public class GameController extends Thread {
     private int countShips2;
     private Timer timer;
     private File thisGame;
+    private boolean placedShipEndOne;
+    private boolean placedShipEndTwo;
 
     public GameController(PlayerController playerController1, PlayerController playerController2) {
         this.playerController1 = playerController1;
@@ -34,16 +36,6 @@ public class GameController extends Thread {
     public void run() {
 
     }
-
-    public boolean checkStart() {
-        if (countShips1+countShips2 < 40) {
-            return false;
-        } else {
-            saveGame();
-            return true;
-        }
-    }
-
 
     public void changePlayer() {
         firstPlayerTurn = !firstPlayerTurn;
@@ -97,22 +89,41 @@ public class GameController extends Thread {
         return str;
     }
 
+    public boolean checkStart(int countShips) {
+        if (countShips < 20) {
+            return false;
+        } else {
+            saveGame();
+            return true;
+        }
+    }
+
+    public boolean checkStartGame() {
+        if (countShips1 + countShips2 < 40) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     public String setShip(PlayerController playerController, Ship ship) {
         if (playerController.equals(playerController1)){
             str = field1.setShip(ship);
             if(str.equals("OK")) {
                 countShips1 += ship.getHealth();
             }
-            if (checkStart()) {
-                str ="GAME STARTED, you are PLAYER ONE";
+            if (checkStart(countShips1)) {
+                str ="PLACED ENDED";
+                placedShipEndOne = true;
             }
         }else {
             str = field2.setShip(ship);
             if(str.equals("OK")) {
                 countShips2 += ship.getHealth();
             }
-            if (checkStart()) {
-                str ="GAME STARTED, you are PLAYER TWO";
+            if (checkStart(countShips2)) {
+                str ="PLACED ENDED";
+                placedShipEndTwo = true;
             }
         }
 
@@ -200,4 +211,11 @@ public class GameController extends Thread {
         this.thisGame = thisGame;
     }
 
+    public boolean isPlacedShipEndOne() {
+        return placedShipEndOne;
+    }
+
+    public boolean isPlacedShipEndTwo() {
+        return placedShipEndTwo;
+    }
 }

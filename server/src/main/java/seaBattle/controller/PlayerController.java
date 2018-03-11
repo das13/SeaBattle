@@ -156,7 +156,12 @@ public class PlayerController extends Thread {
                                 int y2 = Integer.parseInt(inServerXML.checkValue(reader));
                                 System.out.println("x2 = \"" + y2 + "\"");
                                 sleep(10);
+
                                 getOutServerXML().send("SHIP LOCATION", gc.setShip(this, new Ship(new int[]{x1, y1, x2, y2})));
+                                if (gc.checkStartGame()) {
+                                    //примерно так я не знаю что конекретно нужно дима напиши в телеграме
+                                    getOutServerXML().send("START GAME","READY");
+                                }
                                 System.out.println();
                                 break;
                             }
@@ -191,7 +196,7 @@ public class PlayerController extends Thread {
                                 System.out.println("UNKNOWN KEY RECEIVED FROM " + this.getThisPlayer().getLogin());
                                 str = "unknown key";
                                 getOutServerXML().send("INFO", str);
-                            }
+                             }
                         }
                     }
                     if (reader.isEndElement() && "root".equals(reader.getName().toString())) {
