@@ -46,6 +46,7 @@ public class ServerListener implements Runnable{
     public static ServerListener getListener() {
         return ListenerHolder.listener;
     }
+
     private static class ListenerHolder{
         private final static ServerListener listener = new ServerListener();
     }
@@ -137,7 +138,7 @@ public class ServerListener implements Runnable{
                                Platform.runLater(new Runnable() {
                                    @Override
                                    public void run() {
-                                       commonWindowController.getTxaChat().appendText(value);
+                                       commonWindowController.getTxaChat().appendText(value + "\n\r");
                                    }
                                });
                                break;
@@ -267,7 +268,6 @@ public class ServerListener implements Runnable{
                                    });
                                    break;
                                }
-
                                else {
                                    Platform.runLater(new Runnable() {
                                        @Override
@@ -275,7 +275,6 @@ public class ServerListener implements Runnable{
                                             DialogManager.showInfoDialog("SHIP LOCATION", value);
                                        }
                                    });
-
                                }
                                break;
                            }
@@ -288,10 +287,11 @@ public class ServerListener implements Runnable{
                                    @Override
                                    public void run() {
                                        gameController.setShootbyEnemy(result, x1, y1);
+                                       DialogManager.showInfoDialog("SHOOT MY SIDE", result);
                                    }
                                });
+                               break;
                            }
-
                            case "SHOOT RESULT": {
                                System.out.println("\n\n\nSERVER:\"RESULT\"");
                                String value = inClientXML.checkValue(reader);
@@ -300,12 +300,11 @@ public class ServerListener implements Runnable{
                                    @Override
                                    public void run() {
                                        gameController.setShoot(value);
+                                       DialogManager.showInfoDialog("SHOOT RESULT",value);
                                    }
                                });
                                break;
                            }
-                               //сообщение сервера о результате выстрела (ранил / убил / мимо)
-
                            case "SURRENDER": {
                                System.out.println("\n\n\nSERVER:\"SURRENDER\"");
                                String value = inClientXML.checkValue(reader);
@@ -328,7 +327,8 @@ public class ServerListener implements Runnable{
                                    public void run() {
                                        DialogManager.showInfoDialog("GAME OVER", value);
                                    }
-                               });                               break;
+                               });
+                               break;
                            }
                            case "INFO": {
                                System.out.println("\n\n\nSERVER:\"INFO\"");
@@ -435,7 +435,7 @@ public class ServerListener implements Runnable{
         this.gameController = gameController;
     }
 
-    public Thread getTh() {
-        return th;
+    public void setEnemy(String enemy) {
+        this.enemy = enemy;
     }
 }

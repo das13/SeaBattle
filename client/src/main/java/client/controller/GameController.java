@@ -84,7 +84,8 @@ public class GameController implements Initializable {
         createField(enemyPane, true);
         listener.setGameController(this);
         outClientXML = ServerListener.getListener().getOutClientXML();
-        lblEnemyLogin.setText(CommonWindowController.getCwController().getEnemy());
+        lblEnemyLogin.setText(listener.getEnemy());
+        lblUserLogin.setText(listener.getUsername());
     }
 
     private void createField(Pane pane, boolean isEnemy) {
@@ -118,20 +119,16 @@ public class GameController implements Initializable {
 
 
     public void setShoot(String result) {
-         if (result.equals("HIT")){
-            Cell cell = new Cell(x1, y1, true);
+        Cell cell = new Cell(x1, y1, true);
+        enemyPane.getChildren().add(cell);
+        if (result.equals("HIT")){
             cell.border.setFill(Color.BLACK);
-            enemyPane.getChildren().add(cell);
-        }
+       }
         if (result.equals("MISS")){
-            Cell cell = new Cell(x1, y1, true);
             cell.border.setFill(Color.LIGHTBLUE);
-            enemyPane.getChildren().add(cell);
         }
         if (result.equals("DESTROY")){
-            Cell cell = new Cell(x1, y1, true);
             cell.border.setFill(Color.GOLD);
-            enemyPane.getChildren().add(cell);
         }
 
 
@@ -170,21 +167,17 @@ public class GameController implements Initializable {
     }
 
     public void setShootbyEnemy(String result, int x1, int y1) {
+        Cell cell = new Cell(x1, y1, false);
+        userPane.getChildren().add(cell);
         if (result.equals("HIT")){
-            Cell cell = new Cell(x1, y1, false);
             cell.border.setFill(Color.BLACK);
-            userPane.getChildren().add(cell);
         }
         if (result.equals("MISS")){
-            Cell cell = new Cell(x1, y1, false);
             cell.border.setFill(Color.LIGHTBLUE);
-            userPane.getChildren().add(cell);
         }
 
         if (result.equals("DESTROY")){
-            Cell cell = new Cell(x1, y1, false);
             cell.border.setFill(Color.GOLD);
-            userPane.getChildren().add(cell);
         }
 
     }

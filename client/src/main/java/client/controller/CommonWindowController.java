@@ -101,6 +101,7 @@ public class CommonWindowController{
         if (selectedGamer == null) return;
         key = "INVITE";
         enemy = selectedGamer.getName();
+        listener.setEnemy(enemy);
 
         try {
             listener.getOutClientXML().send(key, listener.getUsername(), enemy);
