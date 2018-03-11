@@ -137,7 +137,7 @@ public class ServerListener implements Runnable{
                                Platform.runLater(new Runnable() {
                                    @Override
                                    public void run() {
-                                       commonWindowController.getTxaChat().appendText(value);
+                                       commonWindowController.getTxaChat().appendText(value + "\n");
                                    }
                                });
                                break;
@@ -346,6 +346,8 @@ public class ServerListener implements Runnable{
                    }
                }
            } catch (XMLStreamException e) {
+               //TODO пока будем смотреть где ошибка, после только лог
+               e.printStackTrace();
                logger.error("Error in ServerListenerThread run() XMLStreamException e");
            }
        }
