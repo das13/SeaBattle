@@ -179,7 +179,6 @@ public class GameController implements Initializable {
         if (result.equals("DESTROY")){
             cell.border.setFill(Color.GOLD);
         }
-
     }
 
     public void selectShip1p(ActionEvent event) {

@@ -155,7 +155,7 @@ public class RegController{
         });
     }
 
-    
+
     private boolean isValidServerInfo() {
         port = -1;
         try {
@@ -223,14 +223,6 @@ public class RegController{
         if (isValidServerInfo() ){
             initializeServerInfo();
             ServerListener.getListener().connect(hostname, port);
-            /*
-            Platform.runLater(new Runnable() {
-                 @Override
-                 public void run() {
-                     listener.connect(hostname, port);
-                 }
-             });
-             */
         }
     }
 

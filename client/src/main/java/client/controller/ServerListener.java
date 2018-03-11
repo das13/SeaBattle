@@ -132,7 +132,6 @@ public class ServerListener implements Runnable{
                                break;
                            }
                            case "MSG": {
-                               //делать в последнюю очередь
                                System.out.println("\n\n\nSERVER:\"MSG\"");
                                String value = inClientXML.checkValue(reader);
                                Platform.runLater(new Runnable() {
