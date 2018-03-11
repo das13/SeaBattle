@@ -40,6 +40,7 @@ public class ServerListener implements Runnable{
     public  List<Gamer> listOnGame = new ArrayList<>();
     private Thread th;
     private ServerListener listener = getListener();
+    private int rank;
 
     private ServerListener(){
     }
@@ -188,7 +189,9 @@ public class ServerListener implements Runnable{
                            case "START GAME": {
                                System.out.println("\n\n\nSERVER:\"START GAME\"");
                                String value = inClientXML.checkValue(reader);
+
                                if (value.equals("READY")) {
+                                   gameController.setGameStart(true);
                                    Platform.runLater(new Runnable() {
                                        @Override
                                        public void run() {
@@ -218,7 +221,7 @@ public class ServerListener implements Runnable{
                                listOnline.clear();
                                for (int i = 1; i <= countOfPlayers; i++) {
                                    String name = inClientXML.checkValue(reader);
-                                   int rank = Integer.parseInt(inClientXML.checkValue(reader));
+                                   rank = Integer.parseInt(inClientXML.checkValue(reader));
                                    System.out.println("online player#" + i + " - " + name);
                                    if (!name.equals(username)) {
                                        listOnline.add(new Gamer(name, rank));
@@ -227,10 +230,8 @@ public class ServerListener implements Runnable{
                                            @Override
                                            public void run() {
                                                commonWindowController.getLblMyRank().setText(String.valueOf(rank));
-
                                            }
                                        });
-
                                    }
                                }
 
@@ -253,6 +254,7 @@ public class ServerListener implements Runnable{
                                }
 
                                CommonWindowController.getCwController().createPassiveList(listOnGame);
+
                                break;
                            }
                            case "PLAYER INFO": {
@@ -271,6 +273,7 @@ public class ServerListener implements Runnable{
                                System.out.println("\n\n\nSERVER:\"LOCATION\"");
                                String value = inClientXML.checkValue(reader);
                                if (value.equals("OK")) {
+
                                    Platform.runLater(new Runnable() {
                                        @Override
                                        public void run() {
@@ -282,6 +285,7 @@ public class ServerListener implements Runnable{
 
                                 if (value.equals("PLACED ENDED")) {
 
+
                                    Platform.runLater(new Runnable() {
                                        @Override
                                        public void run() {
@@ -290,6 +294,7 @@ public class ServerListener implements Runnable{
                                            DialogManager.showInfoDialog("SERVER INFO", "PLACED ENDED wait for massage about game start");
                                        }
                                    });
+
                                    break;
                                }
                                Platform.runLater(new Runnable() {
@@ -319,32 +324,36 @@ public class ServerListener implements Runnable{
                                String value = inClientXML.checkValue(reader);
 
                                if (value.equals("VICTORY!")) {
+
+
                                    Platform.runLater(new Runnable() {
                                        @Override
                                        public void run() {
+                                           commonWindowController.getBtnAtack().setDisable(false);
                                            gameController.setGameFinish(true);
                                            gameController.setGameStart(false);
-
                                            gameController.getLblResultGameUser().setText("WINNER");
                                            gameController.getLblResultGameEnemy().setText("LOSER");
-                                           commonWindowController.getBtnAtack().setDisable(true);
                                            DialogManager.showInfoDialog("SHOOT RESULT", "Game over");
+                                        //   regController.showCommonWindow();
                                        }
                                    });
+
                                    break;
                                }
 
                                if (value.equals("DEFEAT!")) {
+
                                    Platform.runLater(new Runnable() {
                                        @Override
                                        public void run() {
+                                           commonWindowController.getBtnAtack().setDisable(false);
                                            gameController.setGameFinish(true);
                                            gameController.setGameStart(false);
                                            gameController.getLblResultGameUser().setText("LOSER");
                                            gameController.getLblResultGameEnemy().setText("WINNER");
-                                           commonWindowController.getBtnAtack().setDisable(true);
                                            DialogManager.showInfoDialog("SHOOT RESULT","Game over");
-
+                                      //     regController.showCommonWindow();
                                        }
                                    });
                                    break;
@@ -354,7 +363,7 @@ public class ServerListener implements Runnable{
                                    @Override
                                    public void run() {
                                        gameController.setShoot(value);
-                                       DialogManager.showInfoDialog("SHOOT RESULT",value);
+                                       DialogManager.showInfoDialog("SHOOT RESULT", value);
                                    }
                                });
                                break;

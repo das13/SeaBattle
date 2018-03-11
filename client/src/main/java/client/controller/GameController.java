@@ -99,6 +99,7 @@ public class GameController implements Initializable {
         outClientXML = ServerListener.getListener().getOutClientXML();
         lblEnemyLogin.setText(listener.getEnemy());
         lblUserLogin.setText(listener.getUsername());
+        CommonWindowController.getCwController().setGameController(this);
     }
 
 
@@ -266,5 +267,9 @@ public class GameController implements Initializable {
 
     public void setGameFinish(boolean gameFinish) {
         isGameFinish = gameFinish;
+    }
+
+    public boolean isGameFinish() {
+        return isGameFinish;
     }
 }

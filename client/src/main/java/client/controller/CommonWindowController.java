@@ -48,7 +48,7 @@ public class CommonWindowController{
     @FXML
     private TextArea txaChat;
     private Stage gameWindow;
-    private boolean isEnemySurrender = false;
+    private boolean isEnemySurrender;
     private static Stage waitAnswerWindow;
     private String key;
     private String value;
@@ -57,6 +57,7 @@ public class CommonWindowController{
     private final static String WAITANSWERFORM = "/views/WaitAnswer.fxml";
     protected final static String ANSWERFORM = "/views/Answer.fxml";
     public RegController regController;
+    private GameController gameController;
 
     private List<Gamer> onlineGamers = new ArrayList<>();
     private List<Gamer> inGamePlayers = new ArrayList<>();
@@ -204,21 +205,23 @@ public class CommonWindowController{
                 }
                 stage.setOnCloseRequest((WindowEvent e) -> {
                     try {
-                        if (!isEnemySurrender()) {
+                        if (/*!isEnemySurrender() ||*/ !gameController.isGameFinish()) {
 
                             ServerListener.getListener().getOutClientXML().send("SURRENDER", lblLogin.getText());
                         }
-                        setEnemySurrender(false);
                     } catch (XMLStreamException e1) {
                         logger.error("SURRENDER error", e1);
                     }
                     btnAtack.setDisable(false);
-                    RegController.getRegController().comWindow.show();
+                 /*   if (!gameController.isGameFinish()) {
+                        RegController.getRegController().comWindow.show();
+                    }*/
+
                 });
                 stage.setTitle("Sea battle");
                 stage.setScene(new Scene(root, 700, 400));
                 stage.setResizable(false);
-                RegController.getRegController().comWindow.hide();
+               // RegController.getRegController().comWindow.hide();
                 btnAtack.setDisable(true);
                 stage.show();
 
@@ -246,6 +249,10 @@ public class CommonWindowController{
 
     public Label getLblMyRank() {
         return lblMyRank;
+    }
+
+    public void setGameController(GameController gameController) {
+        this.gameController = gameController;
     }
 }
 
