@@ -57,7 +57,7 @@ public class GameController extends TimerTask {
 
     }
 
-    public String shoot(PlayerController playerController,int x ,int y) throws CloneNotSupportedException {
+    public String shoot(PlayerController playerController,int x ,int y)  {
         if (!playerController.equals(currentPlayerController)) {
             return "NOT YOUR TURN";
         }
@@ -103,7 +103,12 @@ public class GameController extends TimerTask {
         }*/
         changeCurrentPlayer();
         timer.cancel();
-        GameController gc = (GameController) this.clone();
+        GameController gc = null;
+        try {
+            gc = (GameController) this.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
         timer.schedule(gc,0,30000);
         return str;
     }
