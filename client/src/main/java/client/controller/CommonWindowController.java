@@ -220,7 +220,7 @@ public class CommonWindowController{
                     RegController.getRegController().comWindow.show();
                 });
                 stage.setTitle("Sea battle");
-                stage.setScene(new Scene(root, 600, 350));
+                stage.setScene(new Scene(root, 700, 400));
                 stage.setResizable(false);
                 RegController.getRegController().comWindow.hide();
                 stage.show();

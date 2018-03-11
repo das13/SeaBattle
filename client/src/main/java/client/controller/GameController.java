@@ -1,6 +1,7 @@
 package client.controller;
 
 import client.controller.models.Cell;
+import client.controller.models.FieldDesignation;
 import client.controller.models.Ship;
 import client.controller.utils.DialogManager;
 import client.xmlservice.OutClientXML;
@@ -49,7 +50,17 @@ public class GameController implements Initializable {
     public Pane userPane;
     @FXML
     public Pane enemyPane;
+    @FXML
     public Button btnSurrender;
+    @FXML
+    public Pane paneColumn1;
+    @FXML
+    public Pane paneRow1;
+    @FXML
+    public Pane paneColumn2;
+    @FXML
+    public Pane paneRow2;
+
     @FXML
     private Label enemyLogin;
 
@@ -88,7 +99,19 @@ public class GameController implements Initializable {
         lblUserLogin.setText(listener.getUsername());
     }
 
+
     private void createField(Pane pane, boolean isEnemy) {
+        for (int i = 0; i < 10; i++) {
+            if (!isEnemy) {
+                paneColumn1.getChildren().add(new FieldDesignation(0, i, i));
+                paneRow1.getChildren().add(new FieldDesignation(i, 0, i));
+            } else {
+                paneColumn2.getChildren().add(new FieldDesignation(0, i, i));
+                paneRow2.getChildren().add(new FieldDesignation(i, 0, i));
+            }
+
+        }
+
         for (int y = 0; y < Y_TILES; y++) {
             for (int x = 0; x < X_TILES; x++) {
                 Cell cell = new Cell(x,y, isEnemy);

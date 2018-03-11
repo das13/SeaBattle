@@ -11,14 +11,32 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 
-<VBox prefWidth="700.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.controller.GameController">
+<VBox prefHeight="400.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.controller.GameController">
    <children>
       <HBox fx:id="gameHBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="700.0">
           <children>
-              <Pane fx:id="userPane" prefHeight="250.0" prefWidth="250.0">
+            <GridPane prefHeight="300.0" prefWidth="290.0">
+               <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="30.0" minWidth="10.0" prefWidth="30.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="250.0" minHeight="10.0" prefHeight="250.0" vgrow="SOMETIMES" />
+               </rowConstraints>
+               <children>
+                    <Pane fx:id="userPane" maxHeight="250.0" maxWidth="250.0" prefHeight="250.0" prefWidth="250.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                     <HBox.margin>
+                        <Insets left="50.0" top="50.0" />
+                     </HBox.margin>
+                  </Pane>
+                  <Pane fx:id="paneColumn1" maxHeight="250.0" maxWidth="30.0" prefHeight="250.0" prefWidth="30.0" GridPane.rowIndex="1" />
+                  <Pane fx:id="paneRow1" maxHeight="30.0" maxWidth="250.0" prefHeight="250.0" prefWidth="40.0" GridPane.columnIndex="1" />
+               </children>
                <HBox.margin>
-                  <Insets left="50.0" top="50.0" />
-               </HBox.margin></Pane>
+                  <Insets left="10.0" top="10.0" />
+               </HBox.margin>
+            </GridPane>
               <Pane fx:id="shipsPane" prefHeight="250.0" prefWidth="100.0">
                   <children>
                       <RadioButton fx:id="rb_ship1p" layoutX="8.0" layoutY="33.0" mnemonicParsing="false" onAction="#selectShip1p" selected="true" text="Ship 1p x">
@@ -43,15 +61,33 @@
                       <RadioButton fx:id="rb_verically" layoutX="7.0" layoutY="210.0" mnemonicParsing="false" onAction="#selectVerically" text="vertically" toggleGroup="$orientation" />
                   </children>
               </Pane>
-              <Pane fx:id="enemyPane" prefHeight="250.0" prefWidth="250.0">
+            <GridPane prefHeight="300.0" prefWidth="290.0">
+               <children>
+                  <Pane fx:id="enemyPane" maxHeight="250.0" maxWidth="250.0" minHeight="250.0" minWidth="250.0" prefHeight="250.0" prefWidth="250.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                     <HBox.margin>
+                        <Insets left="50.0" top="50.0" />
+                     </HBox.margin>
+                  </Pane>
+                  <Pane fx:id="paneColumn2" maxHeight="250.0" maxWidth="30.0" minWidth="30.0" prefHeight="250.0" prefWidth="30.0" GridPane.rowIndex="1" />
+                  <Pane fx:id="paneRow2" maxHeight="40.0" maxWidth="250.0" prefHeight="250.0" prefWidth="40.0" GridPane.columnIndex="1" />
+               </children>
+               <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="30.0" minWidth="10.0" prefWidth="10.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="250.0" minWidth="10.0" prefWidth="250.0" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="250.0" minHeight="10.0" vgrow="SOMETIMES" />
+               </rowConstraints>
                <HBox.margin>
-                  <Insets left="50.0" top="50.0" />
-               </HBox.margin></Pane>
+                  <Insets left="10.0" top="10.0" />
+               </HBox.margin>
+            </GridPane>
           </children>
       </HBox>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
          <children>
-            <HBox alignment="CENTER" prefWidth="250.0">
+            <HBox alignment="CENTER" prefWidth="300.0">
                <children>
                   <Label fx:id="lblUserLogin" text="MyLogin" textFill="#a44040">
                      <font>
@@ -65,7 +101,7 @@
                   <Button id="btnSurrender" fx:id="btnSurrender" mnemonicParsing="false" onAction="#pressBtnSurrender" text="SURRENDER" />
                </children>
             </HBox>
-            <HBox alignment="CENTER" prefWidth="250.0">
+            <HBox alignment="CENTER" prefWidth="300.0">
                <children>
                   <Label fx:id="lblEnemyLogin" text="EnemyLogin" textFill="#291bae">
                      <font>
