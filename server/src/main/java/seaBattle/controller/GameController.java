@@ -24,6 +24,7 @@ public class GameController extends TimerTask {
     private boolean placedShipEndTwo;
 
     public GameController(PlayerController playerController1, PlayerController playerController2) {
+        timer = new Timer();
         this.playerController1 = playerController1;
         this.playerController2 = playerController2;
         currentPlayerController = playerController1;
@@ -56,7 +57,7 @@ public class GameController extends TimerTask {
 
     }
 
-    public String shoot(PlayerController playerController,int x ,int y){
+    public String shoot(PlayerController playerController,int x ,int y) throws CloneNotSupportedException {
         if (!playerController.equals(currentPlayerController)) {
             return "NOT YOUR TURN";
         }
@@ -101,6 +102,9 @@ public class GameController extends TimerTask {
             e.printStackTrace();
         }*/
         changeCurrentPlayer();
+        timer.cancel();
+        GameController gc = (GameController) this.clone();
+        timer.schedule(gc,0,30000);
         return str;
     }
 

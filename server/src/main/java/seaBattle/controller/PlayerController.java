@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.Date;
 import java.util.SortedSet;
+import java.util.Timer;
 
 public class PlayerController extends Thread {
     private Socket socket;
@@ -162,7 +163,8 @@ public class PlayerController extends Thread {
                                 if (gc.checkStartGame()) {
                                     gc.getPlayerController1().getOutServerXML().send("START GAME","READY");
                                     gc.getPlayerController2().getOutServerXML().send("START GAME","READY");
-                                    gc.getTimer().schedule(gc,new Date(),30000);
+                                    Timer timer = gc.getTimer();
+                                    timer.schedule(gc,0,30000);
                                 }
                                 System.out.println();
                                 break;
