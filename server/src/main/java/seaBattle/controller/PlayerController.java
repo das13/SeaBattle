@@ -172,11 +172,9 @@ public class PlayerController extends Thread {
                             }
                             case "MSG": {
                                 System.out.println("\n\n\nkey \"MSG\" from " + this.getThisPlayer().getLogin() + " detected:");
-                                String player = inServerXML.checkValue(reader);
-                                System.out.println("player = \"" + player + "\"");
                                 String msg = inServerXML.checkValue(reader);
                                 System.out.println("msg = \"" + msg + "\"");
-                                msgResult(player,msg);
+                                msgResult(thisPlayer.getLogin(),msg);
                                 break;
                             }
                             default:{
@@ -341,8 +339,8 @@ public class PlayerController extends Thread {
                     outServerXML.send("START GAME", player1);
                     break;
                 }
+                System.out.println("ERROR! dude " + pc.getThisPlayer().getLogin() + " don't wanna play!");
             }
-            System.out.println("ERROR! dude " + pc + " don't wanna play!");
         }
     }
 
@@ -382,6 +380,9 @@ public class PlayerController extends Thread {
 
     //действие на сообщение
     private void msgResult(String login, String msg) {
+        for (PlayerController pc : Server.getAllPlayersControllerSet()){
+            pc.getOutServerXML().send("MSG", login + ": " + msg);
+        }
     }
 
     public String logoutResult(String login) {
