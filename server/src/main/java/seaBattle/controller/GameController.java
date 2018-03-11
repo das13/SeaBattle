@@ -33,6 +33,14 @@ public class GameController extends Thread {
         thisGame = new File("game-" + playerController1.getThisPlayer().getLogin() +"VS"+ playerController2.getThisPlayer().getLogin() + ".xml");
     }
 
+    public void changeCurrentPlayer(){
+        if(currentPlayerController.equals(playerController1)) {
+            currentPlayerController = playerController2;
+        } else {
+            currentPlayerController = playerController1;
+        }
+    }
+
     public void run() {
 
     }
@@ -46,6 +54,9 @@ public class GameController extends Thread {
     }
 
     public String shoot(PlayerController playerController,int x ,int y){
+        if (!playerController.equals(currentPlayerController)) {
+            return "NOT YOUR TURN";
+        }
         if (playerController.equals(playerController1)){
             str = field2.shoot(x,y);
             String y1 = String.valueOf(y);
@@ -86,6 +97,7 @@ public class GameController extends Thread {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        changeCurrentPlayer();
         return str;
     }
 

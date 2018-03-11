@@ -159,8 +159,8 @@ public class PlayerController extends Thread {
 
                                 getOutServerXML().send("SHIP LOCATION", gc.setShip(this, new Ship(new int[]{x1, y1, x2, y2})));
                                 if (gc.checkStartGame()) {
-                                    //примерно так я не знаю что конекретно нужно дима напиши в телеграме
-                                    getOutServerXML().send("START GAME","READY");
+                                    gc.getPlayerController1().getOutServerXML().send("START GAME","READY");
+                                    gc.getPlayerController2().getOutServerXML().send("START GAME","READY");
                                 }
                                 System.out.println();
                                 break;
