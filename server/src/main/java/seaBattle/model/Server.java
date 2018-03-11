@@ -77,6 +77,9 @@ public class Server {
             if (player.getStatus().equals("online")){
                 onlinePlayersSet.add(player);
             }
+            else {
+                onlinePlayersSet.remove(player);
+            }
         }
         System.out.println("updated: onlinePlayersSet");
     }
@@ -85,6 +88,9 @@ public class Server {
         for (Player player : allPlayersSet){
             if (player.getStatus().equals("ingame")){
                 ingamePlayersSet.add(player);
+            }
+            else {
+                ingamePlayersSet.remove(player);
             }
         }
         System.out.println("updated: ingamePlayersSet");
