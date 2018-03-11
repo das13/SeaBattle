@@ -1,8 +1,6 @@
 package seaBattle.controller;
 
 import seaBattle.model.Field;
-import seaBattle.model.Player;
-import seaBattle.model.Server;
 import seaBattle.model.Ship;
 import seaBattle.xmlservice.SaveLoadServerXML;
 
@@ -10,7 +8,7 @@ import java.io.File;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class GameController extends TimerTask {
+public class GameController {
     private PlayerController playerController1;
     private PlayerController playerController2;
     private PlayerController currentPlayerController;
@@ -24,6 +22,20 @@ public class GameController extends TimerTask {
     private File thisGame;
     private boolean placedShipEndOne;
     private boolean placedShipEndTwo;
+
+    class TimerTaskGameChangePlayer extends TimerTask {
+
+        @Override
+        public void run() {
+            changeCurrentPlayer();
+        }
+    }
+
+    public void startTimer() {
+        timer = new Timer();
+        TimerTaskGameChangePlayer timerTaskGameChangePlayer = new TimerTaskGameChangePlayer();
+        timer.schedule(timerTaskGameChangePlayer,30000,30000);
+    }
 
     public GameController(PlayerController playerController1, PlayerController playerController2) {
         timer = new Timer();
@@ -39,16 +51,13 @@ public class GameController extends TimerTask {
     public void changeCurrentPlayer(){
         if(currentPlayerController.equals(playerController1)) {
             currentPlayerController = playerController2;
+            playerController2.getOutServerXML().send("TURN","YES");
+            playerController1.getOutServerXML().send("TURN","NO");
         } else {
             currentPlayerController = playerController1;
+            playerController2.getOutServerXML().send("TURN","NO");
+            playerController1.getOutServerXML().send("TURN","YES");
         }
-    }
-
-    public void run() {
-        currentPlayerController.getOutServerXML().send("TURN","NOT");
-        changeCurrentPlayer();
-        currentPlayerController.getOutServerXML().send("TURN","YES");
-
     }
 
     public void changePlayer() {
@@ -98,32 +107,17 @@ public class GameController extends TimerTask {
             if (countShips1 == 0) {
                 playerController1.getOutServerXML().send("SHOOT RESULT","DEFEAT!");
                 playerController2.getOutServerXML().send("SHOOT RESULT","VICTORY!");
-                for (Player player : Server.getAllPlayersSet()){
-                    if (player.getLogin().equals(playerController2.getThisPlayer().getLogin())){
-                        player.setRank(player.getRank()+10);
-                    }
-                    if (player.getLogin().equals(playerController1.getThisPlayer().getLogin())){
-                        player.setRank(player.getRank()-5);
-                    }
-                }
-                Server.updateAllPlayersSet();
-                Server.updateOnlinePlayersSet();
-                Server.updateIngamePlayersSet();
+                //sleep(10);
             } else if (countShips2 == 0) {
                 playerController1.getOutServerXML().send("SHOOT RESULT","VICTORY!");
                 playerController2.getOutServerXML().send("SHOOT RESULT","DEFEAT!");
-                for (Player player : Server.getAllPlayersSet()){
-                    if (player.getLogin().equals(playerController1.getThisPlayer().getLogin())){
-                        player.setRank(player.getRank()+10);
-                    }
-                    if (player.getLogin().equals(playerController2.getThisPlayer().getLogin())){
-                        player.setRank(player.getRank()-5);
-                    }
-                }
-                Server.updateAllPlayersSet();
-                Server.updateOnlinePlayersSet();
-                Server.updateIngamePlayersSet();
+                //sleep(10);
             }
+        /*} catch (InterruptedException e) {
+            e.printStackTrace();
+        }*/
+        timer.cancel();
+        startTimer();
         return str;
     }
 
