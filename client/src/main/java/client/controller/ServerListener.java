@@ -161,8 +161,6 @@ public class ServerListener implements Runnable{
                                //сообщение от сервера о том что ответ игрока №n на ваше предложение игры - ...
                                String player1 = inClientXML.checkValue(reader);
                                System.out.println("player \"" + player1 + "\" rejected your invite");
-
-
                                break;
                            }
                            case "START GAME": {
@@ -176,13 +174,7 @@ public class ServerListener implements Runnable{
                                        commonWindowController.showGameWindow();
                                    }
                                });
-                               Platform.runLater(new Runnable() {
-                               @Override
-                                   public void run() {
-                                       gameController.setLabelUser(username);
-                                       gameController.setLabelEnemy(enemy);
-                                }
-                                });
+
 
                                break;
                            }
@@ -195,7 +187,7 @@ public class ServerListener implements Runnable{
                                    String name = inClientXML.checkValue(reader);
                                    System.out.println("online player#" + i + " - " + name);
                                    if (!name.equals(username)) {
-                                       listOnline.add(new Gamer(name, 0, 0));
+                                       listOnline.add(new Gamer(name, 0));
                                    }
                                }
 
@@ -213,7 +205,7 @@ public class ServerListener implements Runnable{
                                    String name = inClientXML.checkValue(reader);
                                    System.out.println("online player#" + i + " - " + name);
                                    if (!name.equals(username)) {
-                                       listOnGame.add(new Gamer(name, 0, 0));
+                                       listOnGame.add(new Gamer(name, 0));
                                    }
                                }
 
@@ -244,23 +236,12 @@ public class ServerListener implements Runnable{
                                    });
                                    break;
                                }
-                                if (value.equals("GAME STARTED, you are PLAYER ONE")) {
+                                if (value.equals("PLACED ENDED")) {
 
                                    Platform.runLater(new Runnable() {
                                        @Override
                                        public void run() {
                                            gameController.setShip();
-                                           gameController.setGameStart(true);
-                                           DialogManager.showInfoDialog("SERVER INFO", value);
-                                       }
-                                   });
-                                   break;
-                               }
-                               if (value.equals("GAME STARTED, you are PLAYER TWO")) {
-
-                                   Platform.runLater(new Runnable() {
-                                       @Override
-                                       public void run() {
                                            gameController.setGameStart(true);
                                            DialogManager.showInfoDialog("SERVER INFO", value);
                                        }
@@ -286,7 +267,7 @@ public class ServerListener implements Runnable{
                                    @Override
                                    public void run() {
                                        gameController.setShootbyEnemy(result, x1, y1);
-                                       DialogManager.showInfoDialog("SHOOT MY SIDE", result);
+                                       DialogManager.showInfoDialog("SHOOT MY SIDE", result + " x=" + x1 +" y=" + y1);
                                    }
                                });
                                break;
@@ -309,6 +290,7 @@ public class ServerListener implements Runnable{
                                String value = inClientXML.checkValue(reader);
                                commonWindowController.setEnemySurrender(true);
                                gameController.getBtnSurrender().setDisable(true);
+                               commonWindowController.getBtnAtack().setDisable(false);
                                Platform.runLater(new Runnable() {
                                    @Override
                                    public void run() {

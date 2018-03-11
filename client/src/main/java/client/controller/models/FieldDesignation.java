@@ -13,14 +13,14 @@ public class FieldDesignation extends StackPane{
 
         public Rectangle border = new Rectangle(TILE_SIZE - 2, TILE_SIZE - 2);
 
-        public FieldDesignation(int x, int y, int i) {
+        public FieldDesignation(String s, int y, int x) {
             this.x = x;
             this.y = y;
             border.setStroke(Color.LIGHTSEAGREEN);
             border.setFill(Color.BEIGE);
             text.setFont(Font.font(12));
             text.setFill(Color.GRAY);
-            text.setText(String.valueOf(i));
+            text.setText(s);
             getChildren().addAll(border, text);
             setTranslateX(x * TILE_SIZE);
             setTranslateY(y * TILE_SIZE);

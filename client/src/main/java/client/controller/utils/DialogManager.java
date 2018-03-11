@@ -7,7 +7,7 @@ public class DialogManager {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle(title);
             alert.setContentText(text);
-            alert.setHeaderText("");
+            alert.setHeaderText("INFO");
             alert.showAndWait();
         }
 
@@ -15,7 +15,7 @@ public class DialogManager {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle(title);
             alert.setContentText(text);
-            alert.setHeaderText("");
+            alert.setHeaderText("ERROR");
             alert.showAndWait();
         }
 }

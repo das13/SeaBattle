@@ -28,7 +28,8 @@ import java.util.List;
 
 public class CommonWindowController{
     final static Logger logger = Logger.getLogger(ServerListener.class);
-
+    @FXML
+    public Button btnAtack;
     @FXML
     private TableView tblActiveGamers;
     @FXML
@@ -36,9 +37,7 @@ public class CommonWindowController{
     @FXML
     private TableColumn<Gamer, String> colActiveNicks;
     @FXML
-    private TableColumn<Gamer, Integer> colActiveWins;
-    @FXML
-    private TableColumn<Gamer, Integer> colActiveLoses;
+    private TableColumn<Gamer, Integer> colActiveRank;
     @FXML
     private TableColumn<Gamer, String> colPassiveNicks;
     @FXML
@@ -86,8 +85,7 @@ public class CommonWindowController{
         regController = RegController.getRegController();
         tblActiveGamers.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         colActiveNicks.setCellValueFactory(new PropertyValueFactory<Gamer, String>("name"));
-        colActiveWins.setCellValueFactory(new PropertyValueFactory<Gamer, Integer>("wins"));
-        colActiveLoses.setCellValueFactory(new PropertyValueFactory<Gamer, Integer>("loses"));
+        colActiveRank.setCellValueFactory(new PropertyValueFactory<Gamer, Integer>("rank"));
         colPassiveNicks.setCellValueFactory(new PropertyValueFactory<Gamer, String>("name"));
         tblActiveGamers.setItems(FXCollections.observableArrayList(onlineGamers));
         tblPassiveGamers.setItems(FXCollections.observableArrayList(inGamePlayers));
@@ -217,12 +215,14 @@ public class CommonWindowController{
                     } catch (XMLStreamException e1) {
                         logger.error("SURRENDER error", e1);
                     }
-                    RegController.getRegController().comWindow.show();
+                    btnAtack.setDisable(false);
+                   // RegController.getRegController().comWindow.show();
                 });
                 stage.setTitle("Sea battle");
                 stage.setScene(new Scene(root, 700, 400));
                 stage.setResizable(false);
-                RegController.getRegController().comWindow.hide();
+                //RegController.getRegController().comWindow.hide();
+                btnAtack.setDisable(true);
                 stage.show();
 
             }
@@ -243,8 +243,9 @@ public class CommonWindowController{
         return isEnemySurrender;
     }
 
-
-
+    public Button getBtnAtack() {
+        return btnAtack;
+    }
 }
 
 

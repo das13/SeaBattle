@@ -2,13 +2,11 @@ package client.controller.models;
 
 public class Gamer {
     String name;
-    int wins;
-    int loses;
+    int rank;
 
-    public Gamer(String name, int wins, int loses) {
+    public Gamer(String name, int rank) {
         this.name = name;
-        this.wins = wins;
-        this.loses = loses;
+        this.rank = rank;
     }
 
     public Gamer (String name) {
@@ -17,13 +15,5 @@ public class Gamer {
 
     public String getName() {
         return name;
-    }
-
-    public int getWins() {
-        return wins;
-    }
-
-    public int getLoses() {
-        return loses;
     }
 }

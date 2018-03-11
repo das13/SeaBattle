@@ -101,13 +101,15 @@ public class GameController implements Initializable {
 
 
     private void createField(Pane pane, boolean isEnemy) {
+        char row = 65;
+        char col = '0';
         for (int i = 0; i < 10; i++) {
             if (!isEnemy) {
-                paneColumn1.getChildren().add(new FieldDesignation(0, i, i));
-                paneRow1.getChildren().add(new FieldDesignation(i, 0, i));
+                paneColumn1.getChildren().add(new FieldDesignation(String.valueOf(i+1), i, 0));
+                paneRow1.getChildren().add(new FieldDesignation(String.valueOf(row++), 0, i));
             } else {
-                paneColumn2.getChildren().add(new FieldDesignation(0, i, i));
-                paneRow2.getChildren().add(new FieldDesignation(i, 0, i));
+                paneColumn2.getChildren().add(new FieldDesignation(String.valueOf(i+1), i, 0));
+                paneRow2.getChildren().add(new FieldDesignation(String.valueOf(row++), 0, i));
             }
 
         }

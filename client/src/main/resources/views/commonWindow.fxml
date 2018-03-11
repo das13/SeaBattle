@@ -26,7 +26,7 @@
                   <Font name="Arial Bold" size="13.0" />
                </font>
             </Label>
-            <Label text="Wins:">
+            <Label text="Rank:">
                <HBox.margin>
                   <Insets bottom="10.0" left="10.0" top="10.0" />
                </HBox.margin>
@@ -34,23 +34,7 @@
                   <Font name="Arial Bold" size="13.0" />
                </font>
             </Label>
-            <Label fx:id="lblWins" text="MyWins">
-               <HBox.margin>
-                  <Insets bottom="10.0" left="5.0" right="10.0" top="10.0" />
-               </HBox.margin>
-               <font>
-                  <Font name="Arial Bold" size="13.0" />
-               </font>
-            </Label>
-            <Label text="Loses:">
-               <HBox.margin>
-                  <Insets bottom="10.0" left="10.0" top="10.0" />
-               </HBox.margin>
-               <font>
-                  <Font name="Arial Bold" size="13.0" />
-               </font>
-            </Label>
-            <Label fx:id="lblLoses" text="MyLoses">
+            <Label fx:id="lblWins" text="MyRank">
                <HBox.margin>
                   <Insets bottom="10.0" left="5.0" right="10.0" top="10.0" />
                </HBox.margin>
@@ -84,9 +68,8 @@
                   </Label>
                   <TableView fx:id="tblActiveGamers" layoutY="20.0" prefHeight="195.0" prefWidth="180.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                     <columns>
-                      <TableColumn fx:id="colActiveNicks" maxWidth="-1.0" minWidth="95.0" prefWidth="95.0" text="Nick" />
-                      <TableColumn fx:id="colActiveWins" maxWidth="-1.0" minWidth="45.0" prefWidth="45.0" text="Wins" />
-                        <TableColumn fx:id="colActiveLoses" maxWidth="-1.0" minWidth="45.0" prefWidth="45.0" text="Loses" />
+                      <TableColumn fx:id="colActiveNicks" maxWidth="-1.0" minWidth="125.0" prefWidth="125.0" text="Nick" />
+                        <TableColumn fx:id="colActiveRank" maxWidth="-1.0" minWidth="60.0" prefWidth="60.0" text="Rank" />
                     </columns>
                   </TableView>
                   <Button fx:id="btnAtack" contentDisplay="CENTER" layoutY="215.0" mnemonicParsing="false" onAction="#pressBtnAtack" prefHeight="35.0" prefWidth="180.0" text="Attack!" textFill="#d01c1c" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
