@@ -385,6 +385,7 @@ public class PlayerController extends Thread {
             for (Player player : Server.getOnlinePlayersSet()) {
                 System.out.println("добавляем в ячейку массива №" + i + " - " + player.getLogin());
                 list[i++] = player.getLogin();
+                list[i++] = String.valueOf(player.getRank());
             }
             outServerXML.send("ONLINE PLAYERS", list);
         }
