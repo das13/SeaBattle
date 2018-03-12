@@ -22,6 +22,7 @@ public class GameController {
     private File thisGame;
     private boolean placedShipEndOne;
     private boolean placedShipEndTwo;
+    private boolean endGame;
 
     class TimerTaskGameChangePlayer extends TimerTask {
 
@@ -107,17 +108,23 @@ public class GameController {
             if (countShips1 == 0) {
                 playerController1.getOutServerXML().send("SHOOT RESULT","DEFEAT!");
                 playerController2.getOutServerXML().send("SHOOT RESULT","VICTORY!");
+                timer.cancel();
+                endGame = true;
                 //sleep(10);
             } else if (countShips2 == 0) {
                 playerController1.getOutServerXML().send("SHOOT RESULT","VICTORY!");
                 playerController2.getOutServerXML().send("SHOOT RESULT","DEFEAT!");
+                timer.cancel();
+                endGame = true;
                 //sleep(10);
             }
         /*} catch (InterruptedException e) {
             e.printStackTrace();
         }*/
-        timer.cancel();
-        startTimer();
+        if (!endGame) {
+            timer.cancel();
+            startTimer();
+        }
         return str;
     }
 
