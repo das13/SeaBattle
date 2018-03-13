@@ -51,17 +51,14 @@ public class CommonWindowController{
     private boolean isEnemySurrender;
     private static Stage waitAnswerWindow;
     private String key;
-    private String value;
     private  ServerListener listener;
     private  String enemy;
     private final static String WAITANSWERFORM = "/views/WaitAnswer.fxml";
     protected final static String ANSWERFORM = "/views/Answer.fxml";
-    public RegController regController;
+    private RegController regController;
     private GameController gameController;
-
     private List<Gamer> onlineGamers = new ArrayList<>();
     private List<Gamer> inGamePlayers = new ArrayList<>();
-
     private static CommonWindowController cwController;
 
     public CommonWindowController() {
@@ -71,11 +68,6 @@ public class CommonWindowController{
     public static CommonWindowController getCwController() {
         return cwController;
     }
-
-    public Label getLblLogin() {
-        return lblLogin;
-    }
-
 
     @FXML
     private void initialize(){
@@ -98,7 +90,6 @@ public class CommonWindowController{
         key = "INVITE";
         enemy = selectedGamer.getName();
         listener.setEnemy(enemy);
-
         try {
             listener.getOutClientXML().send(key, listener.getUsername(), enemy);
         } catch (XMLStreamException e) {
@@ -107,7 +98,6 @@ public class CommonWindowController{
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-
                 showWaitAnswerWindow(event, WAITANSWERFORM);
             }
         });
@@ -129,7 +119,6 @@ public class CommonWindowController{
         stage.setScene(scene);
         stage.setX(regController.getComWindow().getX() + 200);
         stage.setY(regController.getComWindow().getY() + 100);
-
         stage.initStyle(StageStyle.UNDECORATED);
         PauseTransition delay = new PauseTransition(Duration.seconds(11));
         delay.setOnFinished( event1 -> stage.close() );
@@ -223,18 +212,12 @@ public class CommonWindowController{
         });
     }
 
-
-
     public TextArea getTxaChat() {
         return txaChat;
     }
 
     public void setEnemySurrender(boolean enemySurrender) {
         isEnemySurrender = enemySurrender;
-    }
-
-    public boolean isEnemySurrender() {
-        return isEnemySurrender;
     }
 
     public Button getBtnAtack() {
@@ -257,5 +240,3 @@ public class CommonWindowController{
         return gameWindow;
     }
 }
-
-

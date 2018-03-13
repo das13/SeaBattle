@@ -72,10 +72,6 @@ public class GameController implements Initializable {
     public ProgressBar prgUser;
     public HBox enemyHbox;
     public HBox userHbox;
-
-    @FXML
-    private Label enemyLogin;
-
     final static Logger logger = Logger.getLogger(GameController.class);
     public static final int TILE_SIZE = 25;
     public static final int W = 250;
@@ -93,8 +89,6 @@ public class GameController implements Initializable {
     private int x1, y1, y2, x2;
     private ShootProgress shootEnemyProgress;
     private ShootProgress shootUserProgress ;
-    private Thread userPrgThread;
-    private Thread enemyPrgThread;
     private CommonWindowController commonWindowController;
 
     public GameController() {
@@ -120,12 +114,7 @@ public class GameController implements Initializable {
         shootUserProgress = new ShootProgress();
         prgEnemy.progressProperty().bind(shootEnemyProgress.progressProperty());
         prgUser.progressProperty().bind(shootUserProgress.progressProperty());
-        userPrgThread = new Thread(shootUserProgress);
-        userPrgThread.setDaemon(true);
-        enemyPrgThread = new Thread(shootEnemyProgress);
-        enemyPrgThread.setDaemon(true);
     }
-
 
     private void createField(Pane pane, boolean isEnemy) {
         char row = 65; // 'A'
@@ -137,7 +126,6 @@ public class GameController implements Initializable {
                 paneColumn2.getChildren().add(new FieldDesignation(String.valueOf(i+1), i, 0));
                 paneRow2.getChildren().add(new FieldDesignation(String.valueOf(row++), 0, i));
             }
-
         }
         for (int y = 0; y < Y_TILES; y++) {
             for (int x = 0; x < X_TILES; x++) {
@@ -195,7 +183,6 @@ public class GameController implements Initializable {
         else {
             DialogManager.showInfoDialog(commonWindowController.getGameWindow(),"GAME INFO", "you have already arranged all the ships");
         }
-
     }
 
     private Cell createNewCell(String result, int x1, int y1){
@@ -206,7 +193,6 @@ public class GameController implements Initializable {
             if (result.equals("MISS")){
                 cell.border.setFill(Color.LIGHTBLUE);
             }
-
             if (result.equals("DESTROY") || result.equals("VICTORY!")){
                 cell.border.setFill(Color.GOLD);
             }
@@ -247,14 +233,6 @@ public class GameController implements Initializable {
 
     public void selectVerically(ActionEvent event) {
         position = 1;
-    }
-
-    public int getPosition() {
-        return position;
-    }
-
-    public int getLength() {
-        return length;
     }
 
     public  Pane getUserPane() {
@@ -305,9 +283,7 @@ public class GameController implements Initializable {
         }else {
             enemyHbox.setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN, null, null)));
             userHbox.setBackground(new Background(new BackgroundFill(Color.LIGHTCORAL, null, null)));
-
         }
-
     }
 
     class ShootProgress extends Task<Integer> {
