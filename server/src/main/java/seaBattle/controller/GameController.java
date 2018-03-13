@@ -126,6 +126,7 @@ public class GameController {
                         if (new File("game-" + playerController1.getThisPlayer().getLogin() +"VS"+ playerController2.getThisPlayer().getLogin() + ".xml").exists()){
                             File file = new File(new File("game-" + playerController1.getThisPlayer().getLogin() +"VS"+ playerController2.getThisPlayer().getLogin() + ".xml").getPath());
                             file.delete();
+
                         }
                     }
                 }
