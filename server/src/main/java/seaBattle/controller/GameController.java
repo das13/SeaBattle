@@ -108,16 +108,25 @@ public class GameController {
         }
        // try {
             if (countShips1 == 0) {
+            int count = 0;
                 playerController1.getOutServerXML().send("SHOOT RESULT","DEFEAT!");
                 playerController2.getOutServerXML().send("SHOOT RESULT","VICTORY!");
                 for (Player player : Server.getAllPlayersSet()){
                     if (player.getLogin().equals(playerController1.getThisPlayer().getLogin())){
                         player.setRank(player.getRank() - 5);
                         player.setStatus("online");
+                        count++;
                     }
                     if (player.getLogin().equals(playerController2.getThisPlayer().getLogin())){
                         player.setRank(player.getRank() + 10);
                         player.setStatus("online");
+                        count++;
+                    }
+                    if (count == 2){
+                        if (new File("game-" + playerController1.getThisPlayer().getLogin() +"VS"+ playerController2.getThisPlayer().getLogin() + ".xml").exists()){
+                            File file = new File(new File("game-" + playerController1.getThisPlayer().getLogin() +"VS"+ playerController2.getThisPlayer().getLogin() + ".xml").getPath());
+                            file.delete();
+                        }
                     }
                 }
                 timer.cancel();
