@@ -18,6 +18,10 @@ public class SaveLoadServerXML {
     private final static Logger logger = Logger.getLogger(SaveLoadServerXML.class);
 
     public static void readServerConfig(){
+        if(!Server.getPlayerListXML().exists()) {
+            logger.warn("Reading XML file, but serverConf.xml not found. Creating... ");
+            checkServerXMLfiles();
+        }
         try {
             File file = new File(Server.getServerConfXML().getPath());
             JAXBContext jaxbContext = JAXBContext.newInstance(ServerConf.class);
@@ -149,26 +153,11 @@ public class SaveLoadServerXML {
         }
     }
 
-    public static void updateAllPlayersSet() {
-        try {
-            File file = new File(Server.getPlayerListXML().getPath());
-            JAXBContext jaxbContext = JAXBContext.newInstance(PlayerList.class);
-
-            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-            PlayerList playerList = (PlayerList) jaxbUnmarshaller.unmarshal(file);
-            System.out.println("\nfound " + playerList.getPlayerList().size() + " players in playerList.xml:");
-            Server.getAllPlayersSet().addAll(playerList.getPlayerList());
-            for (Player player : Server.getAllPlayersSet()) {
-                System.out.print(player.getLogin() + ", ");
-            }
-            System.out.println("\nupdated: allPlayersSet");
-            SaveLoadServerXML.updatePlayerListXML();
-        } catch (JAXBException e) {
-            logger.error("Updating allPlayersSet error.", e);
-        }
-    }
-
     public static void updatePlayerListXML(){
+        if(!Server.getPlayerListXML().exists()) {
+            logger.warn("Updating XML file, but playerList.xml not found. Creating... ");
+            checkServerXMLfiles();
+        }
         try {
             PlayerList playerList = new PlayerList();
             playerList.setPlayerList(new ArrayList<>());
@@ -190,6 +179,10 @@ public class SaveLoadServerXML {
     }
 
     public static void updateAdminsListXML(){
+        if(!Server.getAdminsListXML().exists()) {
+            logger.warn("Updating XML file, but adminsList.xml not found. Creating... ");
+            checkServerXMLfiles();
+        }
         try {
             AdminsList adminsList = new AdminsList();
             adminsList.setAdminList(new ArrayList<>());
@@ -211,6 +204,10 @@ public class SaveLoadServerXML {
     }
 
     public static void updateBannedIpListXML(){
+        if(!Server.getBannedIpListXML().exists()) {
+            logger.warn("Updating XML file, but bannedIpList.xml not found. Creating... ");
+            checkServerXMLfiles();
+        }
         try {
             BannedIpList bannedIpList = new BannedIpList();
             bannedIpList.setBannedIpList(new ArrayList<>());
@@ -231,7 +228,34 @@ public class SaveLoadServerXML {
         }
     }
 
+    public static void updateAllPlayersSet() {
+        if(!Server.getPlayerListXML().exists()) {
+            logger.warn("Updating set, but file playerList.xml not found. Creating... ");
+            checkServerXMLfiles();
+        }
+        try {
+            File file = new File(Server.getPlayerListXML().getPath());
+            JAXBContext jaxbContext = JAXBContext.newInstance(PlayerList.class);
+
+            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+            PlayerList playerList = (PlayerList) jaxbUnmarshaller.unmarshal(file);
+            System.out.println("\nfound " + playerList.getPlayerList().size() + " players in playerList.xml:");
+            Server.getAllPlayersSet().addAll(playerList.getPlayerList());
+            for (Player player : Server.getAllPlayersSet()) {
+                System.out.print(player.getLogin() + ", ");
+            }
+            System.out.println("\nupdated: allPlayersSet");
+            SaveLoadServerXML.updatePlayerListXML();
+        } catch (JAXBException e) {
+            logger.error("Updating allPlayersSet error.", e);
+        }
+    }
+
     public static void updateAdminsSet(){
+        if(!Server.getAdminsListXML().exists()) {
+            logger.warn("Updating set, but file adminsList.xml not found. Creating... ");
+            checkServerXMLfiles();
+        }
         try {
             File file1 = new File(Server.getAdminsListXML().getPath());
             JAXBContext jaxbContext = JAXBContext.newInstance(AdminsList.class);
@@ -251,6 +275,10 @@ public class SaveLoadServerXML {
     }
 
     public static void updateBannedIpSet(){
+        if(!Server.getBannedIpListXML().exists()) {
+            logger.warn("Updating set, but file bannedIpList.xml not found. Creating... ");
+            checkServerXMLfiles();
+        }
         try {
             File file = new File(Server.getBannedIpListXML().getPath());
             JAXBContext jaxbContext = JAXBContext.newInstance(BannedIpList.class);
