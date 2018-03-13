@@ -151,9 +151,6 @@ public class OutServerXML {
             e.printStackTrace();
         }
     }
-//    public void send(String key, SortedMap <login, rank>){
-//
-//    }
 
 
     public XMLOutputFactory getFactory() {
