@@ -12,7 +12,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
 
-<VBox fx:id="regFormWindow" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="640.0" prefWidth="300.0" styleClass="mainBackGround" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.controller.RegController">
+<VBox fx:id="regFormWindow" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="300.0" styleClass="mainBackGround" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.controller.RegController">
    <children>
       <HBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0" prefWidth="200.0">
          <children>
@@ -169,15 +169,6 @@
                   <Font size="14.0" />
                </font>
             </Button>
-         </children>
-      </HBox>
-      <HBox prefHeight="50.0" prefWidth="200.0">
-         <children>
-            <Label fx:id="inputStatus" text="Input status: ">
-               <HBox.margin>
-                  <Insets bottom="8.0" left="20.0" right="8.0" />
-               </HBox.margin>
-            </Label>
          </children>
       </HBox>
    </children>

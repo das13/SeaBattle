@@ -42,7 +42,7 @@ public class MainLauncher extends Application {
             logger.error("Can not load regForm.fxml", e);
         }
         primaryStage.setTitle("Sea Battle 2018");
-        Scene scene = new Scene(root,300,640);
+        Scene scene = new Scene(root,300,600);
         scene.getStylesheets().add(0, "css/main.css");
         scene.setRoot(root);
         primaryStage.setScene(scene);
