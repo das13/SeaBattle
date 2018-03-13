@@ -24,7 +24,7 @@ public class GameController {
     private File thisGame;
     private boolean placedShipEndOne;
     private boolean placedShipEndTwo;
-    private boolean endGame;
+    private boolean endGame = false;
 
     class TimerTaskGameChangePlayer extends TimerTask {
 

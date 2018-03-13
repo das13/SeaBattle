@@ -62,6 +62,37 @@ public class Field {
             c++;
         }
         if (c == 4) {
+            try {
+                if (field[x + 2][y] == 1 && field[x + 1][y] == 3) {
+                    c--;
+                }
+            } catch (ArrayIndexOutOfBoundsException e) {
+
+            }
+            try {
+                if (field[x - 2][y] == 1 && field[x - 1][y] == 3) {
+                    c--;
+                }
+            } catch (ArrayIndexOutOfBoundsException e) {
+
+            }
+            try {
+                if (field[x][y + 2] == 1 && field[x][y + 1] == 3) {
+                    c--;
+                }
+            } catch (ArrayIndexOutOfBoundsException e) {
+
+            }
+            try {
+                if (field[x][y - 2] == 1 && field[x][y - 1] == 3) {
+                    c--;
+                }
+            } catch (ArrayIndexOutOfBoundsException e) {
+
+            }
+        }
+
+        if (c == 4) {
             return true;
         } else {
             return false;
