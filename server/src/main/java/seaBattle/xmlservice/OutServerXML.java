@@ -50,6 +50,11 @@ public class OutServerXML {
         writer2.writeEndElement();
         writer2.writeEndDocument();
         writer2.flush();
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         } catch (XMLStreamException e) {
             e.printStackTrace();
         }
@@ -93,6 +98,12 @@ public class OutServerXML {
             writer2.writeEndElement();
             writer2.writeEndDocument();
             writer2.flush();
+
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         } catch (XMLStreamException e) {
             e.printStackTrace();
         }
@@ -131,6 +142,11 @@ public class OutServerXML {
         writer2.writeEndElement();
         writer2.writeEndDocument();
         writer2.flush();
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         } catch (XMLStreamException e) {
             e.printStackTrace();
         }

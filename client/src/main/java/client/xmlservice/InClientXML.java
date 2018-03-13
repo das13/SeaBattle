@@ -25,7 +25,7 @@ public class InClientXML {
         }
     }
 
-    public String checkValue(XMLStreamReader reader){
+    public synchronized String checkValue(XMLStreamReader reader){
         StringBuilder sb = new StringBuilder();
         String value = "";
         try {
@@ -43,7 +43,7 @@ public class InClientXML {
         return value;
     }
 
-    public void printEvent(XMLStreamReader reader) {
+    public synchronized void printEvent(XMLStreamReader reader) {
         switch (reader.getEventType()) {
             case XMLStreamConstants.START_ELEMENT:
                 System.out.print("<");
@@ -109,7 +109,7 @@ public class InClientXML {
         }
         System.out.println("");
     }
-    private static void printName(XMLStreamReader reader){
+    private synchronized static void printName(XMLStreamReader reader){
         if(reader.hasName()){
             String prefix = reader.getPrefix();
             String uri = reader.getNamespaceURI();
@@ -117,19 +117,19 @@ public class InClientXML {
             printName(prefix,uri,localName);
         }
     }
-    private static void printName(String prefix, String uri, String localName) {
+    private synchronized static void printName(String prefix, String uri, String localName) {
         if (uri != null && !("".equals(uri)) ) System.out.print("['"+uri+"']");
         //if (uri != null && !("".equals(uri)) ) System.out.print("['"+uri+"']:");
         if (prefix != null) System.out.print(prefix+"");
         //if (prefix != null) System.out.print(prefix+":");
         if (localName != null) System.out.print(localName);
     }
-    private static void printAttributes(XMLStreamReader reader){
+    private synchronized static void printAttributes(XMLStreamReader reader){
         for (int i=0; i < reader.getAttributeCount(); i++) {
             printAttribute(reader,i);
         }
     }
-    private static void printAttribute(XMLStreamReader reader, int index) {
+    private synchronized static void printAttribute(XMLStreamReader reader, int index) {
         String prefix = reader.getAttributePrefix(index);
         String namespace = reader.getAttributeNamespace(index);
         String localName = reader.getAttributeLocalName(index);
@@ -138,12 +138,12 @@ public class InClientXML {
         printName(prefix,namespace,localName);
         System.out.print("='"+value+"'");
     }
-    private static void printNamespaces(XMLStreamReader reader){
+    private synchronized static void printNamespaces(XMLStreamReader reader){
         for (int i=0; i < reader.getNamespaceCount(); i++) {
             printNamespace(reader,i);
         }
     }
-    private static void printNamespace(XMLStreamReader reader, int index) {
+    private synchronized static void printNamespace(XMLStreamReader reader, int index) {
         String prefix = reader.getNamespacePrefix(index);
         String uri = reader.getNamespaceURI(index);
         System.out.print(" ");

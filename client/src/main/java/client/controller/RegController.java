@@ -245,4 +245,8 @@ public class RegController{
     public Stage getComWindow() {
         return comWindow;
     }
+
+    public void hideCommonWindow() {
+        comWindow.hide();
+    }
 }

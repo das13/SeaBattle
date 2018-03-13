@@ -254,6 +254,10 @@ public class CommonWindowController{
     public void setGameController(GameController gameController) {
         this.gameController = gameController;
     }
+
+    public void hideGameWindow() {
+        gameWindow.hide();
+    }
 }
 
 

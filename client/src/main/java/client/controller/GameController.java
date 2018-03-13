@@ -6,14 +6,19 @@ import client.controller.models.Ship;
 import client.controller.utils.DialogManager;
 import client.xmlservice.OutClientXML;
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.RadioButton;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import org.apache.log4j.Layout;
 import org.apache.log4j.Logger;
 
 import javax.xml.stream.XMLStreamException;
@@ -62,6 +67,8 @@ public class GameController implements Initializable {
     public Pane paneRow2;
     public Label lblResultGameUser;
     public Label lblResultGameEnemy;
+    public ProgressBar prgEnemy;
+    public ProgressBar prgUser;
 
     @FXML
     private Label enemyLogin;
@@ -81,6 +88,10 @@ public class GameController implements Initializable {
     private boolean isFinishSet;
     private boolean isGameFinish;
     private int x1, y1, y2, x2;
+    private ShootProgress shootEnemyProgress;
+    private ShootProgress shootUserProgress ;
+    private Thread userPrgThread;
+    private Thread enemyPrgThread;
 
     public GameController() {
         gameController = this;
@@ -100,6 +111,14 @@ public class GameController implements Initializable {
         lblEnemyLogin.setText(listener.getEnemy());
         lblUserLogin.setText(listener.getUsername());
         CommonWindowController.getCwController().setGameController(this);
+        shootEnemyProgress = new ShootProgress();
+        shootUserProgress = new ShootProgress();
+        prgEnemy.progressProperty().bind(shootEnemyProgress.progressProperty());
+        prgUser.progressProperty().bind(shootUserProgress.progressProperty());
+        userPrgThread = new Thread(shootUserProgress);
+        userPrgThread.setDaemon(true);
+        enemyPrgThread = new Thread(shootEnemyProgress);
+        enemyPrgThread.setDaemon(true);
     }
 
 
@@ -183,7 +202,7 @@ public class GameController implements Initializable {
                 cell.border.setFill(Color.LIGHTBLUE);
             }
 
-            if (result.equals("DESTROY")){
+            if (result.equals("DESTROY") || result.equals("VICTORY!")){
                 cell.border.setFill(Color.GOLD);
             }
             return cell;
@@ -271,5 +290,35 @@ public class GameController implements Initializable {
 
     public boolean isGameFinish() {
         return isGameFinish;
+    }
+
+    public void shootProgress(boolean isUser){
+
+    }
+
+    class ShootProgress extends Task<Integer> {
+        int i;
+        @Override
+        protected Integer call() throws Exception {
+            for (i = 0; i <= 100; i++) {
+                updateProgress(i/100.0 + 0.01, 1.0);
+                try {
+                    Thread.sleep(300);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if (isCancelled()) {return 0;}
+            }
+            return 100;
+        }
+
+        @Override
+        protected void updateProgress(double workDone, double max) {
+            super.updateProgress(workDone, max);
+        }
+
+        public void setI(int i) {
+            this.i = i;
+        }
     }
 }

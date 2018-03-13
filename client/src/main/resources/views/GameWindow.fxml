@@ -114,7 +114,7 @@
       </HBox>
       <HBox prefHeight="100.0" prefWidth="200.0">
          <children>
-            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="300.0">
+            <HBox fx:id="userHbox" alignment="CENTER" prefHeight="100.0" prefWidth="300.0">
                <children>
                   <Label fx:id="lblResultGameUser" wrapText="true">
                      <font>
@@ -124,13 +124,30 @@
                </children>
             </HBox>
             <HBox prefHeight="100.0" prefWidth="100.0" />
-            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="300.0">
+            <HBox fx:id="enemyHbox" alignment="CENTER" prefHeight="100.0" prefWidth="300.0">
                <children>
                   <Label fx:id="lblResultGameEnemy" wrapText="true">
                      <font>
                         <Font size="18.0" />
                      </font>
                   </Label>
+               </children>
+            </HBox>
+         </children>
+      </HBox>
+      <HBox prefHeight="100.0" prefWidth="200.0">
+         <children>
+            <HBox alignment="CENTER" prefHeight="50.0" prefWidth="300.0">
+               <children>
+                  <Label text="Time for shoot:" />
+                  <ProgressBar fx:id="prgUser" prefWidth="200.0" progress="0.0" />
+               </children>
+            </HBox>
+            <HBox prefHeight="50.0" prefWidth="100.0" />
+            <HBox alignment="CENTER" prefHeight="50.0" prefWidth="300.0">
+               <children>
+                  <Label text="Time for shoot:" />
+                  <ProgressBar fx:id="prgEnemy" prefWidth="200.0" progress="0.0" />
                </children>
             </HBox>
          </children>

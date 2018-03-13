@@ -27,7 +27,7 @@ public class OutClientXML {
     }
 
     //send XML with 1 value
-    public void send(String key, String value1) throws XMLStreamException {
+    public synchronized void send(String key, String value1) throws XMLStreamException {
         writer.writeStartDocument("1.0");
         writer.writeStartElement("root");
         writer.writeStartElement("key");
@@ -54,7 +54,7 @@ public class OutClientXML {
     }
 
     //send XML with 2 values
-    public void send(String key, String value1, String value2) throws XMLStreamException {
+    public synchronized void send(String key, String value1, String value2) throws XMLStreamException {
         writer.writeStartDocument("1.0");
         writer.writeStartElement("root");
         writer.writeStartElement("key");
@@ -88,7 +88,7 @@ public class OutClientXML {
     }
 
     //XML with many values
-    public void send(String key, String[] list) throws XMLStreamException {
+    public synchronized void send(String key, String[] list) throws XMLStreamException {
         writer.writeStartDocument("1.0");
         writer.writeStartElement("root");
         writer.writeStartElement("key");
@@ -121,7 +121,7 @@ public class OutClientXML {
         writer2.flush();
     }
 
-    public void send(String key, int y1, int x1, int y2, int x2) throws XMLStreamException {
+    public synchronized void send(String key, int y1, int x1, int y2, int x2) throws XMLStreamException {
         writer.writeStartDocument("1.0");
         writer.writeStartElement("root");
         writer.writeStartElement("key");

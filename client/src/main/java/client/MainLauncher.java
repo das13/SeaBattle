@@ -58,6 +58,7 @@ public class MainLauncher extends Application {
     }
 
     public static void main(String[] args) {
+        ServerListener.getListener();
         launch(args);
     }
 }
