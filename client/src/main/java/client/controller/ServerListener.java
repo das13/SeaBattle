@@ -87,9 +87,7 @@ public class ServerListener implements Runnable {
 
         regController = RegController.getRegController();
         System.out.println("RUN is runed");
-
         while (!socket.isClosed()) {
-
             try {
                 System.out.println("Enter to while (socket.isConnected()) cycle");
                 inClientXML.setReader(inClientXML.getFactory().createXMLStreamReader(inClientXML.getFileReader()));
@@ -98,7 +96,6 @@ public class ServerListener implements Runnable {
             }
             XMLStreamReader reader;
             reader = inClientXML.getReader();
-
             try {
                 while (reader.hasNext()) {
                     if (reader.getEventType() == 1 && reader.getLocalName().equals("key")) {
