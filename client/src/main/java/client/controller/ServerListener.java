@@ -342,7 +342,7 @@ public class ServerListener implements Runnable {
                                         gameController.setShoot(value);
                                     }
                                 });
-                                DialogManager.showInfoDialog(commonWindowController.getGameWindow(),"SHOOT RESULT", value);
+                                //DialogManager.showInfoDialog(commonWindowController.getGameWindow(),"SHOOT RESULT", value);
 
                                 break;
                             }
