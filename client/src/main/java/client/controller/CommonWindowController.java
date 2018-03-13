@@ -127,8 +127,8 @@ public class CommonWindowController{
         stage.setTitle("Sea Battle 2018");
         Scene scene = new Scene(root,300,200);
         stage.setScene(scene);
-        stage.setX(RegController.getRegController().comWindow.getX() + 200);
-        stage.setY(RegController.getRegController().comWindow.getY() + 100);
+        stage.setX(regController.getComWindow().getX() + 200);
+        stage.setY(regController.getComWindow().getY() + 100);
 
         stage.initStyle(StageStyle.UNDECORATED);
         PauseTransition delay = new PauseTransition(Duration.seconds(11));
@@ -156,7 +156,6 @@ public class CommonWindowController{
                     txtMassage.setText("");
                 }
             });
-
     }
 
     public void sendMethod(KeyEvent event) throws IOException {
@@ -213,10 +212,6 @@ public class CommonWindowController{
                         logger.error("SURRENDER error", e1);
                     }
                     btnAtack.setDisable(false);
-                 /*   if (!gameController.isGameFinish()) {
-                        RegController.getRegController().comWindow.show();
-                    }*/
-
                 });
                 stage.setTitle("Sea battle");
                 stage.setScene(new Scene(root, 700, 400));
@@ -224,7 +219,6 @@ public class CommonWindowController{
                // RegController.getRegController().comWindow.hide();
                 btnAtack.setDisable(true);
                 stage.show();
-
             }
         });
     }
@@ -257,6 +251,10 @@ public class CommonWindowController{
 
     public void hideGameWindow() {
         gameWindow.hide();
+    }
+
+    public Stage getGameWindow() {
+        return gameWindow;
     }
 }
 

@@ -58,11 +58,12 @@ public class RegController{
         regController = this;
     }
 
-    public Stage comWindow;
+    private Stage comWindow;
 
     @FXML
     private void initialize(){
-
+        listener = ServerListener.getListener();
+        listener.setRegController(this);
     }
 
     public static RegController getRegController() {
@@ -82,7 +83,7 @@ public class RegController{
                             checkStatus();
                             initializeUserInfo();
                             if (isValidUserInfo()){
-                                ServerListener.getListener().getOutClientXML().send("REG", username, password);
+                                listener.getOutClientXML().send("REG", username, password);
                             }
                         } catch (XMLStreamException e) {
                             e.printStackTrace();
@@ -105,8 +106,8 @@ public class RegController{
                         checkStatus();
                         initializeUserInfo();
                         if (isValidUserInfo()){
-                            ServerListener.getListener().getOutClientXML().send("LOG IN", username, password);
-                            ServerListener.getListener().setUsername(username);
+                            listener.getOutClientXML().send("LOG IN", username, password);
+                            listener.setUsername(username);
                         }
                     } catch (XMLStreamException e) {
                         e.printStackTrace();
@@ -132,8 +133,7 @@ public class RegController{
                 }
                 stage.setOnCloseRequest((WindowEvent e) -> {
                     try {
-                        ServerListener.getListener().getOutClientXML().send("LOG OUT", username);
-
+                        listener.getOutClientXML().send("LOG OUT", username);
                     } catch (XMLStreamException e1) {
                         logger.error("Logout error", e1);
                     } finally {
@@ -214,15 +214,10 @@ public class RegController{
         passField.setText("");
     }
 
-    public void closeSystem(){
-        Platform.exit();
-        System.exit(0);
-    }
-
     public void pressConnectBtn(ActionEvent event) {
         if (isValidServerInfo() ){
             initializeServerInfo();
-            ServerListener.getListener().connect(hostname, port);
+            listener.connect(hostname, port);
         }
     }
 
@@ -249,4 +244,6 @@ public class RegController{
     public void hideCommonWindow() {
         comWindow.hide();
     }
+
+
 }

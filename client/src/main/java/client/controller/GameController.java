@@ -16,6 +16,7 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.RadioButton;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import org.apache.log4j.Layout;
@@ -69,6 +70,8 @@ public class GameController implements Initializable {
     public Label lblResultGameEnemy;
     public ProgressBar prgEnemy;
     public ProgressBar prgUser;
+    public HBox enemyHbox;
+    public HBox userHbox;
 
     @FXML
     private Label enemyLogin;
@@ -92,6 +95,7 @@ public class GameController implements Initializable {
     private ShootProgress shootUserProgress ;
     private Thread userPrgThread;
     private Thread enemyPrgThread;
+    private CommonWindowController commonWindowController;
 
     public GameController() {
         gameController = this;
@@ -104,6 +108,7 @@ public class GameController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         listener = ServerListener.getListener();
+        commonWindowController = CommonWindowController.getCwController();
         createField(userPane, false);
         createField(enemyPane, true);
         listener.setGameController(this);
@@ -149,7 +154,7 @@ public class GameController implements Initializable {
 
     public void shoot(int x1, int y1) {
         if (isGameFinish) {
-            DialogManager.showInfoDialog("GAME INFO", "Game OVER");
+            DialogManager.showInfoDialog(commonWindowController.getGameWindow(),"GAME INFO", "Game OVER");
             return;
         }
         if (isGameStart) {
@@ -162,7 +167,7 @@ public class GameController implements Initializable {
             }
         }
         else {
-            DialogManager.showInfoDialog("GAME INFO", "Game is not started");
+            DialogManager.showInfoDialog(commonWindowController.getGameWindow(),"GAME INFO", "Game is not started");
         }
     }
 
@@ -174,11 +179,11 @@ public class GameController implements Initializable {
         y2 = (position == 0 ? y1 : y1 + length - 1);
         System.out.println("Ship" + x1 + y1 +x2 +y2);
         try {
-            System.out.println("socket "+ ServerListener.getListener().getSocket().isConnected());
+            System.out.println("socket "+ listener.getSocket().isConnected());
             outClientXML.send("SHIP LOCATION", y1, x1, y2, x2);
         } catch (XMLStreamException e) {
             logger.error("SHIP LOCATION error",e);
-            System.out.println("socket closed:"+ ServerListener.getListener().getSocket().isClosed());
+            System.out.println("socket closed:"+ listener.getSocket().isClosed());
         }
     }
 
@@ -188,7 +193,7 @@ public class GameController implements Initializable {
             ship.setShip();
         }
         else {
-            DialogManager.showInfoDialog("GAME INFO", "you have already arranged all the ships");
+            DialogManager.showInfoDialog(commonWindowController.getGameWindow(),"GAME INFO", "you have already arranged all the ships");
         }
 
     }
@@ -262,7 +267,7 @@ public class GameController implements Initializable {
 
     public void pressBtnSurrender(ActionEvent event) {
         try {
-            ServerListener.getListener().getOutClientXML().send("SURRENDER", listener.getUsername());
+            listener.getOutClientXML().send("SURRENDER", listener.getUsername());
         } catch (XMLStreamException e) {
             e.printStackTrace();
         }
@@ -293,6 +298,15 @@ public class GameController implements Initializable {
     }
 
     public void shootProgress(boolean isUser){
+        if (isUser) {
+            enemyHbox.setBackground(new Background(new BackgroundFill(Color.LIGHTCORAL, null, null)));
+            userHbox.setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN, null, null)));
+
+        }else {
+            enemyHbox.setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN, null, null)));
+            userHbox.setBackground(new Background(new BackgroundFill(Color.LIGHTCORAL, null, null)));
+
+        }
 
     }
 
