@@ -1,6 +1,5 @@
 package client.controller;
 
-
 import client.MainLauncher;
 import client.controller.models.Gamer;
 import client.controller.utils.DialogManager;
@@ -9,42 +8,30 @@ import client.xmlservice.OutClientXML;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import org.apache.log4j.Logger;
-
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
-
 
 public class ServerListener implements Runnable {
 
     final static Logger logger = Logger.getLogger(ServerListener.class);
-
     private static OutClientXML outClientXML;
     private String password;
     private Socket socket;
-    private String hostname;
-    private int port;
     private String username;
     private RegController regController;
     private CommonWindowController commonWindowController;
     private GameController gameController;
     private InClientXML inClientXML;
-    private Scanner scanner;
-    private String key;
-    private boolean isConnect;
     private String enemy;
     public List<Gamer> listOnline = new ArrayList<>();
     public List<Gamer> listOnGame = new ArrayList<>();
-    private Thread th;
-    private ServerListener listener = getListener();
     private int rank;
 
-    private ServerListener() {
-    }
+    private ServerListener() {}
 
     public static ServerListener getListener() {
         return ListenerHolder.listener;
@@ -57,34 +44,22 @@ public class ServerListener implements Runnable {
     public void connect(String hostname, int port) {
         try {
             socket = new Socket(hostname, port);
-            isConnect = true;
             inClientXML = new InClientXML(socket);
             outClientXML = new OutClientXML(socket);
             RegController.getRegController().getRegButton().setDisable(false);
             RegController.getRegController().getSignButton().setDisable(false);
             RegController.getRegController().getBtnConnect().setDisable(true);
-
             new Thread(this).start();
-
             logger.info("Connection accepted " + socket.getInetAddress() + ":" + socket.getPort());
             DialogManager.showInfoDialog(MainLauncher.getPrimaryStageObj(),"Server info", "You connect to server");
         } catch (Exception e) {
-
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    DialogManager.showErrorDialog(MainLauncher.getPrimaryStageObj(),"Server Error", "Could not connect to server");
-                }
-            });
+            DialogManager.showErrorDialog(MainLauncher.getPrimaryStageObj(),"Server Error", "Could not connect to server");
             logger.error("Could not Connect to server", e);
         }
-
-
     }
 
     @Override
     public void run() {
-
         regController = RegController.getRegController();
         System.out.println("RUN is runed");
         while (!socket.isClosed()) {
@@ -340,7 +315,6 @@ public class ServerListener implements Runnable {
                                     }
                                 });
                                 //DialogManager.showInfoDialog(commonWindowController.getGameWindow(),"SHOOT RESULT", value);
-
                                 break;
                             }
                             case "SURRENDER": {
@@ -410,7 +384,7 @@ public class ServerListener implements Runnable {
                     e.printStackTrace();
                 }
             }
-            isConnect = false;
+
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -424,32 +398,12 @@ public class ServerListener implements Runnable {
         return outClientXML;
     }
 
-    public InClientXML getInClientXML() {
-        return inClientXML;
-    }
-
-    public boolean isConnect() {
-        return isConnect;
-    }
-
-    public void setIsConnect(boolean isConnect) {
-        this.isConnect = isConnect;
-    }
-
     public  String getUsername() {
         return username;
     }
 
     public Socket getSocket() {
         return socket;
-    }
-
-    public void setHostname(String hostname) {
-        this.hostname = hostname;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
     }
 
     public void setUsername(String username) {
