@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PlayerInGame{
     String login;
+    String turnTime;
     String row0, row1, row2, row3, row4, row5, row6, row7, row8, row9;
     String[] row = new String[10];
 
@@ -16,6 +17,13 @@ public class PlayerInGame{
     }
     public void setLogin(String login) {
         this.login = login;
+    }
+
+    public String isTurnTime() {
+        return turnTime;
+    }
+    public void setTurnTime(String turnTime) {
+        this.turnTime = turnTime;
     }
 
     public String getRow0() {

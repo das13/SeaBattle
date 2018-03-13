@@ -229,7 +229,7 @@ public class SaveLoadServerXML {
     }
 
     public static void updateAllPlayersSet() {
-        if(!Server.getPlayerListXML().exists()) {
+        if (!Server.getPlayerListXML().exists()) {
             logger.warn("Updating set, but file playerList.xml not found. Creating... ");
             checkServerXMLfiles();
         }
@@ -241,12 +241,20 @@ public class SaveLoadServerXML {
             PlayerList playerList = (PlayerList) jaxbUnmarshaller.unmarshal(file);
             System.out.println("\nfound " + playerList.getPlayerList().size() + " players in playerList.xml:");
             Server.getAllPlayersSet().addAll(playerList.getPlayerList());
+            if (Server.getAllPlayersControllerSet().isEmpty()) {
+                for (Player pl : Server.getAllPlayersSet()) {
+                    if (!pl.getStatus().equals("offline")) {
+                        pl.setStatus("offline");
+                    }
+                }
+            }
             for (Player player : Server.getAllPlayersSet()) {
                 System.out.print(player.getLogin() + ", ");
             }
             System.out.println("\nupdated: allPlayersSet");
             SaveLoadServerXML.updatePlayerListXML();
-        } catch (JAXBException e) {
+
+            } catch(JAXBException e){
             logger.error("Updating allPlayersSet error.", e);
         }
     }
@@ -297,7 +305,7 @@ public class SaveLoadServerXML {
         }
     }
 
-    public static void saveGame(String player1, Field field1, String player2, Field field2){
+    public static void saveGame(String playerTurnTime, String player1, Field field1, String player2, Field field2){
         if (!new File("game-" + player1 +"VS"+ player2 + ".xml").exists()){
 
             GameCondition gameCondition = new GameCondition();
@@ -309,6 +317,9 @@ public class SaveLoadServerXML {
 
             playerInGame1.setLogin(player1);
             playerInGame2.setLogin(player2);
+
+            playerInGame1.setTurnTime(playerTurnTime);
+            playerInGame2.setTurnTime(playerTurnTime);
 
             String[][] tempList = new String[2][];
             tempList[0] = playerInGame1.getRow();
@@ -327,8 +338,6 @@ public class SaveLoadServerXML {
                         }
                     }
                     tempList[t][i] = String.valueOf(sb);
-                    System.out.println("SB = " + sb);
-                    System.out.println("SB TOSTRING = " + sb.toString());
                     sb.delete(0, 10);
                 }
             }

@@ -1,6 +1,8 @@
 package seaBattle.controller;
 
 import seaBattle.model.Field;
+import seaBattle.model.Player;
+import seaBattle.model.Server;
 import seaBattle.model.Ship;
 import seaBattle.xmlservice.SaveLoadServerXML;
 
@@ -108,19 +110,36 @@ public class GameController {
             if (countShips1 == 0) {
                 playerController1.getOutServerXML().send("SHOOT RESULT","DEFEAT!");
                 playerController2.getOutServerXML().send("SHOOT RESULT","VICTORY!");
+                for (Player player : Server.getAllPlayersSet()){
+                    if (player.getLogin().equals(playerController1.getThisPlayer().getLogin())){
+                        player.setRank(player.getRank() - 5);
+                        player.setStatus("online");
+                    }
+                    if (player.getLogin().equals(playerController2.getThisPlayer().getLogin())){
+                        player.setRank(player.getRank() + 10);
+                        player.setStatus("online");
+                    }
+                }
                 timer.cancel();
                 endGame = true;
-                //sleep(10);
+                playerController1.updateAndSendPlayersInfo();
             } else if (countShips2 == 0) {
                 playerController1.getOutServerXML().send("SHOOT RESULT","VICTORY!");
                 playerController2.getOutServerXML().send("SHOOT RESULT","DEFEAT!");
+                for (Player player : Server.getAllPlayersSet()){
+                    if (player.getLogin().equals(playerController2.getThisPlayer().getLogin())){
+                        player.setRank(player.getRank() - 5);
+                        player.setStatus("online");
+                    }
+                    if (player.getLogin().equals(playerController1.getThisPlayer().getLogin())){
+                        player.setRank(player.getRank() + 10);
+                        player.setStatus("online");
+                    }
+                }
                 timer.cancel();
                 endGame = true;
-                //sleep(10);
+                playerController1.updateAndSendPlayersInfo();
             }
-        /*} catch (InterruptedException e) {
-            e.printStackTrace();
-        }*/
         if (!endGame) {
             timer.cancel();
             startTimer();
@@ -129,10 +148,10 @@ public class GameController {
     }
 
     public boolean checkStart(int countShips) {
-        if (countShips < 20) {
+        if (countShips < 40) {
             return false;
         } else {
-            saveGame();
+//            saveGame();
             return true;
         }
     }
@@ -141,6 +160,7 @@ public class GameController {
         if (countShips1 + countShips2 < 40) {
             return false;
         } else {
+            saveGame();
             return true;
         }
     }
@@ -170,7 +190,7 @@ public class GameController {
     }
 
     public void saveGame(){
-        SaveLoadServerXML.saveGame(playerController1.getThisPlayer().getLogin(), field1, playerController2.getThisPlayer().getLogin(),field2);
+        SaveLoadServerXML.saveGame(currentPlayerController.getThisPlayer().getLogin(), playerController1.getThisPlayer().getLogin(), field1, playerController2.getThisPlayer().getLogin(),field2);
     }
 
     public PlayerController getPlayerController1() {
