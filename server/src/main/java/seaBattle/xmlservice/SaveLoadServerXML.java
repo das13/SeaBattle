@@ -6,21 +6,32 @@ import seaBattle.model.Player;
 import seaBattle.model.Server;
 import seaBattle.model.serverFileService.*;
 
+import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 public class SaveLoadServerXML {
+
+    private static final String PLAYERSLIST_XSD = "seaBattle/xmlservice/schemas/pl.xsd";
+
+    private static final String BANNEDIPLIST_XSD = "seaBattle/xmlservice/schemas/bil.xsd";
+    private static final String ADMINSLIST_XSD = "seaBattle/xmlservice/schemas/al.xsd";
+    private static final String SERVERCONF_XSD = "seaBattle/xmlservice/schemas/sc.xsd";
 
     private final static Logger logger = Logger.getLogger(SaveLoadServerXML.class);
 
     public static void readServerConfig(){
         if(!Server.getPlayerListXML().exists()) {
             logger.warn("Reading XML file, but serverConf.xml not found. Creating... ");
-            checkServerXMLfiles();
+            checkExistanceOrRepairServerXMLfiles();
         }
         try {
             File file = new File(Server.getServerConfXML().getPath());
@@ -38,7 +49,7 @@ public class SaveLoadServerXML {
         }
     }
 
-    public static void checkServerXMLfiles() {
+    public static void checkExistanceOrRepairServerXMLfiles() {
         //проверка наличия playerList.xml и создание при негативном результате
         if (!Server.getPlayerListXML().exists()) {
 
@@ -156,7 +167,7 @@ public class SaveLoadServerXML {
     public static void updatePlayerListXML(){
         if(!Server.getPlayerListXML().exists()) {
             logger.warn("Updating XML file, but playerList.xml not found. Creating... ");
-            checkServerXMLfiles();
+            checkExistanceOrRepairServerXMLfiles();
         }
         try {
             PlayerList playerList = new PlayerList();
@@ -181,7 +192,7 @@ public class SaveLoadServerXML {
     public static void updateAdminsListXML(){
         if(!Server.getAdminsListXML().exists()) {
             logger.warn("Updating XML file, but adminsList.xml not found. Creating... ");
-            checkServerXMLfiles();
+            checkExistanceOrRepairServerXMLfiles();
         }
         try {
             AdminsList adminsList = new AdminsList();
@@ -206,7 +217,7 @@ public class SaveLoadServerXML {
     public static void updateBannedIpListXML(){
         if(!Server.getBannedIpListXML().exists()) {
             logger.warn("Updating XML file, but bannedIpList.xml not found. Creating... ");
-            checkServerXMLfiles();
+            checkExistanceOrRepairServerXMLfiles();
         }
         try {
             BannedIpList bannedIpList = new BannedIpList();
@@ -230,9 +241,14 @@ public class SaveLoadServerXML {
 
     public static void updateAllPlayersSet() {
         if (!Server.getPlayerListXML().exists()) {
-            logger.warn("Updating set, but file playerList.xml not found. Creating... ");
-            checkServerXMLfiles();
+            logger.warn("Updating set, but file playerList.xml NOT FOUND. Creating... ");
+            checkExistanceOrRepairServerXMLfiles();
         }
+        //TODO раскомментировать при использовании
+//        if (!checkXMLsafety(Server.getPlayerListXML())){
+//            logger.warn("Updating set, but file playerList.xml WAS DAMAGED. Repairing... ");
+//            checkExistanceOrRepairServerXMLfiles();
+//        }
         try {
             File file = new File(Server.getPlayerListXML().getPath());
             JAXBContext jaxbContext = JAXBContext.newInstance(PlayerList.class);
@@ -262,7 +278,7 @@ public class SaveLoadServerXML {
     public static void updateAdminsSet(){
         if(!Server.getAdminsListXML().exists()) {
             logger.warn("Updating set, but file adminsList.xml not found. Creating... ");
-            checkServerXMLfiles();
+            checkExistanceOrRepairServerXMLfiles();
         }
         try {
             File file1 = new File(Server.getAdminsListXML().getPath());
@@ -285,7 +301,7 @@ public class SaveLoadServerXML {
     public static void updateBannedIpSet(){
         if(!Server.getBannedIpListXML().exists()) {
             logger.warn("Updating set, but file bannedIpList.xml not found. Creating... ");
-            checkServerXMLfiles();
+            checkExistanceOrRepairServerXMLfiles();
         }
         try {
             File file = new File(Server.getBannedIpListXML().getPath());
@@ -303,6 +319,74 @@ public class SaveLoadServerXML {
         } catch (JAXBException e) {
             logger.error("Updating bannedIpSet error.", e);
         }
+    }
+
+    public static boolean checkXMLsafety(File file){
+
+        File xmlDelOrNot = null;
+        String sourceXML = Server.getPlayerListXML().getPath();
+        JAXBContext context;
+        PlayerList myplayerList;
+
+        //не пойму, не берётся информация с XSD файла
+        try (InputStream xsdStream = SaveLoadServerXML.class.getClassLoader().getResourceAsStream(PLAYERSLIST_XSD)) {
+            xmlDelOrNot = new File(sourceXML);
+            if (xmlDelOrNot.exists()) {
+                context = JAXBContext.newInstance(PlayerList.class);
+                Unmarshaller unMarshaller = context.createUnmarshaller();
+
+                SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+                StreamSource xsdStreamSource = new StreamSource(xsdStream);
+                Schema schema = sf.newSchema(xsdStreamSource);
+
+                unMarshaller.setSchema(schema);
+                Object xmlObject = PlayerList.class.cast(unMarshaller.unmarshal(xmlDelOrNot));
+                myplayerList = (PlayerList) xmlObject;
+            } else {
+                //log.severe(configFile.getAbsolutePath() + " does not exist, can not parse configuration info from it.");
+            }
+        } catch(Exception e) {
+            //e.printStackTrace(System.out);
+            xmlDelOrNot.delete();
+            System.out.println("file deleted. it exists? = " + xmlDelOrNot.exists());
+
+            //создаём пустой файл XML куда далее будет скопирована информация с allPlayersSet
+
+            PlayerList playerList = new PlayerList();
+
+            playerList.setPlayerList(new ArrayList<Player>());
+
+            //создаём два стандартных игрока (они всегда присутствуют)
+            Player p1 = new Player();
+            p1.setLogin("admin");
+            p1.setPassword("admin");
+            p1.setStatus("offline");
+            p1.setRank(100);
+
+            Player p2 = new Player();
+            p2.setLogin("hacker");
+            p2.setPassword("lol");
+            p2.setStatus("offline");
+            p2.setRank(9999);
+
+            //добавляем в список
+            playerList.getPlayerList().add(p1);
+            playerList.getPlayerList().add(p2);
+
+            JAXBContext jaxbContext = null;
+            try {
+                jaxbContext = JAXBContext.newInstance(PlayerList.class);
+                Marshaller jaxbMarshaller = null;
+                jaxbMarshaller = jaxbContext.createMarshaller();
+                jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+                //Marshal-им плеерлист в файл
+                jaxbMarshaller.marshal(playerList, new File(Server.getPlayerListXML().getPath()));
+            } catch (JAXBException e1) {
+                logger.error("playerList.xml creation error.", e);
+            }
+            return false;
+        }
+        return true;
     }
 
     public static void saveGame(String playerTurnTime, String player1, Field field1, String player2, Field field2){

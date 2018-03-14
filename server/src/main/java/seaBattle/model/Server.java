@@ -60,7 +60,7 @@ public class Server {
     }
 
     public static void serverLaunchPreparation(){
-        SaveLoadServerXML.checkServerXMLfiles();
+        SaveLoadServerXML.checkExistanceOrRepairServerXMLfiles();
         updateAllPlayersSet();
         updateOnlinePlayersSet();
         updateIngamePlayersSet();
