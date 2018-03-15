@@ -132,7 +132,7 @@ public class PlayerController extends Thread {
                                 System.out.println("\n\n\nkey \"SURRENDER\" from " + this.getThisPlayer().getLogin() + " detected:");
                                 String player = inServerXML.checkValue(reader);
                                 System.out.println("player = \"" + player + "\"");
-                                surrenderResult(player);
+                                gc.surrender(this);
                                 break;
                             }
                             case "GAME OVER": {

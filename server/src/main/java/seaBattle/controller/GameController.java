@@ -157,6 +157,18 @@ public class GameController {
         return str;
     }
 
+    public void surrender(PlayerController playerController) {
+        if(playerController.equals(playerController1)) {
+            playerController1.getOutServerXML().send("SURRENDER RESULT","DEFEAT!");
+            playerController2.getOutServerXML().send("SURRENDER RESULT","VICTORY!");
+        } else {
+            playerController2.getOutServerXML().send("SURRENDER RESULT","DEFEAT!");
+            playerController1.getOutServerXML().send("SURRENDER RESULT","VICTORY!");
+        }
+        endGame = true;
+        timer.cancel();
+    }
+
     public boolean checkStart(int countShips) {
         if (countShips < 40) {
             return false;
