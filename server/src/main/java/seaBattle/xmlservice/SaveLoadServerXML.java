@@ -20,11 +20,11 @@ import java.util.ArrayList;
 
 public class SaveLoadServerXML {
 
-    private static final String PLAYERSLIST_XSD = "seaBattle/xmlservice/schemas/pl.xsd";
+    private static final String PLAYERSLIST_XSD = "seaBattle/xmlservice/schemasForXML/pl.xsd";
 
-    private static final String BANNEDIPLIST_XSD = "seaBattle/xmlservice/schemas/bil.xsd";
-    private static final String ADMINSLIST_XSD = "seaBattle/xmlservice/schemas/al.xsd";
-    private static final String SERVERCONF_XSD = "seaBattle/xmlservice/schemas/sc.xsd";
+    private static final String BANNEDIPLIST_XSD = "seaBattle/xmlservice/schemasForXML/bil.xsd";
+    private static final String ADMINSLIST_XSD = "seaBattle/xmlservice/schemasForXML/al.xsd";
+    private static final String SERVERCONF_XSD = "seaBattle/xmlservice/schemasForXML/sc.xsd";
 
     private final static Logger logger = Logger.getLogger(SaveLoadServerXML.class);
 
