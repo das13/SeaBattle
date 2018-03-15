@@ -4,6 +4,12 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * <code>PlayerInGame</code> exist for use by <code>GameCondition</code>
+  * when saves game
+ * @author Oleksandr Symonenko
+ */
+
 @XmlRootElement(name = "player")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PlayerInGame{

@@ -4,6 +4,12 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * <code>ServerConf</code> exist for creating serverConf.xml file
+ * by marshalling object based on <code>ServerConf</code> class into XML
+ * @author Oleksandr Symonenko
+ */
+
 @XmlRootElement(name = "serverConf")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ServerConf{

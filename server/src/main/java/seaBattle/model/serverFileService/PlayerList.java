@@ -8,6 +8,12 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.List;
 
+/**
+ * <code>PlayerList</code> exist for creating playerList.xml file
+ * by marshalling object based on <code>PlayerList</code> class into XML
+ * @author Oleksandr Symonenko
+ */
+
 @XmlRootElement(name = "playerList")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PlayerList

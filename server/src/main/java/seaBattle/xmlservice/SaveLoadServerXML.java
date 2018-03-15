@@ -19,6 +19,7 @@ import java.util.ArrayList;
  * loads/saves info from/to local server XML files.
  * XML files restore info when server launching,
  * backup specific changes while the server is running.
+ * @author Oleksandr Symonenko
  */
 
 public class SaveLoadServerXML {
@@ -30,6 +31,9 @@ public class SaveLoadServerXML {
 
     private final static Logger logger = Logger.getLogger(SaveLoadServerXML.class);
 
+    /**
+     * <code>readServerConfig</code> read info from serverConf.xml when server starts
+     */
     public static void readServerConfig(){
         if(!Server.getPlayerListXML().exists()) {
             logger.warn("Reading XML file, but serverConf.xml not found. Creating... ");
@@ -51,6 +55,10 @@ public class SaveLoadServerXML {
         }
     }
 
+    /**
+     * <code>checkExistanceOrCreateServerXMLfiles</code> check existence
+     * or create xml server files if some of them is not exist
+     */
     public static void checkExistanceOrCreateServerXMLfiles() {
         //проверка наличия playerList.xml и создание при негативном результате
         if (!Server.getPlayerListXML().exists()) {
@@ -70,6 +78,10 @@ public class SaveLoadServerXML {
         }
     }
 
+    /**
+     * the <code>createPlayerListXML</code> method
+     * creates playerList.xml with basic info inside
+     */
     public static void createPlayerListXML(){
         PlayerList playerList = new PlayerList();
 
@@ -106,6 +118,10 @@ public class SaveLoadServerXML {
         }
     }
 
+    /**
+     * the <code>createBannedIpListXML</code> method
+     * creates bannedIpList.xml with basic info inside
+     */
     public static void createBannedIpListXML(){
         BannedIpList bannedIpList = new BannedIpList();
 
@@ -129,6 +145,10 @@ public class SaveLoadServerXML {
         }
     }
 
+    /**
+     * the <code>createAdminsListXML</code> method
+     * creates adminsList.xml with basic info inside
+     */
     public static void createAdminsListXML(){
         AdminsList adminsList = new AdminsList();
 
@@ -152,6 +172,10 @@ public class SaveLoadServerXML {
         }
     }
 
+    /**
+     * the <code>createServerConfXML</code> method
+     * creates serverConf.xml with basic info inside
+     */
     public static void createServerConfXML(){
         ServerConf serverConf = new ServerConf();
 
@@ -175,6 +199,10 @@ public class SaveLoadServerXML {
         }
     }
 
+    /**
+     * the <code>updatePlayerListXML</code> method
+     * updates playerList.xml with info from allPlayersSet
+     */
     public static void updatePlayerListXML(){
         if(!Server.getPlayerListXML().exists()) {
             logger.warn("Updating XML file, but playerList.xml not found. Creating... ");
@@ -200,6 +228,10 @@ public class SaveLoadServerXML {
         }
     }
 
+    /**
+     * the <code>updateAdminsListXML</code> method
+     * updates adminsList.xml with info from adminsSet
+     */
     public static void updateAdminsListXML(){
         if(!Server.getAdminsListXML().exists()) {
             logger.warn("Updating XML file, but adminsList.xml not found. Creating... ");
@@ -225,6 +257,10 @@ public class SaveLoadServerXML {
         }
     }
 
+    /**
+     * the <code>updateBannedIpListXML</code> method
+     * updates bannedIpList.xml with info from bannedIpSet
+     */
     public static void updateBannedIpListXML(){
         if(!Server.getBannedIpListXML().exists()) {
             logger.warn("Updating XML file, but bannedIpList.xml not found. Creating... ");
@@ -250,6 +286,11 @@ public class SaveLoadServerXML {
         }
     }
 
+    /**
+     * the <code>updateAllPlayersSet</code> method
+     * updates allPlayersSet with info from PlayerController class,
+     * then called method <code>updatePlayerListXML</code> to backup changes
+     */
     public static void updateAllPlayersSet() {
         if (!Server.getPlayerListXML().exists()) {
             logger.warn("Updating set, but file playerList.xml NOT FOUND. Creating... ");
@@ -286,6 +327,11 @@ public class SaveLoadServerXML {
         }
     }
 
+    /**
+     * the <code>updateAdminsSet</code> method
+     * updates adminsSet with info from PlayerController class,
+     * then called method <code>updateAdminsListXML</code> to backup changes
+     */
     public static void updateAdminsSet(){
         if(!Server.getAdminsListXML().exists()) {
             logger.warn("Updating set, but file adminsList.xml not found. Creating... ");
@@ -314,6 +360,11 @@ public class SaveLoadServerXML {
         }
     }
 
+    /**
+     * the <code>updateBannedIpSet</code> method
+     * updates bannedIpSet with info from PlayerController class,
+     * then called method <code>updateBannedIpListXML</code> to backup changes
+     */
     public static void updateBannedIpSet(){
         if(!Server.getBannedIpListXML().exists()) {
             logger.warn("Updating set, but file bannedIpList.xml not found. Creating... ");
@@ -342,6 +393,10 @@ public class SaveLoadServerXML {
         }
     }
 
+    /**
+     * the <code>checkXMLsafety</code> method
+     * checks specific XML file for damages
+     */
     public static boolean checkXMLsafety(File XMLforCheck, String XMLschema, Class c) {
         File xmlDelOrNot = null;
         String sourceXML = XMLforCheck.getPath();
@@ -378,6 +433,10 @@ public class SaveLoadServerXML {
         return true;
     }
 
+    /**
+     * the <code>saveGame</code> method
+     * saves game info from GameController class
+     */
     public static void saveGame(String playerTurnTime, String player1, Field field1, String player2, Field field2){
         if (!new File("game-" + player1 +"VS"+ player2 + ".xml").exists()){
 

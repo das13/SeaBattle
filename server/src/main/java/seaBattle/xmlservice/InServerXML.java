@@ -1,7 +1,6 @@
 package seaBattle.xmlservice;
 
 import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.IOException;
@@ -11,7 +10,8 @@ import java.net.Socket;
 
 /**
  * <code>OutServerXML</code>
- * provides sending keys/values with XMLStreamWriter
+ * provides receive keys/values with XMLStreamReader
+ * @author Oleksandr Symonenko
  */
 
 public class InServerXML {
@@ -20,6 +20,10 @@ public class InServerXML {
     private Reader fileReader;
     private Socket socket;
 
+    /**
+     * <code>InServerXML</code> initializes for every <code>PlayerController</code> thread
+     * to receive XML data from specific Client linked to this <code>PlayerController</code>
+     */
     public InServerXML(Socket socket){
         this.socket = socket;
         this.factory = XMLInputFactory.newInstance();
@@ -30,6 +34,9 @@ public class InServerXML {
         }
     }
 
+    /**
+     * The <code>checkValue</code> method returns all text information from value
+     */
     public static String checkValue(XMLStreamReader reader){
         StringBuilder sb = new StringBuilder();
         String value = "";

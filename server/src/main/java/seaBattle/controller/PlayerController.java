@@ -16,6 +16,13 @@ import java.util.Date;
 import java.util.SortedSet;
 import java.util.Timer;
 
+/**
+ * <code>PlayerController</code> is the main communication unit that
+ * handles thread with client, receives messages and provides answers.
+ * Though <code>PlayerController</code> user do all actions related to Server part of game.
+ * @author Oleksandr Symonenko
+ */
+
 public class PlayerController extends Thread {
     private Socket socket;
     private String str;
@@ -30,15 +37,11 @@ public class PlayerController extends Thread {
         thisPlayer = new Player();
     }
 
-    public PlayerController(Socket socket) throws IOException {
-        thisPlayer = new Player();
-        this.socket = socket;
-        inServerXML = new InServerXML(socket);
-        outServerXML = new OutServerXML(socket);
-    }
-
+    /**
+     * <code>run</code> adds PlayerController thread ability to receive XML data
+     * from linked Client and send appropriate XML data answers, based on keys/values in incoming XMLs
+     */
     public void run() {
-        int threadNumber = Server.getCountOfThread();
         thisPlayer.setStatus("offline");
         try {
             while (!socket.isClosed()){
@@ -198,6 +201,9 @@ public class PlayerController extends Thread {
         }
     }
 
+    /**
+     * <code>authResult</code> returns result of Client authorization
+     */
     public String authResult(String login, String password) {
         for (Player player : Server.getAllPlayersSet()){
             if (!player.getLogin().equals(login) && !player.getPassword().equals(password)){
@@ -239,6 +245,9 @@ public class PlayerController extends Thread {
         return str;
     }
 
+    /**
+     * <code>regResult</code> returns result of Client registration
+     */
     public String regResult(String login, String password){
         str = "";
         for (Player player : Server.getAllPlayersSet()){
@@ -260,6 +269,9 @@ public class PlayerController extends Thread {
         return str;
     }
 
+    /**
+     * <code>banPlayerResult</code> returns result of Client try to ban chosen player
+     */
     public String banPlayerResult(String admin,String playerToBan) {
         str = "something wrong";
         for (String login : Server.getAdminsSet()) {
@@ -296,6 +308,9 @@ public class PlayerController extends Thread {
         return str;
     }
 
+    /**
+     * <code>banIpResult</code> returns result of Client try to ban chosen ip
+     */
     public String banIpResult(String admin,String ipToBan) throws IOException {
         for (String login : Server.getAdminsSet()) {
             if (admin.equals(login)) {
@@ -319,7 +334,9 @@ public class PlayerController extends Thread {
         return str;
     }
 
-    //действие на приглашение игроком№1 игрока№2 в игру
+    /**
+     * <code>inviteResult</code> returns result of Client#1 invite player for play game
+     */
     private void inviteResult(String player1, String player2) {
         for (PlayerController pl: Server.getAllPlayersControllerSet()) {
             if (pl.getThisPlayer().getLogin().equals(player2)) {
@@ -329,7 +346,9 @@ public class PlayerController extends Thread {
         outServerXML.send("INFO","invite send to player: " + player2);
     }
 
-    //действие на ответ игрока№2 игроку№1 на приглашение в игру
+    /**
+     * <code>inviteResult</code> returns result of Client#2 reply on invite for play game
+     */
     private String replyResult(String player1, String value) {
 
         for (PlayerController pc : Server.getAllPlayersControllerSet()) {
@@ -359,6 +378,10 @@ public class PlayerController extends Thread {
         return str;
     }
 
+    /**
+     * <code>updateAndSendPlayersInfo</code> updates XML files and send their Sets copy
+     * to all aviable Clients, that choosing by existence of their PlayerControllers
+     */
     public void updateAndSendPlayersInfo(){
         Server.updateAllPlayersSet();
         Server.updateOnlinePlayersSet();
@@ -372,6 +395,9 @@ public class PlayerController extends Thread {
         }
     }
 
+    /**
+     * <code>sendOnlinePlayers</code> uses by <code>updateAndSendPlayersInfo</code>
+     */
     public void sendOnlinePlayers() {
         String[] list = new String[((Server.getOnlinePlayersSet().size())*2)+1];
         str = String.valueOf(Server.getOnlinePlayersSet().size());
@@ -388,6 +414,9 @@ public class PlayerController extends Thread {
         outServerXML.send("ONLINE PLAYERS", list);
     }
 
+    /**
+     * <code>sendIngamePlayers</code> uses by <code>updateAndSendPlayersInfo</code>
+     */
     public void sendIngamePlayers() {
         String[] list = new String[Server.getIngamePlayersSet().size()+1];
         str = String.valueOf(Server.getIngamePlayersSet().size());
@@ -403,13 +432,18 @@ public class PlayerController extends Thread {
         outServerXML.send("INGAME PLAYERS", list);
     }
 
-    //действие на сообщение
+    /**
+     * <code>msgResult</code> writes message to all Clients
+     */
     private void msgResult(String login, String msg) {
         for (PlayerController pc : Server.getAllPlayersControllerSet()){
             pc.getOutServerXML().send("MSG", login + ": " + msg);
         }
     }
 
+    /**
+     * <code>logoutResult</code> returns result of logging out Client
+     */
     public String logoutResult(String login) {
         for (Player player : Server.getAllPlayersSet()){
             if (player.getLogin().equals(login) && player.getStatus().equals("online")){
@@ -423,13 +457,18 @@ public class PlayerController extends Thread {
         return str;
     }
 
+    /////////////////////////////////////////////////
     private void surrenderResult(String player) {
     }
 
+    /**
+     * <code>shootResult</code> returns result of shooting while playing game
+     */
     private String shootResult(PlayerController playerController, String x1, String y1) {
         return gc.shoot(this,Integer.parseInt(x1),Integer.parseInt(y1));
     }
 
+    /////////////////////////////////////////////////
     private void shipLocationResult(String player, String x1, String y1, String x2, String y2) {
     }
 

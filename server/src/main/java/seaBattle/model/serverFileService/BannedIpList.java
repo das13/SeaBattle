@@ -6,6 +6,12 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.List;
 
+/**
+ * <code>BannedIpList</code> exist for creating bannedIpList.xml file
+ * by marshalling object based on <code>BannedIpList</code> class into XML
+ * @author Oleksandr Symonenko
+ */
+
 @XmlRootElement(name = "bannedIpList")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BannedIpList

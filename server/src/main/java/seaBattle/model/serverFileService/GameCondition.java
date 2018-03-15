@@ -6,6 +6,13 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.List;
 
+/**
+ * <code>GameCondition</code> exist for creating game-"player#1"VS"player#2".xml file
+ * by marshalling object based on <code>GameCondition</code> class into XML
+ * when saves game
+ * @author Oleksandr Symonenko
+ */
+
 @XmlRootElement(name = "gameCondition")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GameCondition {

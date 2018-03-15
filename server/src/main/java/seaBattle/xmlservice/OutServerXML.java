@@ -9,6 +9,7 @@ import java.net.Socket;
 /**
  * <code>OutServerXML</code>
  * provides sending keys/values with XMLStreamWriter
+ * @author Oleksandr Symonenko
  */
 
 public class OutServerXML {
@@ -16,6 +17,10 @@ public class OutServerXML {
     private XMLStreamWriter writer;
     private Socket socket;
 
+    /**
+     * <code>OutServerXML</code> initializes for every <code>PlayerController</code> thread
+     * to send XML data to specific Client linked to this <code>PlayerController</code>
+     */
     public OutServerXML(Socket socket){
         this.socket = socket;
         factory = XMLOutputFactory.newInstance();
@@ -26,6 +31,9 @@ public class OutServerXML {
         }
     }
 
+    /**
+     * <code>send</code> sends XML data with specific key and 1 value
+     */
     public void send(String key, String value){
         try {
         writer.writeStartDocument("1.0");
@@ -49,6 +57,9 @@ public class OutServerXML {
         }
     }
 
+    /**
+     * <code>send</code> sends XML data with specific key, shoot result and 2 values
+     */
     public void send(String key,String shootResult, String value1, String value2){
         try {
             writer.writeStartDocument("1.0");
@@ -78,7 +89,9 @@ public class OutServerXML {
         }
     }
 
-    //XML with many values
+    /**
+     * <code>send</code> sends XML data with specific key and list of String values
+     */
     public void send(String key, String[] list) {
         try {
         writer.writeStartDocument("1.0");
