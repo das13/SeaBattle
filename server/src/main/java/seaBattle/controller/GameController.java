@@ -217,7 +217,7 @@ public class GameController {
      * @param ship ship for setting
      * @return result of ship setting
      */
-    public String setShip(PlayerController playerController, Ship ship) throws BSException {
+    public String setShip(PlayerController playerController, Ship ship) {
         if (playerController.equals(playerController1)){
             str = field1.setShip(ship);
             if(str.equals("OK")) {
