@@ -203,6 +203,9 @@ public class PlayerController extends Thread {
 
     /**
      * <code>authResult</code> returns result of Client authorization
+     * @param login - login
+     * @param password - password
+     * @return - result
      */
     public String authResult(String login, String password) {
         for (Player player : Server.getAllPlayersSet()){
@@ -247,6 +250,9 @@ public class PlayerController extends Thread {
 
     /**
      * <code>regResult</code> returns result of Client registration
+     * @param login - login
+     * @param password - password
+     * @return - result
      */
     public String regResult(String login, String password){
         str = "";
@@ -271,6 +277,9 @@ public class PlayerController extends Thread {
 
     /**
      * <code>banPlayerResult</code> returns result of Client try to ban chosen player
+     * @param admin - sender login
+     * @param playerToBan - players login to ban
+     * @return - result
      */
     public String banPlayerResult(String admin,String playerToBan) {
         str = "something wrong";
@@ -310,6 +319,10 @@ public class PlayerController extends Thread {
 
     /**
      * <code>banIpResult</code> returns result of Client try to ban chosen ip
+     * @param admin - sender login
+     * @param ipToBan - ip to ban
+     * @return - result
+     * @throws IOException
      */
     public String banIpResult(String admin,String ipToBan) throws IOException {
         for (String login : Server.getAdminsSet()) {
@@ -336,6 +349,8 @@ public class PlayerController extends Thread {
 
     /**
      * <code>inviteResult</code> returns result of Client#1 invite player for play game
+     * @param player1 - sender login
+     * @param player2 - receiver login
      */
     private void inviteResult(String player1, String player2) {
         for (PlayerController pl: Server.getAllPlayersControllerSet()) {
@@ -348,6 +363,9 @@ public class PlayerController extends Thread {
 
     /**
      * <code>inviteResult</code> returns result of Client#2 reply on invite for play game
+     * @param player1 - receiver login
+     * @param value - answer
+     * @return
      */
     private String replyResult(String player1, String value) {
 
@@ -434,6 +452,8 @@ public class PlayerController extends Thread {
 
     /**
      * <code>msgResult</code> writes message to all Clients
+     * @param login - login
+     * @param msg - message
      */
     private void msgResult(String login, String msg) {
         for (PlayerController pc : Server.getAllPlayersControllerSet()){
@@ -443,6 +463,8 @@ public class PlayerController extends Thread {
 
     /**
      * <code>logoutResult</code> returns result of logging out Client
+     * @param login - players login
+     * @return - result
      */
     public String logoutResult(String login) {
         for (Player player : Server.getAllPlayersSet()){
@@ -457,23 +479,18 @@ public class PlayerController extends Thread {
         return str;
     }
 
-    /////////////////////////////////////////////////
-    private void surrenderResult(String player) {
-    }
-
     /**
      * <code>shootResult</code> returns result of shooting while playing game
+     * @param playerController - Client's PlayerController who shoot
+     * @param x1 - coordinate
+     * @param y1 - coordinate
+     * @return
      */
     private String shootResult(PlayerController playerController, String x1, String y1) {
         return gc.shoot(this,Integer.parseInt(x1),Integer.parseInt(y1));
     }
 
-    /////////////////////////////////////////////////
-    private void shipLocationResult(String player, String x1, String y1, String x2, String y2) {
-    }
-
     //getters and setters
-
     public OutServerXML getOutServerXML() {
         return outServerXML;
     }

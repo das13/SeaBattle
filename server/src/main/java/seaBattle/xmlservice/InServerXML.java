@@ -23,6 +23,7 @@ public class InServerXML {
     /**
      * <code>InServerXML</code> initializes for every <code>PlayerController</code> thread
      * to receive XML data from specific Client linked to this <code>PlayerController</code>
+     @param socket - specific Client connection socket
      */
     public InServerXML(Socket socket){
         this.socket = socket;
@@ -36,6 +37,8 @@ public class InServerXML {
 
     /**
      * The <code>checkValue</code> method returns all text information from value
+     * @param reader - XMLStreamReader
+     * @return - full String from text inside value
      */
     public static String checkValue(XMLStreamReader reader){
         StringBuilder sb = new StringBuilder();
