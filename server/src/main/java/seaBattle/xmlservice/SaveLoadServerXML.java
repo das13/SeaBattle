@@ -14,6 +14,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * <code>SaveLoadServerXML</code> class
+ * loads/saves info from/to local server XML files.
+ * XML files restore info when server launching,
+ * backup specific changes while the server is running.
+ */
+
 public class SaveLoadServerXML {
 
     private static final String PLAYERSLIST_XSD = "pl.xsd";
@@ -263,7 +270,7 @@ public class SaveLoadServerXML {
             Server.getAllPlayersSet().addAll(playerList.getPlayerList());
             if (Server.getAllPlayersControllerSet().isEmpty()) {
                 for (Player pl : Server.getAllPlayersSet()) {
-                    if (!pl.getStatus().equals("offline")) {
+                    if (!pl.getStatus().equals("offline") && !pl.getStatus().equals("banned")) {
                         pl.setStatus("offline");
                     }
                 }

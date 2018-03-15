@@ -6,11 +6,14 @@ import javax.xml.stream.XMLStreamWriter;
 import java.io.IOException;
 import java.net.Socket;
 
+/**
+ * <code>OutServerXML</code>
+ * provides sending keys/values with XMLStreamWriter
+ */
+
 public class OutServerXML {
     private XMLOutputFactory factory;
     private XMLStreamWriter writer;
-    //второй для контроля в консоли
-    private XMLStreamWriter writer2;
     private Socket socket;
 
     public OutServerXML(Socket socket){
@@ -18,7 +21,6 @@ public class OutServerXML {
         factory = XMLOutputFactory.newInstance();
         try {
             writer = factory.createXMLStreamWriter(socket.getOutputStream());
-            writer2 = factory.createXMLStreamWriter(System.out);
         } catch (XMLStreamException | IOException e) {
             e.printStackTrace();
         }
@@ -37,19 +39,6 @@ public class OutServerXML {
         writer.writeEndElement();
         writer.writeEndDocument();
         writer.flush();
-
-        //console check
-        writer2.writeStartDocument("1.0");
-        writer2.writeStartElement("root");
-        writer2.writeStartElement("key");
-        writer2.writeCharacters(key);
-        writer2.writeEndElement();
-        writer2.writeStartElement("value");
-        writer2.writeCharacters(value);
-        writer2.writeEndElement();
-        writer2.writeEndElement();
-        writer2.writeEndDocument();
-        writer2.flush();
             try {
                 Thread.sleep(50);
             } catch (InterruptedException e) {
@@ -79,26 +68,6 @@ public class OutServerXML {
             writer.writeEndElement();
             writer.writeEndDocument();
             writer.flush();
-
-            //console check
-            writer2.writeStartDocument("1.0");
-            writer2.writeStartElement("root");
-            writer2.writeStartElement("key");
-            writer2.writeCharacters(key);
-            writer2.writeEndElement();
-            writer2.writeStartElement("value");
-            writer2.writeCharacters(shootResult);
-            writer2.writeEndElement();
-            writer2.writeStartElement("value");
-            writer2.writeCharacters(value1);
-            writer2.writeEndElement();
-            writer2.writeStartElement("value");
-            writer2.writeCharacters(value2);
-            writer2.writeEndElement();
-            writer2.writeEndElement();
-            writer2.writeEndDocument();
-            writer2.flush();
-
             try {
                 Thread.sleep(50);
             } catch (InterruptedException e) {
@@ -127,21 +96,6 @@ public class OutServerXML {
         writer.writeEndDocument();
         writer.flush();
 
-        //console check
-        writer2.writeStartDocument("1.0");
-        writer2.writeStartElement("root");
-        writer2.writeStartElement("key");
-        writer2.writeCharacters(key);
-        writer2.writeEndElement();
-
-            for (String aList : list) {
-                writer2.writeStartElement("value");
-                writer2.writeCharacters(aList);
-                writer2.writeEndElement();
-            }
-        writer2.writeEndElement();
-        writer2.writeEndDocument();
-        writer2.flush();
             try {
                 Thread.sleep(50);
             } catch (InterruptedException e) {
@@ -152,7 +106,7 @@ public class OutServerXML {
         }
     }
 
-
+    //getters & setters
     public XMLOutputFactory getFactory() {
         return factory;
     }
@@ -167,13 +121,5 @@ public class OutServerXML {
 
     public void setWriter(XMLStreamWriter writer) {
         this.writer = writer;
-    }
-
-    public XMLStreamWriter getWriter2() {
-        return writer2;
-    }
-
-    public void setWriter2(XMLStreamWriter writer2) {
-        this.writer2 = writer2;
     }
 }
