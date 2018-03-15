@@ -91,13 +91,9 @@ public class GameController {
             String y1 = String.valueOf(y);
             String x1 = String.valueOf(x);
             playerController2.getOutServerXML().send("SHOOT MY SIDE", str, y1,x1);
-            /*try {
-                sleep(10);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }*/
             if (!str.equals("MISS")) {
                 countShips2--;
+                saveGame();
             } else {
                 changeCurrentPlayer();
             }
@@ -106,19 +102,14 @@ public class GameController {
             String y1 = String.valueOf(y);
             String x1 = String.valueOf(x);
             playerController1.getOutServerXML().send("SHOOT MY SIDE", str, y1,x1);
-            /*try {
-                sleep(10);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }*/
             if (!str.equals("MISS")) {
+                saveGame();
                 countShips1--;
             } else {
                 changeCurrentPlayer();
             }
         }
-       // try {
-            if (countShips1 == 0) {
+        if (countShips1 == 0) {
             int count = 0;
                 playerController1.getOutServerXML().send("SHOOT RESULT","DEFEAT!");
                 playerController2.getOutServerXML().send("SHOOT RESULT","VICTORY!");
