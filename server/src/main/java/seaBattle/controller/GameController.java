@@ -1,9 +1,6 @@
 package seaBattle.controller;
 
-import seaBattle.model.Field;
-import seaBattle.model.Player;
-import seaBattle.model.Server;
-import seaBattle.model.Ship;
+import seaBattle.model.*;
 import seaBattle.xmlservice.SaveLoadServerXML;
 
 import java.io.File;
@@ -220,7 +217,7 @@ public class GameController {
      * @param ship ship for setting
      * @return result of ship setting
      */
-    public String setShip(PlayerController playerController, Ship ship) {
+    public String setShip(PlayerController playerController, Ship ship) throws BSException {
         if (playerController.equals(playerController1)){
             str = field1.setShip(ship);
             if(str.equals("OK")) {

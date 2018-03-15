@@ -44,6 +44,7 @@ public class Field {
                 c++;
             }
         }catch (ArrayIndexOutOfBoundsException e){
+            Server.logger.info("Out of bound in checkShipDestroy",e);
             c++;
         }
         try {
@@ -51,6 +52,7 @@ public class Field {
                 c++;
             }
         }catch (ArrayIndexOutOfBoundsException e){
+            Server.logger.info("Out of bound in checkShipDestroy",e);
             c++;
         }
         try {
@@ -58,6 +60,7 @@ public class Field {
                 c++;
             }
         }catch (ArrayIndexOutOfBoundsException e){
+            Server.logger.info("Out of bound in checkShipDestroy",e);
             c++;
         }
         try {
@@ -65,6 +68,7 @@ public class Field {
                 c++;
             }
         }catch (ArrayIndexOutOfBoundsException e){
+            Server.logger.info("Out of bound in checkShipDestroy",e);
             c++;
         }
         if (c == 4) {
@@ -73,28 +77,28 @@ public class Field {
                     c--;
                 }
             } catch (ArrayIndexOutOfBoundsException e) {
-
+                Server.logger.info("Out of bound in checkShipDestroy second part",e);
             }
             try {
                 if (field[x - 2][y] == 1 && field[x - 1][y] == 3) {
                     c--;
                 }
             } catch (ArrayIndexOutOfBoundsException e) {
-
+                Server.logger.info("Out of bound in checkShipDestroy second part",e);
             }
             try {
                 if (field[x][y + 2] == 1 && field[x][y + 1] == 3) {
                     c--;
                 }
             } catch (ArrayIndexOutOfBoundsException e) {
-
+                Server.logger.info("Out of bound in checkShipDestroy second part",e);
             }
             try {
                 if (field[x][y - 2] == 1 && field[x][y - 1] == 3) {
                     c--;
                 }
             } catch (ArrayIndexOutOfBoundsException e) {
-
+                Server.logger.info("Out of bound in checkShipDestroy second part",e);
             }
         }
 
@@ -191,7 +195,7 @@ public class Field {
                         f[i][j] = 2;
                     }
                 }catch (ArrayIndexOutOfBoundsException e) {
-
+                    Server.logger.info("Out of bound in setSafeArea",e);
                 }
             }
         }
@@ -224,6 +228,7 @@ public class Field {
                 }
             }
         }catch (ArrayIndexOutOfBoundsException e) {
+            Server.logger.info("Out of bound in areaChecking" ,e);
             return false;
         }
         return true;

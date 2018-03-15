@@ -23,7 +23,7 @@ public class Server {
     private static SortedSet<String> bannedIpSet = new TreeSet<>();
     private static HashSet<PlayerController> allPlayersControllerSet = new HashSet<>();
 
-    private final static Logger logger = Logger.getLogger(Server.class);
+    public final static Logger logger = Logger.getLogger(Server.class);
 
     private static int PORT;
     private static int countOfThread = 0;
