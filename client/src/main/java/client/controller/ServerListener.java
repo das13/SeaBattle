@@ -8,6 +8,7 @@ import client.xmlservice.OutClientXML;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import org.apache.log4j.Logger;
+
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.IOException;
@@ -31,7 +32,8 @@ public class ServerListener implements Runnable {
     public List<Gamer> listOnGame = new ArrayList<>();
     private int rank;
 
-    private ServerListener() {}
+    private ServerListener() {
+    }
 
     public static ServerListener getListener() {
         return ListenerHolder.listener;
@@ -52,9 +54,9 @@ public class ServerListener implements Runnable {
             isConnect = true;
             new Thread(this).start();
             logger.info("Connection accepted " + socket.getInetAddress() + ":" + socket.getPort());
-            DialogManager.showInfoDialog(MainLauncher.getPrimaryStageObj(),"Server info", "You connect to server");
+            DialogManager.showInfoDialog(MainLauncher.getPrimaryStageObj(), "Server info", "You connect to server");
         } catch (Exception e) {
-            DialogManager.showErrorDialog(MainLauncher.getPrimaryStageObj(),"Server Error", "Could not connect to server");
+            DialogManager.showErrorDialog(MainLauncher.getPrimaryStageObj(), "Server Error", "Could not connect to server");
             logger.error("Could not Connect to server", e);
         }
     }
@@ -90,7 +92,7 @@ public class ServerListener implements Runnable {
                                     });
                                     break;
                                 } else {
-                                    DialogManager.showInfoDialog(MainLauncher.getPrimaryStageObj(),"Log in INFO", value);
+                                    DialogManager.showInfoDialog(MainLauncher.getPrimaryStageObj(), "Log in INFO", value);
 
                                 }
                                 break;
@@ -105,7 +107,7 @@ public class ServerListener implements Runnable {
                                 System.out.println("\n\n\nSERVER:\"REG\"");
                                 String value = inClientXML.checkValue(reader);
                                 System.out.println("result = \"" + value + "\"");
-                                DialogManager.showInfoDialog(MainLauncher.getPrimaryStageObj(),"Registration INFO", value);
+                                DialogManager.showInfoDialog(MainLauncher.getPrimaryStageObj(), "Registration INFO", value);
                                 break;
                             }
                             case "MSG": {
@@ -141,24 +143,24 @@ public class ServerListener implements Runnable {
                             }
                             case "TURN": {
                                 System.out.println("\n\n\nSERVER:\"TURN\"");
-                                    String turn = inClientXML.checkValue(reader);
-                                    if (turn.equals("YES")) {
-                                        Platform.runLater(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                gameController.shootProgress(true);
-                                                gameController.getTxaGameInfo().appendText("Server: You turn\n");
-                                            }
-                                        });
-                                    } else {
-                                        Platform.runLater(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                gameController.shootProgress(false);
-                                                gameController.getTxaGameInfo().appendText("Server: You wait\n");
-                                            }
-                                        });
-                                    }
+                                String turn = inClientXML.checkValue(reader);
+                                if (turn.equals("YES")) {
+                                    Platform.runLater(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            gameController.shootProgress(true);
+                                            gameController.getTxaGameInfo().appendText("Server: You turn\n");
+                                        }
+                                    });
+                                } else {
+                                    Platform.runLater(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            gameController.shootProgress(false);
+                                            gameController.getTxaGameInfo().appendText("Server: You wait\n");
+                                        }
+                                    });
+                                }
                                 break;
                             }
                             case "START GAME": {
@@ -260,7 +262,7 @@ public class ServerListener implements Runnable {
                                 Platform.runLater(new Runnable() {
                                     @Override
                                     public void run() {
-                                        DialogManager.showInfoDialog(commonWindowController.getGameWindow(),"SHIP LOCATION", value);
+                                        DialogManager.showInfoDialog(commonWindowController.getGameWindow(), "SHIP LOCATION", value);
                                     }
                                 });
                                 break;
@@ -286,14 +288,8 @@ public class ServerListener implements Runnable {
                                     Platform.runLater(new Runnable() {
                                         @Override
                                         public void run() {
-                                            gameController.setGameFinish(true);
-                                            gameController.setGameStart(false);
                                             gameController.setShoot(value);
-                                            commonWindowController.getBtnAtack().setDisable(false);
-                                            gameController.getLblResultGameUser().setText("WINNER");
-                                            gameController.getLblResultGameEnemy().setText("LOSER");
-                                            DialogManager.showInfoDialog(commonWindowController.getGameWindow(),"SHOOT RESULT", "Game over");
-                                            gameController.getTxaGameInfo().appendText("Server: You WIN\n");
+                                            gameController.resultGame(true);
                                             //   regController.showCommonWindow();
                                         }
                                     });
@@ -303,16 +299,11 @@ public class ServerListener implements Runnable {
                                     Platform.runLater(new Runnable() {
                                         @Override
                                         public void run() {
-                                            gameController.setGameFinish(true);
-                                            gameController.setGameStart(false);
-                                            commonWindowController.getBtnAtack().setDisable(false);
-                                            gameController.getLblResultGameUser().setText("LOSER");
-                                            gameController.getLblResultGameEnemy().setText("WINNER");
-                                            gameController.getTxaGameInfo().appendText("Server: You DEFEAT\n");
+                                            gameController.resultGame(false);
                                             //     regController.showCommonWindow();
                                         }
                                     });
-                                    DialogManager.showInfoDialog(commonWindowController.getGameWindow(),"SHOOT RESULT", "Game over");
+                                    DialogManager.showInfoDialog(commonWindowController.getGameWindow(), "SHOOT RESULT", "Game over");
                                     break;
                                 }
                                 Platform.runLater(new Runnable() {
@@ -324,19 +315,40 @@ public class ServerListener implements Runnable {
                                 //DialogManager.showInfoDialog(commonWindowController.getGameWindow(),"SHOOT RESULT", value);
                                 break;
                             }
-                            case "SURRENDER": {
+                            case "SURRENDER RESULT": {
                                 System.out.println("\n\n\nSERVER:\"SURRENDER\"");
                                 String value = inClientXML.checkValue(reader);
-                                commonWindowController.setEnemySurrender(true);
-                                gameController.getBtnSurrender().setDisable(true);
-                                commonWindowController.getBtnAtack().setDisable(false);
-                                DialogManager.showInfoDialog(commonWindowController.getGameWindow(),"SURRENDER", value);
+                                if (value.equals("VICTORY!")) {
+                                    Platform.runLater(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            commonWindowController.setEnemySurrender(true);
+                                            gameController.getBtnSurrender().setDisable(true);
+                                            gameController.getTxaGameInfo().appendText("Server: Enemy surrender\n");
+                                            gameController.resultGame(true);
+                                        }
+                                    });
+                                    break;
+                                }
+                                if (value.equals("DEFEAT!")) {
+                                    Platform.runLater(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            commonWindowController.setEnemySurrender(true);
+                                            commonWindowController.getBtnAtack().setDisable(false);
+                                            gameController.getTxaGameInfo().appendText("Server: You Surrender\n");
+                                            gameController.resultGame(false);
+                                        }
+                                    });
+                                    break;
+                                }
                                 break;
+
                             }
                             case "GAME OVER": {
                                 System.out.println("\n\n\nSERVER:\"GAME OVER\"");
                                 String value = inClientXML.checkValue(reader);
-                                DialogManager.showInfoDialog(commonWindowController.getGameWindow(),"GAME OVER", value);
+                                DialogManager.showInfoDialog(commonWindowController.getGameWindow(), "GAME OVER", value);
                                 break;
                             }
                             case "INFO": {
@@ -361,7 +373,7 @@ public class ServerListener implements Runnable {
         disconnect();
     }
 
-    public void disconnect(){
+    public void disconnect() {
         isConnect = false;
         try {
             Platform.runLater(new Runnable() {
@@ -369,10 +381,12 @@ public class ServerListener implements Runnable {
                 public void run() {
                     try {
                         commonWindowController.hideGameWindow();
-                    } catch (Exception e) {}
+                    } catch (Exception e) {
+                    }
                     try {
                         regController.hideCommonWindow();
-                    } catch (Exception e) {}
+                    } catch (Exception e) {
+                    }
                     MainLauncher.getPrimaryStageObj().show();
                 }
             });
@@ -384,7 +398,7 @@ public class ServerListener implements Runnable {
             regController.getBtnConnect().setText("Connect");
         } catch (XMLStreamException e1) {
             logger.error("Logout error", e1);
-            if(socket != null) {
+            if (socket != null) {
                 try {
                     socket.close();
                 } catch (IOException e) {
@@ -405,7 +419,7 @@ public class ServerListener implements Runnable {
         return outClientXML;
     }
 
-    public  String getUsername() {
+    public String getUsername() {
         return username;
     }
 

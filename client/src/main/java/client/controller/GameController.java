@@ -333,6 +333,25 @@ public class GameController implements Initializable {
         return txaGameInfo;
     }
 
+    public void resultGame(boolean isVictory) {
+        setGameFinish(true);
+        setGameStart(false);
+        btnSurrender.setDisable(true);
+        commonWindowController.getBtnAtack().setDisable(false);
+        DialogManager.showInfoDialog(commonWindowController.getGameWindow(), "GAME", "Game over");
+        if (isVictory){
+            prgUser.progressProperty().unbind();
+            lblResultGameUser.setText("WINNER");
+            lblResultGameEnemy.setText("LOSER");
+            gameController.getTxaGameInfo().appendText("Server: You WINNER\n");
+        }else {
+            prgEnemy.progressProperty().unbind();
+            lblResultGameUser.setText("LOSER");
+            lblResultGameEnemy.setText("WINNER");
+            gameController.getTxaGameInfo().appendText("Server: You DEFEAT\n");
+        }
+    }
+
     class ShootProgress extends Task<Integer> {
         int i = 0;
         @Override

@@ -120,7 +120,7 @@ public class RegController{
                         MainLauncher.getPrimaryStageObj().show();
                         comWindow.hide();
                     }
-                    listener.disconnect();
+
                 });
                 stage.setTitle("Sea Battle 2018");
                 Scene scene = new Scene(root,640,360);
