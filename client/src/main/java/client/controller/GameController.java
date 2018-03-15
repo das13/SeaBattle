@@ -119,10 +119,7 @@ public class GameController implements Initializable {
         lblEnemyLogin.setText(listener.getEnemy());
         lblUserLogin.setText(listener.getUsername());
         CommonWindowController.getCwController().setGameController(this);
-        shootEnemyProgress = new ShootProgress();
-        shootUserProgress = new ShootProgress();
-        prgEnemy.progressProperty().bind(shootEnemyProgress.progressProperty());
-        prgUser.progressProperty().bind(shootUserProgress.progressProperty());
+
     }
 
     private void createField(Pane pane, boolean isEnemy) {
@@ -195,22 +192,6 @@ public class GameController implements Initializable {
         }
     }
 
-    private void updateCounter(int length) {
-        if (length == 1) {
-            countShip1p.setText(String.valueOf(--count1p));
-            return;
-        }
-        if (length == 2) {
-            countShip2p.setText(String.valueOf(--count2p));
-            return;
-        }
-        if (length == 3) {
-            countShip3p.setText(String.valueOf(--count3p));
-            return;
-        }
-        countShip4p.setText(String.valueOf(--count4p));
-    }
-
     private Cell createNewCell(String result, int x1, int y1, boolean isEnemy){
         String who = isEnemy ? "Enemy:" : "You:";
         Cell cell = new Cell(x1, y1);
@@ -269,6 +250,22 @@ public class GameController implements Initializable {
         return userPane;
     }
 
+    private void updateCounter(int length) {
+        if (length == 1) {
+            countShip1p.setText(String.valueOf(--count1p));
+            return;
+        }
+        if (length == 2) {
+            countShip2p.setText(String.valueOf(--count2p));
+            return;
+        }
+        if (length == 3) {
+            countShip3p.setText(String.valueOf(--count3p));
+            return;
+        }
+        countShip4p.setText(String.valueOf(--count4p));
+    }
+
     public void setGameStart(boolean gameStart) {
         isGameStart = gameStart;
     }
@@ -308,18 +305,25 @@ public class GameController implements Initializable {
 
     public void shootProgress(boolean isUser){
         if (isUser) {
-
+            shootUserProgress = new ShootProgress();
+            prgUser.progressProperty().bind(shootUserProgress.progressProperty());
+            shootUserProgress.updateProgress(0.0,1.0);
+            prgUser.progressProperty().bind(shootUserProgress.progressProperty());
+            Thread th1 = new Thread(shootUserProgress);
+            th1.start();
             prgEnemy.progressProperty().unbind();
             prgEnemy.setProgress(0.0);
-
             enemyHbox.setBackground(new Background(new BackgroundFill(Color.LIGHTCORAL, null, null)));
             userHbox.setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN, null, null)));
-
         }else {
-            //prgEnemy.progressProperty().set(0.0);
+            shootEnemyProgress = new ShootProgress();
+            prgEnemy.progressProperty().bind(shootEnemyProgress.progressProperty());
             shootEnemyProgress.updateProgress(0.0,1.0);
             prgEnemy.progressProperty().bind(shootEnemyProgress.progressProperty());
-            new Thread(shootEnemyProgress).start();
+            Thread th2 = new Thread(shootEnemyProgress);
+            th2.start();
+            prgUser.progressProperty().unbind();
+            prgUser.setProgress(0.0);
             enemyHbox.setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN, null, null)));
             userHbox.setBackground(new Background(new BackgroundFill(Color.LIGHTCORAL, null, null)));
         }
@@ -330,7 +334,7 @@ public class GameController implements Initializable {
     }
 
     class ShootProgress extends Task<Integer> {
-        int i;
+        int i = 0;
         @Override
         protected Integer call() throws Exception {
             for (i = 0; i <= 100; i++) {
@@ -349,11 +353,5 @@ public class GameController implements Initializable {
         protected void updateProgress(double workDone, double max) {
             super.updateProgress(workDone, max);
         }
-
-        public void setI(int i) {
-            this.i = i;
-        }
-
-
     }
 }

@@ -343,7 +343,6 @@ public class ServerListener implements Runnable {
                                 System.out.println("\n\n\nSERVER:\"INFO\"");
                                 String value = inClientXML.checkValue(reader);
                                 System.out.println("***\"" + value + "\"***");
-                                DialogManager.showInfoDialog(null,"SERVER INFO", value);
                                 break;
                             }
                         }
