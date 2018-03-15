@@ -189,7 +189,9 @@ public class RegController{
     }
 
     public void pressConnectBtn(ActionEvent event) {
-        if (isValidServerInfo() ){
+        if (listener.isConnect()){
+            listener.disconnect();
+        } else if (isValidServerInfo() ){
             initializeServerInfo();
             listener.connect(hostname, port);
         }

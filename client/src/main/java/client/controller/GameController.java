@@ -10,10 +10,7 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.RadioButton;
+import javafx.scene.control.*;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.HBox;
@@ -66,12 +63,20 @@ public class GameController implements Initializable {
     public Pane paneColumn2;
     @FXML
     public Pane paneRow2;
+    @FXML
     public Label lblResultGameUser;
+    @FXML
     public Label lblResultGameEnemy;
+    @FXML
     public ProgressBar prgEnemy;
+    @FXML
     public ProgressBar prgUser;
+    @FXML
     public HBox enemyHbox;
+    @FXML
     public HBox userHbox;
+    @FXML
+    private TextArea txaGameInfo;
     final static Logger logger = Logger.getLogger(GameController.class);
     public static final int TILE_SIZE = 25;
     public static final int W = 250;
@@ -80,6 +85,10 @@ public class GameController implements Initializable {
     private static final int Y_TILES = H / TILE_SIZE;
     private int position = 0;
     private int length = 1;
+    private int count1p = 4;
+    private int count2p = 3;
+    private int count3p = 2;
+    private int count4p = 1;
     private OutClientXML outClientXML;
     private ServerListener listener;
     private boolean isGameStart;
@@ -179,35 +188,56 @@ public class GameController implements Initializable {
         if (!isFinishSet) {
             Ship ship = new Ship(x1, y1, length, position);
             ship.setShip();
+            updateCounter(length);
         }
         else {
             DialogManager.showInfoDialog(commonWindowController.getGameWindow(),"GAME INFO", "you have already arranged all the ships");
         }
     }
 
-    private Cell createNewCell(String result, int x1, int y1){
-            Cell cell = new Cell(x1, y1);
-            if (result.equals("HIT")){
-                cell.border.setFill(Color.BLACK);
-            }
-            if (result.equals("MISS")){
-                cell.border.setFill(Color.LIGHTBLUE);
-            }
-            if (result.equals("DESTROY") || result.equals("VICTORY!")){
-                cell.border.setFill(Color.GOLD);
-            }
-            return cell;
+    private void updateCounter(int length) {
+        if (length == 1) {
+            countShip1p.setText(String.valueOf(--count1p));
+            return;
+        }
+        if (length == 2) {
+            countShip2p.setText(String.valueOf(--count2p));
+            return;
+        }
+        if (length == 3) {
+            countShip3p.setText(String.valueOf(--count3p));
+            return;
+        }
+        countShip4p.setText(String.valueOf(--count4p));
+    }
+
+    private Cell createNewCell(String result, int x1, int y1, boolean isEnemy){
+        String who = isEnemy ? "Enemy:" : "You:";
+        Cell cell = new Cell(x1, y1);
+        if (result.equals("HIT")) {
+            cell.border.setFill(Color.BLACK);
+            txaGameInfo.appendText(who + " HIT " + ((char)('A' + x1)) + " " + (y1 + 1) + "\n");
+        }
+        if (result.equals("MISS")) {
+            cell.border.setFill(Color.LIGHTBLUE);
+            txaGameInfo.appendText(who + " MISS " + ((char)('A' + x1)) + " " + (y1 + 1) + "\n");
+        }
+        if (result.equals("DESTROY") || result.equals("VICTORY!")) {
+            txaGameInfo.appendText(who + " DESTROY " + ((char)('A' + x1)) + " " + (y1 + 1) + "\n");
+            cell.border.setFill(Color.GOLD);
+        }
+        return cell;
     }
 
     public void setShoot(String result) {
         if (result.equals("HIT") || result.equals("MISS") || result.equals("DESTROY")) {
-            enemyPane.getChildren().add(createNewCell(result, x1, y1));
+            enemyPane.getChildren().add(createNewCell(result, x1, y1, false));
         }
     }
 
     public void setShootbyEnemy(String result, int x1, int y1) {
         if (result.equals("HIT") || result.equals("MISS") || result.equals("DESTROY")) {
-            userPane.getChildren().add(createNewCell(result, x1, y1));
+            userPane.getChildren().add(createNewCell(result, x1, y1, true));
         }
     }
 
@@ -244,6 +274,7 @@ public class GameController implements Initializable {
     }
 
     public void pressBtnSurrender(ActionEvent event) {
+        txaGameInfo.appendText("YOU: Surrender\n");
         try {
             listener.getOutClientXML().send("SURRENDER", listener.getUsername());
         } catch (XMLStreamException e) {
@@ -277,13 +308,25 @@ public class GameController implements Initializable {
 
     public void shootProgress(boolean isUser){
         if (isUser) {
+
+            prgEnemy.progressProperty().unbind();
+            prgEnemy.setProgress(0.0);
+
             enemyHbox.setBackground(new Background(new BackgroundFill(Color.LIGHTCORAL, null, null)));
             userHbox.setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN, null, null)));
 
         }else {
+            //prgEnemy.progressProperty().set(0.0);
+            shootEnemyProgress.updateProgress(0.0,1.0);
+            prgEnemy.progressProperty().bind(shootEnemyProgress.progressProperty());
+            new Thread(shootEnemyProgress).start();
             enemyHbox.setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN, null, null)));
             userHbox.setBackground(new Background(new BackgroundFill(Color.LIGHTCORAL, null, null)));
         }
+    }
+
+    public TextArea getTxaGameInfo() {
+        return txaGameInfo;
     }
 
     class ShootProgress extends Task<Integer> {
@@ -310,5 +353,7 @@ public class GameController implements Initializable {
         public void setI(int i) {
             this.i = i;
         }
+
+
     }
 }

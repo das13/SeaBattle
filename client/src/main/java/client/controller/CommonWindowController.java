@@ -203,7 +203,7 @@ public class CommonWindowController{
                     btnAtack.setDisable(false);
                 });
                 stage.setTitle("Sea battle");
-                stage.setScene(new Scene(root, 700, 400));
+                stage.setScene(new Scene(root, 700, 500));
                 stage.setResizable(false);
                // RegController.getRegController().comWindow.hide();
                 btnAtack.setDisable(true);

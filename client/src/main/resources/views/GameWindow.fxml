@@ -11,7 +11,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 
-<VBox prefHeight="400.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.controller.GameController">
+<VBox prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.controller.GameController">
    <children>
       <HBox fx:id="gameHBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="700.0">
           <children>
@@ -112,9 +112,9 @@
             </HBox>
          </children>
       </HBox>
-      <HBox prefHeight="100.0" prefWidth="200.0">
+      <HBox maxHeight="200.0" prefHeight="100.0" prefWidth="200.0">
          <children>
-            <HBox fx:id="userHbox" alignment="CENTER" prefHeight="100.0" prefWidth="300.0">
+            <HBox fx:id="userHbox" alignment="CENTER" prefHeight="100.0" prefWidth="150.0">
                <children>
                   <Label fx:id="lblResultGameUser" wrapText="true">
                      <font>
@@ -123,8 +123,16 @@
                   </Label>
                </children>
             </HBox>
-            <HBox prefHeight="100.0" prefWidth="100.0" />
-            <HBox fx:id="enemyHbox" alignment="CENTER" prefHeight="100.0" prefWidth="300.0">
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="400.0">
+               <children>
+                  <Label text="Game status">
+                     <HBox.margin>
+                        <Insets right="5.0" />
+                     </HBox.margin>
+                  </Label>
+                  <TextArea fx:id="txaGameInfo" prefHeight="100.0" prefWidth="300.0" wrapText="true" />
+               </children></HBox>
+            <HBox fx:id="enemyHbox" alignment="CENTER" prefHeight="100.0" prefWidth="150.0">
                <children>
                   <Label fx:id="lblResultGameEnemy" wrapText="true">
                      <font>
