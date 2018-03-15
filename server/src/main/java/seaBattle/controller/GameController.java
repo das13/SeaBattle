@@ -16,30 +16,43 @@ public class GameController {
     private PlayerController currentPlayerController;
     private Field field1;
     private Field field2;
-    private boolean firstPlayerTurn;
     private String str;
     private int countShips1;
     private int countShips2;
     private Timer timer;
     private File thisGame;
-    private boolean placedShipEndOne;
-    private boolean placedShipEndTwo;
+   /* private boolean placedShipEndOne;
+    private boolean placedShipEndTwo;*/
     private boolean endGame = false;
 
+    /**
+     * timer task class
+     */
     class TimerTaskGameChangePlayer extends TimerTask {
 
+        /**
+         * change of turn of player
+         */
         @Override
         public void run() {
             changeCurrentPlayer();
         }
     }
 
+    /**
+     * start timer every 30 sec
+     */
     public void startTimer() {
         timer = new Timer();
         TimerTaskGameChangePlayer timerTaskGameChangePlayer = new TimerTaskGameChangePlayer();
         timer.schedule(timerTaskGameChangePlayer,30000,30000);
     }
 
+    /**
+     * constructor
+     * @param playerController1 player one
+     * @param playerController2 player two
+     */
     public GameController(PlayerController playerController1, PlayerController playerController2) {
         timer = new Timer();
         this.playerController1 = playerController1;
@@ -47,10 +60,12 @@ public class GameController {
         currentPlayerController = playerController1;
         field1 = new Field();
         field2 = new Field();
-        firstPlayerTurn = true;
         thisGame = new File("game-" + playerController1.getThisPlayer().getLogin() +"VS"+ playerController2.getThisPlayer().getLogin() + ".xml");
     }
 
+    /**
+     * change turn of players
+     */
     public void changeCurrentPlayer(){
         if(currentPlayerController.equals(playerController1)) {
             currentPlayerController = playerController2;
@@ -63,14 +78,13 @@ public class GameController {
         }
     }
 
-    public void changePlayer() {
-        firstPlayerTurn = !firstPlayerTurn;
-    }
-
-    public void endController() {
-
-    }
-
+    /**
+     * shoot of player
+     * @param playerController player
+     * @param x row
+     * @param y col
+     * @return result of shoot
+     */
     public String shoot(PlayerController playerController,int x ,int y)  {
         if (!playerController.equals(currentPlayerController)) {
             return "NOT YOUR TURN";
@@ -157,6 +171,10 @@ public class GameController {
         return str;
     }
 
+    /**
+     * surrender of player
+     * @param playerController player
+     */
     public void surrender(PlayerController playerController) {
         if(playerController.equals(playerController1)) {
             playerController1.getOutServerXML().send("SURRENDER RESULT","DEFEAT!");
@@ -169,8 +187,13 @@ public class GameController {
         timer.cancel();
     }
 
+    /**
+     * checking of end of placing of player
+     * @param countShips
+     * @return true if placing of player was ended
+     */
     public boolean checkStart(int countShips) {
-        if (countShips < 40) {
+        if (countShips < 20) {
             return false;
         } else {
 //            saveGame();
@@ -178,6 +201,10 @@ public class GameController {
         }
     }
 
+    /**
+     * checking start of game after placing
+     * @return true if two players ended of placing
+     */
     public boolean checkStartGame() {
         if (countShips1 + countShips2 < 40) {
             return false;
@@ -187,6 +214,12 @@ public class GameController {
         }
     }
 
+    /**
+     * ship setting
+     * @param playerController player, who set ship
+     * @param ship ship for setting
+     * @return result of ship setting
+     */
     public String setShip(PlayerController playerController, Ship ship) {
         if (playerController.equals(playerController1)){
             str = field1.setShip(ship);
@@ -195,7 +228,7 @@ public class GameController {
             }
             if (checkStart(countShips1)) {
                 str ="PLACED ENDED";
-                placedShipEndOne = true;
+              //  placedShipEndOne = true;
             }
         }else {
             str = field2.setShip(ship);
@@ -204,99 +237,31 @@ public class GameController {
             }
             if (checkStart(countShips2)) {
                 str ="PLACED ENDED";
-                placedShipEndTwo = true;
+              //  placedShipEndTwo = true;
             }
         }
 
         return str;
     }
 
+    /**
+     * saving of game
+     */
     public void saveGame(){
         SaveLoadServerXML.saveGame(currentPlayerController.getThisPlayer().getLogin(), playerController1.getThisPlayer().getLogin(), field1, playerController2.getThisPlayer().getLogin(),field2);
     }
 
+    /**
+     * @return player one
+     */
     public PlayerController getPlayerController1() {
         return playerController1;
     }
-    public void setPlayerController1(PlayerController playerController1) {
-        this.playerController1 = playerController1;
-    }
 
+    /**
+     * @return player two
+     */
     public PlayerController getPlayerController2() {
         return playerController2;
-    }
-    public void setPlayerController2(PlayerController playerController2) {
-        this.playerController2 = playerController2;
-    }
-
-    public PlayerController getCurrentPlayerController() {
-        return currentPlayerController;
-    }
-    public void setCurrentPlayerController(PlayerController currentPlayerController) {
-        this.currentPlayerController = currentPlayerController;
-    }
-
-    public Field getField1() {
-        return field1;
-    }
-    public void setField1(Field field1) {
-        this.field1 = field1;
-    }
-
-    public Field getField2() {
-        return field2;
-    }
-    public void setField2(Field field2) {
-        this.field2 = field2;
-    }
-
-    public boolean isFirstPlayerTurn() {
-        return firstPlayerTurn;
-    }
-    public void setFirstPlayerTurn(boolean firstPlayerTurn) {
-        this.firstPlayerTurn = firstPlayerTurn;
-    }
-
-    public String getStr() {
-        return str;
-    }
-    public void setStr(String str) {
-        this.str = str;
-    }
-
-    public int getCountShips1() {
-        return countShips1;
-    }
-    public void setCountShips1(int countShips1) {
-        this.countShips1 = countShips1;
-    }
-
-    public int getCountShips2() {
-        return countShips2;
-    }
-    public void setCountShips2(int countShips2) {
-        this.countShips2 = countShips2;
-    }
-
-    public Timer getTimer() {
-        return timer;
-    }
-    public void setTimer(Timer timer) {
-        this.timer = timer;
-    }
-
-    public File getThisGame() {
-        return thisGame;
-    }
-    public void setThisGame(File thisGame) {
-        this.thisGame = thisGame;
-    }
-
-    public boolean isPlacedShipEndOne() {
-        return placedShipEndOne;
-    }
-
-    public boolean isPlacedShipEndTwo() {
-        return placedShipEndTwo;
     }
 }

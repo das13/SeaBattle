@@ -5,19 +5,19 @@ public class Field {
     private int [] countOfShip = new int[4];
     String str;
 
-    public int[] getCountOfShip() {
-        return countOfShip;
-    }
-
+    /**
+     * @return field of player
+     */
     public int[][] getField() {
         return field;
     }
 
-    public void setField(int[][] field) {
-
-        this.field = field;
-    }
-
+    /**
+     * shoot of your opponent
+     * @param x row
+     * @param y col
+     * @return result of shoot
+     */
     public String shoot (int x, int y) {
         if (field[x][y] == 1 && checkShipDestroy(x,y)) {
             field[x][y] = 3;
@@ -31,6 +31,12 @@ public class Field {
         return str;
     }
 
+    /**
+     * checking of ship destroy after shooting
+     * @param x row
+     * @param y col
+     * @return true if destroy
+     */
     public boolean checkShipDestroy(int x,int y) {
         int c = 0;
         try {
@@ -99,16 +105,21 @@ public class Field {
         }
     }
 
+    /**
+     * ship setting
+     * @param ship ship for setting
+     * @return result of ship setting
+     */
     public String setShip (Ship ship) {
         int[] a = ship.getShip();
         if (checkOutOfBoundsShip(ship)) {
             if (checkLongShip(ship)) {
                 if (shipCountChecking(ship)) {
                     if (ship.isVertical()) {
-                        if (areaChecking(field, a[0], a[1], a[3], ship.isVertical())) {
+                        if (areaChecking(a[0], a[1], a[3], ship.isVertical())) {
                             for (int i = a[1]; i <= a[3]; i++) {
                                 field[a[0]][i] = 1;
-                                setSafeArea(field, a[0], i, ship.isVertical());
+                                setSafeArea(field, a[0], i);
                             }
                             countOfShip[ship.getHealth() - 1]++;
                             return "OK";
@@ -116,10 +127,10 @@ public class Field {
                             return "PLACE ERROR";
                         }
                     } else {
-                        if (areaChecking(field, a[1], a[0], a[2], ship.isVertical())) {
+                        if (areaChecking(a[1], a[0], a[2], ship.isVertical())) {
                             for (int i = a[0]; i <= a[2]; i++) {
                                 field[i][a[1]] = 1;
-                                setSafeArea(field, i, a[1], ship.isVertical());
+                                setSafeArea(field, i, a[1]);
                             }
                             countOfShip[ship.getHealth() - 1]++;
                             return "OK";
@@ -138,6 +149,11 @@ public class Field {
         }
     }
 
+    /**
+     * checking of ship length for constraint
+     * @param ship ship for checking
+     * @return true if ship not more than the specified length
+     */
     public boolean checkLongShip(Ship ship) {
         if (ship.getHealth() > 4) {
             return false;
@@ -146,6 +162,11 @@ public class Field {
         }
     }
 
+    /**
+     * checking ship out of bound
+     * @param ship ship for checking
+     * @return true if ship doesn't abroad
+     */
     public boolean checkOutOfBoundsShip(Ship ship) {
         int [] a = ship.getShip();
         if (ship.isVertical() && a[2]>9) {
@@ -156,7 +177,13 @@ public class Field {
         return true;
     }
 
-    public void setSafeArea(int [][]f, int i1,int j1,boolean v) {
+    /**
+     * set area where ships cannot be placed
+     * @param f field
+     * @param i1 row
+     * @param j1 col
+     */
+    public void setSafeArea(int [][]f, int i1,int j1) {
         for (int i = i1 - 1; i < i1 + 2; i++) {
             for (int j = j1 -1 ; j< j1 + 2; j++) {
                 try {
@@ -170,7 +197,15 @@ public class Field {
         }
     }
 
-    public boolean areaChecking(int [][]f,int stat,int a,int b,boolean v) {
+    /**
+     * checking area for placing ship
+     * @param stat static col or row
+     * @param a start row or col
+     * @param b end row or col
+     * @param v vertical or not vertical ship for determining rows and cols
+     * @return result of checking
+     */
+    public boolean areaChecking(int stat,int a,int b,boolean v) {
         try {
             if (v) {
                 for (int i = a; i <= b; i++) {
@@ -194,6 +229,11 @@ public class Field {
         return true;
     }
 
+    /**
+     * checking count of different kinds of ships for control setting ships
+     * @param ship ship for checking
+     * @return true if player can to place ship
+     */
     public boolean shipCountChecking(Ship ship) {
         if (ship.getHealth() == 4 && countOfShip[3] < 1) {
             return true;

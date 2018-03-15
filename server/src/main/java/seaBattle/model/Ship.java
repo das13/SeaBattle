@@ -6,6 +6,10 @@ public class Ship {
     private int health;
     private boolean vertical;
 
+    /**
+     * constructor
+     * @param ship array of coordinates
+     */
     public Ship(int[] ship) {
         this.ship = ship;
         if (ship[0] == ship[2]) {
@@ -17,18 +21,23 @@ public class Ship {
         }
     }
 
+    /**
+     * @return array of coordinates
+     */
     public int[] getShip() {
         return ship;
     }
 
-    public void setShip(int[] ship) {
-        this.ship = ship;
-    }
-
+    /**
+     * @return length of ship
+     */
     public int getHealth() {
         return health;
     }
 
+    /**
+     * @return true if ship is vertical
+     */
     public boolean isVertical() {
         return vertical;
     }
