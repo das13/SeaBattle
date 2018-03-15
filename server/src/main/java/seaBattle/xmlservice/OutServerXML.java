@@ -11,7 +11,6 @@ import java.net.Socket;
  * provides sending keys/values with XMLStreamWriter
  * @author Oleksandr Symonenko
  */
-
 public class OutServerXML {
     private XMLOutputFactory factory;
     private XMLStreamWriter writer;
@@ -33,6 +32,8 @@ public class OutServerXML {
 
     /**
      * <code>send</code> sends XML data with specific key and 1 value
+     * @param key - key
+     * @param value - value
      */
     public void send(String key, String value){
         try {
@@ -59,6 +60,10 @@ public class OutServerXML {
 
     /**
      * <code>send</code> sends XML data with specific key, shoot result and 2 values
+     * @param key - key
+     * @param shootResult - result of shooting
+     * @param value1 - y1 coordinate
+     * @param value2 - x1 coordinate
      */
     public void send(String key,String shootResult, String value1, String value2){
         try {
@@ -91,6 +96,8 @@ public class OutServerXML {
 
     /**
      * <code>send</code> sends XML data with specific key and list of String values
+     * @param key - key
+     * @param list - list of String values
      */
     public void send(String key, String[] list) {
         try {
@@ -123,15 +130,12 @@ public class OutServerXML {
     public XMLOutputFactory getFactory() {
         return factory;
     }
-
     public void setFactory(XMLOutputFactory factory) {
         this.factory = factory;
     }
-
     public XMLStreamWriter getWriter() {
         return writer;
     }
-
     public void setWriter(XMLStreamWriter writer) {
         this.writer = writer;
     }
