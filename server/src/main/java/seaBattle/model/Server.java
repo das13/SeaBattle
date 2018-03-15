@@ -2,13 +2,8 @@ package seaBattle.model;
 
 import org.apache.log4j.Logger;
 import seaBattle.controller.PlayerController;
-import seaBattle.model.serverFileService.AdminsList;
-import seaBattle.model.serverFileService.BannedIpList;
-import seaBattle.model.serverFileService.PlayerList;
-import seaBattle.model.serverFileService.ServerConf;
 import seaBattle.xmlservice.SaveLoadServerXML;
 
-import javax.xml.bind.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -18,8 +13,8 @@ public class Server {
 
     private static File playerListXML = new File("playerList.xml");
     private static File bannedIpListXML = new File("bannedIpList.xml");
-    private static File serverConfXML = new File ("serverConf.xml");
-    private static File adminsListXML = new File ("adminsList.xml");
+    private static File serverConfXML = new File("serverConf.xml");
+    private static File adminsListXML = new File("adminsList.xml");
 
     private static SortedSet<Player> allPlayersSet = new TreeSet<>(Comparator.comparing(Player::getLogin));
     private static SortedSet<Player> onlinePlayersSet = new TreeSet<>(Comparator.comparing(Player::getLogin));
@@ -42,25 +37,25 @@ public class Server {
         try {
             listener = new ServerSocket(PORT);
 
-        try {
-            while (true) {
-                PlayerController pc;
-                pc = new PlayerController();
-                pc.setSocket(listener.accept());
-                pc.start();
-                allPlayersControllerSet.add(pc);
-                countOfThread++;
-                      }
-        } finally {
-            listener.close();
-        }
+            try {
+                while (true) {
+                    PlayerController pc;
+                    pc = new PlayerController();
+                    pc.setSocket(listener.accept());
+                    pc.start();
+                    allPlayersControllerSet.add(pc);
+                    countOfThread++;
+                }
+            } finally {
+                listener.close();
+            }
         } catch (IOException e) {
             logger.error("Error with starting server", e);
         }
     }
 
-    public static void serverLaunchPreparation(){
-        SaveLoadServerXML.checkExistanceOrRepairServerXMLfiles();
+    public static void serverLaunchPreparation() {
+        SaveLoadServerXML.checkExistanceOrCreateServerXMLfiles();
         updateAllPlayersSet();
         updateOnlinePlayersSet();
         updateIngamePlayersSet();
@@ -68,28 +63,26 @@ public class Server {
         SaveLoadServerXML.updateBannedIpSet();
     }
 
-    public static void updateAllPlayersSet(){
+    public static void updateAllPlayersSet() {
         SaveLoadServerXML.updateAllPlayersSet();
     }
 
-    public static void updateOnlinePlayersSet(){
-        for (Player player : allPlayersSet){
-            if (player.getStatus().equals("online")){
+    public static void updateOnlinePlayersSet() {
+        for (Player player : allPlayersSet) {
+            if (player.getStatus().equals("online")) {
                 onlinePlayersSet.add(player);
-            }
-            else {
+            } else {
                 onlinePlayersSet.remove(player);
             }
         }
         System.out.println("updated: onlinePlayersSet");
     }
 
-    public static void updateIngamePlayersSet(){
-        for (Player player : allPlayersSet){
-            if (player.getStatus().equals("ingame")){
+    public static void updateIngamePlayersSet() {
+        for (Player player : allPlayersSet) {
+            if (player.getStatus().equals("ingame")) {
                 ingamePlayersSet.add(player);
-            }
-            else {
+            } else {
                 ingamePlayersSet.remove(player);
             }
         }
@@ -99,6 +92,7 @@ public class Server {
     public static int getPORT() {
         return PORT;
     }
+
     public static void setPORT(int PORT) {
         Server.PORT = PORT;
     }
@@ -106,6 +100,7 @@ public class Server {
     public static int getCountOfThread() {
         return countOfThread;
     }
+
     public static void setCountOfThread(int countOfThread) {
         Server.countOfThread = countOfThread;
     }
@@ -113,6 +108,7 @@ public class Server {
     public static File getPlayerListXML() {
         return playerListXML;
     }
+
     public static void setPlayerListXML(File playerListXML) {
         Server.playerListXML = playerListXML;
     }
@@ -120,6 +116,7 @@ public class Server {
     public static File getBannedIpListXML() {
         return bannedIpListXML;
     }
+
     public static void setBannedIpListXML(File bannedIpListXML) {
         Server.bannedIpListXML = bannedIpListXML;
     }
@@ -127,6 +124,7 @@ public class Server {
     public static File getServerConfXML() {
         return serverConfXML;
     }
+
     public static void setServerConfXML(File serverConfXML) {
         Server.serverConfXML = serverConfXML;
     }
@@ -134,6 +132,7 @@ public class Server {
     public static File getAdminsListXML() {
         return adminsListXML;
     }
+
     public static void setAdminsListXML(File adminsListXML) {
         Server.adminsListXML = adminsListXML;
     }
@@ -141,6 +140,7 @@ public class Server {
     public static Set<Player> getAllPlayersSet() {
         return allPlayersSet;
     }
+
     public static void setAllPlayersSet(SortedSet<Player> allPlayersSet) {
         Server.allPlayersSet = allPlayersSet;
     }
@@ -148,6 +148,7 @@ public class Server {
     public static SortedSet<Player> getOnlinePlayersSet() {
         return onlinePlayersSet;
     }
+
     public static void setOnlinePlayersSet(SortedSet<Player> onlinePlayersSet) {
         Server.onlinePlayersSet = onlinePlayersSet;
     }
@@ -155,6 +156,7 @@ public class Server {
     public static SortedSet<Player> getIngamePlayersSet() {
         return ingamePlayersSet;
     }
+
     public static void setIngamePlayersSet(SortedSet<Player> ingamePlayersSet) {
         Server.ingamePlayersSet = ingamePlayersSet;
     }
@@ -162,6 +164,7 @@ public class Server {
     public static SortedSet<String> getAdminsSet() {
         return adminsSet;
     }
+
     public static void setAdminsSet(SortedSet<String> adminsSet) {
         Server.adminsSet = adminsSet;
     }
@@ -169,6 +172,7 @@ public class Server {
     public static SortedSet<String> getBannedIpListSet() {
         return bannedIpSet;
     }
+
     public static void setBannedIpListSet(SortedSet<String> bannedIpSet) {
         Server.bannedIpSet = bannedIpSet;
     }
@@ -176,6 +180,7 @@ public class Server {
     public static HashSet<PlayerController> getAllPlayersControllerSet() {
         return allPlayersControllerSet;
     }
+
     public static void setAllPlayersControllerSet(HashSet<PlayerController> allPlayersControllerSet) {
         Server.allPlayersControllerSet = allPlayersControllerSet;
     }
