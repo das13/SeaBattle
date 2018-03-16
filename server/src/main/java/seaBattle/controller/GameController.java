@@ -136,16 +136,25 @@ public class GameController {
                 endGame = true;
                 playerController1.updateAndSendPlayersInfo();
             } else if (countShips2 == 0) {
+            int count = 0;
                 playerController1.getOutServerXML().send("SHOOT RESULT","VICTORY!");
                 playerController2.getOutServerXML().send("SHOOT RESULT","DEFEAT!");
                 for (Player player : Server.getAllPlayersSet()){
                     if (player.getLogin().equals(playerController2.getThisPlayer().getLogin())){
                         player.setRank(player.getRank() - 5);
                         player.setStatus("online");
+                        count++;
                     }
                     if (player.getLogin().equals(playerController1.getThisPlayer().getLogin())){
                         player.setRank(player.getRank() + 10);
                         player.setStatus("online");
+                        count++;
+                    }
+                    if (count == 2){
+                        if (new File("game-" + playerController1.getThisPlayer().getLogin() +"VS"+ playerController2.getThisPlayer().getLogin() + ".xml").exists()){
+                            File file = new File(new File("game-" + playerController1.getThisPlayer().getLogin() +"VS"+ playerController2.getThisPlayer().getLogin() + ".xml").getPath());
+                            file.delete();
+                        }
                     }
                 }
                 timer.cancel();
@@ -164,12 +173,49 @@ public class GameController {
      * @param playerController player
      */
     public void surrender(PlayerController playerController) {
+        int count = 0;
         if(playerController.equals(playerController1)) {
             playerController1.getOutServerXML().send("SURRENDER RESULT","DEFEAT!");
             playerController2.getOutServerXML().send("SURRENDER RESULT","VICTORY!");
+            for (Player player : Server.getAllPlayersSet()){
+                if (player.getLogin().equals(playerController1.getThisPlayer().getLogin())){
+                    player.setRank(player.getRank() - 5);
+                    player.setStatus("online");
+                    count++;
+                }
+                if (player.getLogin().equals(playerController2.getThisPlayer().getLogin())){
+                    player.setRank(player.getRank() + 10);
+                    player.setStatus("online");
+                    count++;
+                }
+                if (count == 2){
+                    if (new File("game-" + playerController1.getThisPlayer().getLogin() +"VS"+ playerController2.getThisPlayer().getLogin() + ".xml").exists()){
+                        File file = new File(new File("game-" + playerController1.getThisPlayer().getLogin() +"VS"+ playerController2.getThisPlayer().getLogin() + ".xml").getPath());
+                        file.delete();
+                    }
+                }
+            }
         } else {
             playerController2.getOutServerXML().send("SURRENDER RESULT","DEFEAT!");
             playerController1.getOutServerXML().send("SURRENDER RESULT","VICTORY!");
+            for (Player player : Server.getAllPlayersSet()){
+                if (player.getLogin().equals(playerController2.getThisPlayer().getLogin())){
+                    player.setRank(player.getRank() - 5);
+                    player.setStatus("online");
+                    count++;
+                }
+                if (player.getLogin().equals(playerController1.getThisPlayer().getLogin())){
+                    player.setRank(player.getRank() + 10);
+                    player.setStatus("online");
+                    count++;
+                }
+                if (count == 2){
+                    if (new File("game-" + playerController1.getThisPlayer().getLogin() +"VS"+ playerController2.getThisPlayer().getLogin() + ".xml").exists()){
+                        File file = new File(new File("game-" + playerController1.getThisPlayer().getLogin() +"VS"+ playerController2.getThisPlayer().getLogin() + ".xml").getPath());
+                        file.delete();
+                    }
+                }
+            }
         }
         endGame = true;
         timer.cancel();

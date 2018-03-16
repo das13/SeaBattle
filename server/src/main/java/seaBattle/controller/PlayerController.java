@@ -138,10 +138,6 @@ public class PlayerController extends Thread {
                                 gc.surrender(this);
                                 break;
                             }
-                            case "GAME OVER": {
-                                //это сервер должен определить когда отсылать гейм овер
-                                System.out.println("xml message with key \"GAME OVER\" detected");
-                            }
                             case "MSG": {
                                 System.out.println("\n\n\nkey \"MSG\" from " + this.getThisPlayer().getLogin() + " detected:");
                                 String msg = inServerXML.checkValue(reader);
