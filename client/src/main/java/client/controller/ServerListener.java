@@ -8,13 +8,21 @@ import client.xmlservice.OutClientXML;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import org.apache.log4j.Logger;
-
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+
+/**
+ *Class implemets Runnable to work with the server and create a socket,
+ *streams (InClientXML, OutClientXML), and thread of Server listener
+ *class is implemented as Singleton
+ *
+ *@autor Dmytro Cherevko
+ *@version 1.0
+ */
 
 public class ServerListener implements Runnable {
 
@@ -31,6 +39,7 @@ public class ServerListener implements Runnable {
     public List<Gamer> listOnline = new ArrayList<>();
     public List<Gamer> listOnGame = new ArrayList<>();
     private int rank;
+    private Thread serverListenerThread;
 
     private ServerListener() {
     }
@@ -43,6 +52,11 @@ public class ServerListener implements Runnable {
         private final static ServerListener listener = new ServerListener();
     }
 
+    /**
+     * method for creating a connection to the server
+     * @param hostname host of server
+     * @param port port of server
+     */
     public void connect(String hostname, int port) {
         try {
             socket = new Socket(hostname, port);
@@ -52,7 +66,8 @@ public class ServerListener implements Runnable {
             RegController.getRegController().getSignButton().setDisable(false);
             RegController.getRegController().getBtnConnect().setText("Disconnect");
             isConnect = true;
-            new Thread(this).start();
+            serverListenerThread = new Thread(this);
+            serverListenerThread.start();
             logger.info("Connection accepted " + socket.getInetAddress() + ":" + socket.getPort());
             DialogManager.showInfoDialog(MainLauncher.getPrimaryStageObj(), "Server info", "You connect to server");
         } catch (Exception e) {
@@ -61,11 +76,14 @@ public class ServerListener implements Runnable {
         }
     }
 
+    /**
+     * method running in the thread to listen messages from the server
+     */
     @Override
     public void run() {
         regController = RegController.getRegController();
         System.out.println("RUN is runed");
-        while (!socket.isClosed()) {
+        while (!serverListenerThread.isInterrupted() && !socket.isClosed()) {
             try {
                 System.out.println("Enter to while (socket.isConnected()) cycle");
                 inClientXML.setReader(inClientXML.getFactory().createXMLStreamReader(inClientXML.getFileReader()));
@@ -75,7 +93,7 @@ public class ServerListener implements Runnable {
             XMLStreamReader reader;
             reader = inClientXML.getReader();
             try {
-                while (reader.hasNext()) {
+                while (isConnect && reader.hasNext()) {
                     if (reader.getEventType() == 1 && reader.getLocalName().equals("key")) {
                         reader.next();
                         switch (inClientXML.checkValue(reader)) {
@@ -217,7 +235,7 @@ public class ServerListener implements Runnable {
                                     String name = inClientXML.checkValue(reader);
                                     System.out.println("online player#" + i + " - " + name);
                                     if (!name.equals(username)) {
-                                        listOnGame.add(new Gamer(name, 0));
+                                        listOnGame.add(new Gamer(name));
                                     }
                                 }
                                 commonWindowController.createPassiveList(listOnGame);
@@ -227,12 +245,6 @@ public class ServerListener implements Runnable {
                                 System.out.println("\n\n\nSERVER:\"PLAYER INFO\"");
                                 String value = inClientXML.checkValue(reader);
                                 System.out.println("You are = \"" + value + "\"");
-                                break;
-                            }
-                            case "SHIP": {
-                                System.out.println("\n\n\nSERVER:\"SHIP\"");
-                                //сообщение от сервера относительно того как игрок пытается поставить корабль - ...
-                                //(успех / ошибка / все корабли расставлены и идёт ожидание другого игрока или запуск игры)
                                 break;
                             }
                             case "SHIP LOCATION": {
@@ -343,7 +355,6 @@ public class ServerListener implements Runnable {
                                     break;
                                 }
                                 break;
-
                             }
                             case "GAME OVER": {
                                 System.out.println("\n\n\nSERVER:\"GAME OVER\"");
@@ -370,11 +381,17 @@ public class ServerListener implements Runnable {
             }
         }
         System.out.println("RUN IS ENDED");
-        disconnect();
+        if (!serverListenerThread.isInterrupted()) {
+            disconnect();
+        }
     }
 
+    /**
+     * method to disconnect from the server and close streams and windows
+     */
     public void disconnect() {
         isConnect = false;
+        serverListenerThread.interrupt();
         try {
             Platform.runLater(new Runnable() {
                 @Override
@@ -390,7 +407,6 @@ public class ServerListener implements Runnable {
                     MainLauncher.getPrimaryStageObj().show();
                 }
             });
-            Thread.sleep(1000);
             outClientXML.getWriter().close();
             outClientXML.getWriter2().close();
             RegController.getRegController().getSignButton().setDisable(true);
@@ -398,16 +414,13 @@ public class ServerListener implements Runnable {
             regController.getBtnConnect().setText("Connect");
         } catch (XMLStreamException e1) {
             logger.error("Logout error", e1);
-            if (socket != null) {
-                try {
-                    socket.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+        }
+        if (socket != null) {
+            try {
+                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
     }
 

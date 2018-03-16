@@ -4,6 +4,11 @@ import client.controller.utils.ProgressAnimation;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+/**
+ *class controller for working with a WaitAnswer form
+ *@autor Dmytro Cherevko
+ *@version 1.0
+ */
 
 public class WaitAnswerController {
     @FXML

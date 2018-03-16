@@ -6,6 +6,12 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
+/**
+ *class extends StackPane for creating cells for Game Fields (field designations)
+ *@autor Dmytro Cherevko
+ *@version 1.0
+ */
+
 public class FieldDesignation extends StackPane{
         public static final int TILE_SIZE = 25;
         public int x, y;

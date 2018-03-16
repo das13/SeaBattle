@@ -7,7 +7,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 
 import javax.xml.stream.XMLStreamException;
-
+/**
+ *class controller for working with a Answer form
+ *@autor Dmytro Cherevko
+ *@version 1.0
+ */
 public class AnswerController {
     @FXML
     private ProgressBar progressBar;

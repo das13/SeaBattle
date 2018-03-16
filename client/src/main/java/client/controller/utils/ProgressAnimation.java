@@ -2,6 +2,12 @@ package client.controller.utils;
 
 import javafx.concurrent.Task;
 
+/**
+ *class extends Task<Integer> for creating Task for animation of progressBar
+ *@autor Dmytro Cherevko
+ *@version 1.0
+ */
+
 public class ProgressAnimation extends Task<Integer> {
 
     @Override

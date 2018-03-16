@@ -5,6 +5,12 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
+/**
+ *class extends StackPane for creating cells for Game Fields
+ *@autor Dmytro Cherevko
+ *@version 1.0
+ */
+
 public class Cell extends StackPane {
     public static final int TILE_SIZE = 25;
     public int x, y;

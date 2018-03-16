@@ -25,12 +25,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-
-public class CommonWindowController{
-    final static Logger logger = Logger.getLogger(ServerListener.class);
+/**
+ *class controller for working with a commonWindow form
+ *@autor Dmytro Cherevko
+ *@version 1.0
+ */
+public class CommonWindowController {
+    final static Logger logger = Logger.getLogger(CommonWindowController.class);
     @FXML
-    public Button btnAtack;
-    public Label lblMyRank;
+    private Button btnAtack;
+    @FXML
+    private Label lblMyRank;
     @FXML
     private TableView tblActiveGamers;
     @FXML
@@ -51,8 +56,8 @@ public class CommonWindowController{
     private boolean isEnemySurrender;
     private static Stage waitAnswerWindow;
     private String key;
-    private  ServerListener listener;
-    private  String enemy;
+    private ServerListener listener;
+    private String enemy;
     private final static String WAITANSWERFORM = "/views/WaitAnswer.fxml";
     protected final static String ANSWERFORM = "/views/Answer.fxml";
     private RegController regController;
@@ -69,8 +74,11 @@ public class CommonWindowController{
         return cwController;
     }
 
+    /**
+     * controller initialization method
+     */
     @FXML
-    private void initialize(){
+    private void initialize() {
         listener = ServerListener.getListener();
         regController = RegController.getRegController();
         tblActiveGamers.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
@@ -83,6 +91,10 @@ public class CommonWindowController{
         listener.setCommonWindowController(this);
     }
 
+    /**
+     * method for processing keystrokes btnAtack
+     * @param event
+     */
     @FXML
     public void pressBtnAtack(ActionEvent event) {
         Gamer selectedGamer = (Gamer) tblActiveGamers.getSelectionModel().getSelectedItem();
@@ -103,6 +115,11 @@ public class CommonWindowController{
         });
     }
 
+    /**
+     * method for creating response windows
+     * @param event
+     * @param form form Answer or form WaitAnswer
+     */
     protected void showWaitAnswerWindow(ActionEvent event, String form) {
         Stage stage = new Stage();
         waitAnswerWindow = stage;
@@ -115,22 +132,25 @@ public class CommonWindowController{
             logger.error("Can not load " + form, e);
         }
         stage.setTitle("Sea Battle 2018");
-        Scene scene = new Scene(root,300,200);
+        Scene scene = new Scene(root, 300, 200);
         stage.setScene(scene);
         stage.setX(regController.getComWindow().getX() + 200);
         stage.setY(regController.getComWindow().getY() + 100);
         stage.initStyle(StageStyle.UNDECORATED);
         PauseTransition delay = new PauseTransition(Duration.seconds(11));
-        delay.setOnFinished( event1 -> stage.close() );
+        delay.setOnFinished(event1 -> stage.close());
         delay.play();
         stage.show();
     }
 
-    public void hideWaitAnswerWindow(){
+    public void hideWaitAnswerWindow() {
         waitAnswerWindow.hide();
     }
 
-    public void sendButtonAction(){
+    /**
+     * method for sending messages from chat (from txtMassage)
+     */
+    public void sendButtonAction() {
         String msg = txtMassage.getText();
         if (!txtMassage.getText().isEmpty()) {
             try {
@@ -140,21 +160,30 @@ public class CommonWindowController{
             }
         }
         Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    txtMassage.setText("");
-                }
-            });
+            @Override
+            public void run() {
+                txtMassage.setText("");
+            }
+        });
     }
 
+
+    /**
+     * method of processing keystrokes in the txtMassage
+     * @param event
+     * @throws IOException
+     */
     public void sendMethod(KeyEvent event) throws IOException {
         if (event.getCode() == KeyCode.ENTER) {
             sendButtonAction();
         }
     }
 
+    /**method for creating and updating tblActiveGamers
+     *
+     * @param onlineGamersFromListener (list of online gamers from server)
+     */
     public void createActiveList(List onlineGamersFromListener) {
-
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
@@ -164,8 +193,11 @@ public class CommonWindowController{
         });
     }
 
+    /**method for creating and updating tblActiveGamers
+     *
+     * @param onGameGamersFromListener (list of ingame gamers from server)
+     */
     public void createPassiveList(List onGameGamersFromListener) {
-
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
@@ -175,10 +207,9 @@ public class CommonWindowController{
         });
     }
 
-    public String getEnemy() {
-        return enemy;
-    }
-
+    /**
+     * method for creating a game window (GameWindow form)
+     */
     public void showGameWindow() {
         Platform.runLater(new Runnable() {
             @Override
@@ -194,7 +225,6 @@ public class CommonWindowController{
                 stage.setOnCloseRequest((WindowEvent e) -> {
                     try {
                         if (/*!isEnemySurrender() ||*/ !gameController.isGameFinish()) {
-
                             ServerListener.getListener().getOutClientXML().send("SURRENDER", lblLogin.getText());
                         }
                     } catch (XMLStreamException e1) {
@@ -205,11 +235,15 @@ public class CommonWindowController{
                 stage.setTitle("Sea battle");
                 stage.setScene(new Scene(root, 700, 500));
                 stage.setResizable(false);
-               // RegController.getRegController().comWindow.hide();
+                // RegController.getRegController().comWindow.hide();
                 btnAtack.setDisable(true);
                 stage.show();
             }
         });
+    }
+
+    public String getEnemy() {
+        return enemy;
     }
 
     public TextArea getTxaChat() {

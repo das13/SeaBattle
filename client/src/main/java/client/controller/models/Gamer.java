@@ -1,5 +1,12 @@
 package client.controller.models;
 
+
+/**
+ *class for creating gamers
+ *@autor Dmytro Cherevko
+ *@version 1.0
+ */
+
 public class Gamer {
     String name;
     int rank;

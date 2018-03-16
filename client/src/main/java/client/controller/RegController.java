@@ -19,7 +19,13 @@ import org.apache.log4j.Logger;
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 
-public class RegController{
+/**
+ *class controller for working with a regForm form
+ *@autor Dmytro Cherevko
+ *@version 1.0
+ */
+
+public class RegController {
 
     final static Logger logger = Logger.getLogger(RegController.class);
     @FXML
@@ -48,44 +54,51 @@ public class RegController{
         regController = this;
     }
 
+    /**
+     * controller initialization method
+     */
     @FXML
-    private void initialize(){
+    private void initialize() {
         listener = ServerListener.getListener();
         listener.setRegController(this);
     }
 
-    public static RegController getRegController() {
-        return regController;
-    }
-
+    /**
+     * method for processing keystrokes regButton
+     * @param event
+     */
     @FXML
     private void pressRegButton(ActionEvent event) {
-            if(isValidUserInfo()){
-                initializeUserInfo();
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            if (isValidUserInfo()){
-                                listener.getOutClientXML().send("REG", username, password);
-                            }
-                        } catch (XMLStreamException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-            }
-        }
-
-    @FXML
-    private void pressSignButton(ActionEvent event) {
-        if(isValidUserInfo()){
+        if (isValidUserInfo()) {
             initializeUserInfo();
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        if (isValidUserInfo()){
+                        if (isValidUserInfo()) {
+                            listener.getOutClientXML().send("REG", username, password);
+                        }
+                    } catch (XMLStreamException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+    }
+
+    /**
+     * method for processing keystrokes signButton
+     * @param event
+     */
+    @FXML
+    private void pressSignButton(ActionEvent event) {
+        if (isValidUserInfo()) {
+            initializeUserInfo();
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        if (isValidUserInfo()) {
                             listener.getOutClientXML().send("LOG IN", username, password);
                             listener.setUsername(username);
                         }
@@ -97,6 +110,9 @@ public class RegController{
         }
     }
 
+    /**
+     * method for creating a common application window
+     */
     protected void showCommonWindow() {
         Platform.runLater(new Runnable() {
             @Override
@@ -120,10 +136,9 @@ public class RegController{
                         MainLauncher.getPrimaryStageObj().show();
                         comWindow.hide();
                     }
-
                 });
                 stage.setTitle("Sea Battle 2018");
-                Scene scene = new Scene(root,640,360);
+                Scene scene = new Scene(root, 640, 360);
                 stage.setScene(scene);
                 stage.setMinHeight(360);
                 stage.setMinWidth(640);
@@ -134,67 +149,93 @@ public class RegController{
         });
     }
 
+    /**
+     * Method for verifying the correctness of the entered server data
+     * @return true if valid info
+     */
     private boolean isValidServerInfo() {
         port = -1;
         try {
             port = Integer.parseInt(txtServerPort.getText());
         } catch (NumberFormatException e) {
-            DialogManager.showInfoDialog(MainLauncher.getPrimaryStageObj(),"Server port","No valid port");
+            DialogManager.showInfoDialog(MainLauncher.getPrimaryStageObj(), "Server port", "No valid port");
         }
-        if(txtServerPort.getText().isEmpty()) {
-            DialogManager.showInfoDialog(MainLauncher.getPrimaryStageObj(),"Server port","Please,enter the server port");
+        if (txtServerPort.getText().isEmpty()) {
+            DialogManager.showInfoDialog(MainLauncher.getPrimaryStageObj(), "Server port", "Please,enter the server port");
             return false;
         }
-        if(port < 0 || port > 65535) {
-            DialogManager.showInfoDialog(MainLauncher.getPrimaryStageObj(),"Port info", "Please, enter the valid port (0...65535)");
-            return false;
-        }
-        return true;
-    }
-
-    private boolean isValidUserInfo(){
-
-        if(loginField.getText().isEmpty()) {
-            DialogManager.showInfoDialog(MainLauncher.getPrimaryStageObj(),"Login info","Please, enter the login");
-            return false;
-        }
-        if(loginField.getText().contains(" ")) {
-            DialogManager.showInfoDialog(MainLauncher.getPrimaryStageObj(),"Login info","Login can not include the space");
-            return false;
-        }
-        if(passField.getText().isEmpty()) {
-            DialogManager.showInfoDialog(MainLauncher.getPrimaryStageObj(),"Password info","Please,enter the password");
-            return false;
-        }
-        if(txtServerHostname.getText().isEmpty()) {
-            DialogManager.showInfoDialog(MainLauncher.getPrimaryStageObj(),"Host info","Please,enter the server host");
+        if (port < 0 || port > 65535) {
+            DialogManager.showInfoDialog(MainLauncher.getPrimaryStageObj(), "Port info", "Please, enter the valid port (0...65535)");
             return false;
         }
         return true;
     }
 
-    private void initializeServerInfo(){
+    /**
+     * method for verifying the correctness of the entered user data
+     * @return true if valid info
+     */
+    private boolean isValidUserInfo() {
+        if (loginField.getText().isEmpty() || loginField.getText().length() > 12) {
+            DialogManager.showInfoDialog(MainLauncher.getPrimaryStageObj(), "Login info", "Please, enter the login from 1 symbol to 12");
+            loginField.setText("");
+            return false;
+        }
+        if (loginField.getText().contains(" ")) {
+            DialogManager.showInfoDialog(MainLauncher.getPrimaryStageObj(), "Login info", "Login can not include the space");
+            loginField.setText("");
+            return false;
+        }
+        if (passField.getText().isEmpty()) {
+            DialogManager.showInfoDialog(MainLauncher.getPrimaryStageObj(), "Password info", "Please,enter the password");
+            return false;
+        }
+        if (txtServerHostname.getText().isEmpty()) {
+            DialogManager.showInfoDialog(MainLauncher.getPrimaryStageObj(), "Host info", "Please,enter the server host");
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * method for initializing information about the server (host, port)
+     */
+    private void initializeServerInfo() {
         hostname = txtServerHostname.getText();
         port = Integer.parseInt(txtServerPort.getText());
     }
 
+    /**
+     * method for initializing user information (username, password)
+     */
     private void initializeUserInfo() {
         username = loginField.getText();
         password = passField.getText();
     }
 
-    private void clearUserInput(){
+    /**
+     * method for cleaning fields loginField and passField
+     */
+    private void clearUserInput() {
         loginField.setText("");
         passField.setText("");
     }
 
+    /**
+     * method for handling the button click event (btnConnect)
+     * @param event
+     */
     public void pressConnectBtn(ActionEvent event) {
-        if (listener.isConnect()){
+        if (listener.isConnect()) {
             listener.disconnect();
-        } else if (isValidServerInfo() ){
+        } else if (isValidServerInfo()) {
             initializeServerInfo();
             listener.connect(hostname, port);
         }
+    }
+
+    public static RegController getRegController() {
+        return regController;
     }
 
     public String getUsername() {

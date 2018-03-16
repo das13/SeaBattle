@@ -23,6 +23,12 @@ import javax.xml.stream.XMLStreamException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+/**
+ *class controller for working with a GameWindow form
+ *@autor Dmytro Cherevko
+ *@version 1.0
+ */
+
 public class GameController implements Initializable {
 
     @FXML
@@ -97,7 +103,7 @@ public class GameController implements Initializable {
     private boolean isGameFinish;
     private int x1, y1, y2, x2;
     private ShootProgress shootEnemyProgress;
-    private ShootProgress shootUserProgress ;
+    private ShootProgress shootUserProgress;
     private CommonWindowController commonWindowController;
 
     public GameController() {
@@ -108,6 +114,9 @@ public class GameController implements Initializable {
         return gameController;
     }
 
+    /**
+     * controller initialization method
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         listener = ServerListener.getListener();
@@ -119,17 +128,21 @@ public class GameController implements Initializable {
         lblEnemyLogin.setText(listener.getEnemy());
         lblUserLogin.setText(listener.getUsername());
         CommonWindowController.getCwController().setGameController(this);
-
     }
 
+    /**
+     * Method for filling the user and enemy fields for the game
+     * @param pane Pane for filling
+     * @param isEnemy enemy or user field
+     */
     private void createField(Pane pane, boolean isEnemy) {
         char row = 65; // 'A'
         for (int i = 0; i < 10; i++) {
             if (!isEnemy) {
-                paneColumn1.getChildren().add(new FieldDesignation(String.valueOf(i+1), i, 0));
+                paneColumn1.getChildren().add(new FieldDesignation(String.valueOf(i + 1), i, 0));
                 paneRow1.getChildren().add(new FieldDesignation(String.valueOf(row++), 0, i));
             } else {
-                paneColumn2.getChildren().add(new FieldDesignation(String.valueOf(i+1), i, 0));
+                paneColumn2.getChildren().add(new FieldDesignation(String.valueOf(i + 1), i, 0));
                 paneRow2.getChildren().add(new FieldDesignation(String.valueOf(row++), 0, i));
             }
         }
@@ -146,9 +159,14 @@ public class GameController implements Initializable {
         }
     }
 
+    /**
+     * method for sending messages to the server about the shot
+     * @param x1 shot coordinate
+     * @param y1 shot coordinate
+     */
     public void shoot(int x1, int y1) {
         if (isGameFinish) {
-            DialogManager.showInfoDialog(commonWindowController.getGameWindow(),"GAME INFO", "Game OVER");
+            DialogManager.showInfoDialog(commonWindowController.getGameWindow(), "GAME INFO", "Game OVER");
             return;
         }
         if (isGameStart) {
@@ -159,67 +177,175 @@ public class GameController implements Initializable {
             } catch (XMLStreamException e) {
                 e.printStackTrace();
             }
-        }
-        else {
-            DialogManager.showInfoDialog(commonWindowController.getGameWindow(),"GAME INFO", "Game is not started");
+        } else {
+            DialogManager.showInfoDialog(commonWindowController.getGameWindow(), "GAME INFO", "Game is not started");
         }
     }
 
+    /**
+     * method for sending a request for ship location
+     * @param x1 coordinate of head of ship
+     * @param y1 coordinate of head of ship
+     */
     public void sendAnswer(int x1, int y1) {
         System.out.println(lblEnemyLogin.getText() + lblUserLogin.getText());
         this.x1 = x1;
         this.y1 = y1;
-        x2 = (position == 0 ? x1 + length - 1: x1);
+        x2 = (position == 0 ? x1 + length - 1 : x1);
         y2 = (position == 0 ? y1 : y1 + length - 1);
-        System.out.println("Ship" + x1 + y1 +x2 +y2);
+        System.out.println("Ship" + x1 + y1 + x2 + y2);
         try {
-            System.out.println("socket "+ listener.getSocket().isConnected());
+            System.out.println("socket " + listener.getSocket().isConnected());
             outClientXML.send("SHIP LOCATION", y1, x1, y2, x2);
         } catch (XMLStreamException e) {
-            logger.error("SHIP LOCATION error",e);
-            System.out.println("socket closed:"+ listener.getSocket().isClosed());
+            logger.error("SHIP LOCATION error", e);
+            System.out.println("socket closed:" + listener.getSocket().isClosed());
         }
     }
 
-    public void setShip(){
+    /**
+     * method for setting ships on the field
+     */
+    public void setShip() {
         if (!isFinishSet) {
             Ship ship = new Ship(x1, y1, length, position);
             ship.setShip();
             updateCounter(length);
-        }
-        else {
-            DialogManager.showInfoDialog(commonWindowController.getGameWindow(),"GAME INFO", "you have already arranged all the ships");
+        } else {
+            DialogManager.showInfoDialog(commonWindowController.getGameWindow(), "GAME INFO", "you have already arranged all the ships");
         }
     }
 
-    private Cell createNewCell(String result, int x1, int y1, boolean isEnemy){
+    /**
+     * method for creating a cell on which a shot was fired
+     * @param result shot result
+     * @param x1 coordinate of shot
+     * @param y1 coordinate of shot
+     * @param isEnemy on whose field to set
+     * @return new Cell
+     */
+    private Cell createNewCell(String result, int x1, int y1, boolean isEnemy) {
         String who = isEnemy ? "Enemy:" : "You:";
         Cell cell = new Cell(x1, y1);
         if (result.equals("HIT")) {
             cell.border.setFill(Color.BLACK);
-            txaGameInfo.appendText(who + " HIT " + ((char)('A' + x1)) + " " + (y1 + 1) + "\n");
+            txaGameInfo.appendText(who + " HIT " + ((char) ('A' + x1)) + " " + (y1 + 1) + "\n");
         }
         if (result.equals("MISS")) {
             cell.border.setFill(Color.LIGHTBLUE);
-            txaGameInfo.appendText(who + " MISS " + ((char)('A' + x1)) + " " + (y1 + 1) + "\n");
+            txaGameInfo.appendText(who + " MISS " + ((char) ('A' + x1)) + " " + (y1 + 1) + "\n");
         }
         if (result.equals("DESTROY") || result.equals("VICTORY!")) {
-            txaGameInfo.appendText(who + " DESTROY " + ((char)('A' + x1)) + " " + (y1 + 1) + "\n");
+            txaGameInfo.appendText(who + " DESTROY " + ((char) ('A' + x1)) + " " + (y1 + 1) + "\n");
             cell.border.setFill(Color.GOLD);
         }
         return cell;
     }
 
+    /**
+     * method for displaying the result of a shot on enemy's field
+     * @param result result of shot
+     */
     public void setShoot(String result) {
         if (result.equals("HIT") || result.equals("MISS") || result.equals("DESTROY")) {
             enemyPane.getChildren().add(createNewCell(result, x1, y1, false));
         }
     }
 
+    /**
+     * method for displaying the result of a shot on users's field
+     * @param result result of shot
+     */
     public void setShootbyEnemy(String result, int x1, int y1) {
         if (result.equals("HIT") || result.equals("MISS") || result.equals("DESTROY")) {
             userPane.getChildren().add(createNewCell(result, x1, y1, true));
         }
+    }
+
+    /**
+     * Method to update the progress of time on the shot. Color change on the form
+     * @param isUser whose turn is now
+     */
+    public void shootProgress(boolean isUser) {
+        if (isUser) {
+            shootUserProgress = new ShootProgress();
+            prgUser.progressProperty().bind(shootUserProgress.progressProperty());
+            shootUserProgress.updateProgress(0.0, 1.0);
+            prgUser.progressProperty().bind(shootUserProgress.progressProperty());
+            Thread th1 = new Thread(shootUserProgress);
+            th1.start();
+            prgEnemy.progressProperty().unbind();
+            prgEnemy.setProgress(0.0);
+            enemyHbox.setBackground(new Background(new BackgroundFill(Color.LIGHTCORAL, null, null)));
+            userHbox.setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN, null, null)));
+        } else {
+            shootEnemyProgress = new ShootProgress();
+            prgEnemy.progressProperty().bind(shootEnemyProgress.progressProperty());
+            shootEnemyProgress.updateProgress(0.0, 1.0);
+            prgEnemy.progressProperty().bind(shootEnemyProgress.progressProperty());
+            Thread th2 = new Thread(shootEnemyProgress);
+            th2.start();
+            prgUser.progressProperty().unbind();
+            prgUser.setProgress(0.0);
+            enemyHbox.setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN, null, null)));
+            userHbox.setBackground(new Background(new BackgroundFill(Color.LIGHTCORAL, null, null)));
+        }
+    }
+
+    /**
+     * method for processing the result of the game
+     * @param isVictory victory (true) or defeat(false)
+     */
+    public void resultGame(boolean isVictory) {
+        setGameFinish(true);
+        setGameStart(false);
+        btnSurrender.setDisable(true);
+        commonWindowController.getBtnAtack().setDisable(false);
+        DialogManager.showInfoDialog(commonWindowController.getGameWindow(), "GAME", "Game over");
+        if (isVictory) {
+            prgUser.progressProperty().unbind();
+            lblResultGameUser.setText("WINNER");
+            lblResultGameEnemy.setText("LOSER");
+            gameController.getTxaGameInfo().appendText("Server: You WINNER\n");
+        } else {
+            prgEnemy.progressProperty().unbind();
+            lblResultGameUser.setText("LOSER");
+            lblResultGameEnemy.setText("WINNER");
+            gameController.getTxaGameInfo().appendText("Server: You DEFEAT\n");
+        }
+    }
+
+    /**
+     * method for processing keystrokes btnSurrender
+     * @param event
+     */
+    public void pressBtnSurrender(ActionEvent event) {
+        txaGameInfo.appendText("YOU: Surrender\n");
+        try {
+            listener.getOutClientXML().send("SURRENDER", listener.getUsername());
+        } catch (XMLStreamException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * method for processing the number of remaining ships for installation
+     * @param length number of ship decks
+     */
+    private void updateCounter(int length) {
+        if (length == 1) {
+            countShip1p.setText(String.valueOf(--count1p));
+            return;
+        }
+        if (length == 2) {
+            countShip2p.setText(String.valueOf(--count2p));
+            return;
+        }
+        if (length == 3) {
+            countShip3p.setText(String.valueOf(--count3p));
+            return;
+        }
+        countShip4p.setText(String.valueOf(--count4p));
     }
 
     public void selectShip1p(ActionEvent event) {
@@ -246,37 +372,12 @@ public class GameController implements Initializable {
         position = 1;
     }
 
-    public  Pane getUserPane() {
+    public Pane getUserPane() {
         return userPane;
-    }
-
-    private void updateCounter(int length) {
-        if (length == 1) {
-            countShip1p.setText(String.valueOf(--count1p));
-            return;
-        }
-        if (length == 2) {
-            countShip2p.setText(String.valueOf(--count2p));
-            return;
-        }
-        if (length == 3) {
-            countShip3p.setText(String.valueOf(--count3p));
-            return;
-        }
-        countShip4p.setText(String.valueOf(--count4p));
     }
 
     public void setGameStart(boolean gameStart) {
         isGameStart = gameStart;
-    }
-
-    public void pressBtnSurrender(ActionEvent event) {
-        txaGameInfo.appendText("YOU: Surrender\n");
-        try {
-            listener.getOutClientXML().send("SURRENDER", listener.getUsername());
-        } catch (XMLStreamException e) {
-            e.printStackTrace();
-        }
     }
 
     public Button getBtnSurrender() {
@@ -287,14 +388,6 @@ public class GameController implements Initializable {
         isFinishSet = finishSet;
     }
 
-    public Label getLblResultGameUser() {
-        return lblResultGameUser;
-    }
-
-    public Label getLblResultGameEnemy() {
-        return lblResultGameEnemy;
-    }
-
     public void setGameFinish(boolean gameFinish) {
         isGameFinish = gameFinish;
     }
@@ -303,67 +396,26 @@ public class GameController implements Initializable {
         return isGameFinish;
     }
 
-    public void shootProgress(boolean isUser){
-        if (isUser) {
-            shootUserProgress = new ShootProgress();
-            prgUser.progressProperty().bind(shootUserProgress.progressProperty());
-            shootUserProgress.updateProgress(0.0,1.0);
-            prgUser.progressProperty().bind(shootUserProgress.progressProperty());
-            Thread th1 = new Thread(shootUserProgress);
-            th1.start();
-            prgEnemy.progressProperty().unbind();
-            prgEnemy.setProgress(0.0);
-            enemyHbox.setBackground(new Background(new BackgroundFill(Color.LIGHTCORAL, null, null)));
-            userHbox.setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN, null, null)));
-        }else {
-            shootEnemyProgress = new ShootProgress();
-            prgEnemy.progressProperty().bind(shootEnemyProgress.progressProperty());
-            shootEnemyProgress.updateProgress(0.0,1.0);
-            prgEnemy.progressProperty().bind(shootEnemyProgress.progressProperty());
-            Thread th2 = new Thread(shootEnemyProgress);
-            th2.start();
-            prgUser.progressProperty().unbind();
-            prgUser.setProgress(0.0);
-            enemyHbox.setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN, null, null)));
-            userHbox.setBackground(new Background(new BackgroundFill(Color.LIGHTCORAL, null, null)));
-        }
-    }
-
     public TextArea getTxaGameInfo() {
         return txaGameInfo;
     }
 
-    public void resultGame(boolean isVictory) {
-        setGameFinish(true);
-        setGameStart(false);
-        btnSurrender.setDisable(true);
-        commonWindowController.getBtnAtack().setDisable(false);
-        DialogManager.showInfoDialog(commonWindowController.getGameWindow(), "GAME", "Game over");
-        if (isVictory){
-            prgUser.progressProperty().unbind();
-            lblResultGameUser.setText("WINNER");
-            lblResultGameEnemy.setText("LOSER");
-            gameController.getTxaGameInfo().appendText("Server: You WINNER\n");
-        }else {
-            prgEnemy.progressProperty().unbind();
-            lblResultGameUser.setText("LOSER");
-            lblResultGameEnemy.setText("WINNER");
-            gameController.getTxaGameInfo().appendText("Server: You DEFEAT\n");
-        }
-    }
-
+    /**
+     * class extends Task<Integer> to create a task for the animation progress time to shot
+     */
     class ShootProgress extends Task<Integer> {
-        int i = 0;
         @Override
         protected Integer call() throws Exception {
-            for (i = 0; i <= 100; i++) {
-                updateProgress(i/100.0 + 0.01, 1.0);
+            for (int i = 0; i <= 100; i++) {
+                updateProgress(i / 100.0 + 0.01, 1.0);
                 try {
                     Thread.sleep(300);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                if (isCancelled()) {return 0;}
+                if (isCancelled()) {
+                    return 0;
+                }
             }
             return 100;
         }

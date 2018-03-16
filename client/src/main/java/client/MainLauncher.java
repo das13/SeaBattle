@@ -15,6 +15,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ *Class of the main application loader
+ *@autor Dmytro Cherevko
+ *@version 1.0
+ */
+
 public class MainLauncher extends Application {
 
     final static Logger logger = Logger.getLogger(MainLauncher.class);
@@ -26,7 +32,7 @@ public class MainLauncher extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage){
+    public void start(Stage primaryStage) {
         primaryStageObj = primaryStage;
         ServerListener listener = ServerListener.getListener();
         Parent root = null;
@@ -42,7 +48,7 @@ public class MainLauncher extends Application {
             logger.error("Can not load regForm.fxml", e);
         }
         primaryStage.setTitle("Sea Battle 2018");
-        Scene scene = new Scene(root,300,600);
+        Scene scene = new Scene(root, 300, 600);
         scene.getStylesheets().add(0, "css/main.css");
         scene.setRoot(root);
         primaryStage.setScene(scene);
