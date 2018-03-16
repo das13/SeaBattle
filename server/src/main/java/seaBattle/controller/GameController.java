@@ -219,6 +219,7 @@ public class GameController {
         }
         endGame = true;
         timer.cancel();
+        playerController1.updateAndSendPlayersInfo();
     }
 
     /**
