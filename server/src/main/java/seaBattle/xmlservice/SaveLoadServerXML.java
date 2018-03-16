@@ -47,9 +47,6 @@ public class SaveLoadServerXML {
             ServerConf serverConf = (ServerConf) jaxbUnmarshaller.unmarshal(file);
 
             Server.setPORT(serverConf.getPort());
-            //TODO добавить хост?
-            //this.setHOST(serverConf.getPort());
-            System.out.println("\nPort updated from serverConf.xml");
         } catch (JAXBException e) {
             logger.error("serverConf.xml reading error.", e);
         }
@@ -218,10 +215,6 @@ public class SaveLoadServerXML {
             jaxbContext = JAXBContext.newInstance(PlayerList.class);
             Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
             jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            //Marsha-им плеерлист в консоль
-//            System.out.println("UPDATING PLAYERLIST XML:");
-//            jaxbMarshaller.marshal(playerList, System.out);
-            //Marshal-им плеерлист в файл
             jaxbMarshaller.marshal(playerList, new File(Server.getPlayerListXML().getPath()));
         } catch (JAXBException e) {
             logger.error("Updating playerList.xml error.", e);
@@ -247,10 +240,6 @@ public class SaveLoadServerXML {
             jaxbContext = JAXBContext.newInstance(AdminsList.class);
             Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
             jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            //Marsha-им админлист в консоль
-//            System.out.println("UPDATING ADMINSLIST XML:");
-//            jaxbMarshaller.marshal(adminsList, System.out);
-            //Marshal-им админлист в файл
             jaxbMarshaller.marshal(adminsList, new File(Server.getAdminsListXML().getPath()));
         } catch (JAXBException e) {
             logger.error("Updating adminsList.xml error.", e);
@@ -276,10 +265,6 @@ public class SaveLoadServerXML {
             jaxbContext = JAXBContext.newInstance(BannedIpList.class);
             Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
             jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            //Marsha-им айпибанлист в консоль
-//            System.out.println("UPDATING BANNEDIPLIST XML:");
-//            jaxbMarshaller.marshal(bannedIpList, System.out);
-            //Marshal-им айпибанлист в файл
             jaxbMarshaller.marshal(bannedIpList, new File(Server.getBannedIpListXML().getPath()));
         } catch (JAXBException e) {
             logger.error("Updating bannedIpList.xml error.", e);
@@ -307,7 +292,6 @@ public class SaveLoadServerXML {
 
             Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
             PlayerList playerList = (PlayerList) jaxbUnmarshaller.unmarshal(file);
-            System.out.println("\nfound " + playerList.getPlayerList().size() + " players in playerList.xml:");
             Server.getAllPlayersSet().addAll(playerList.getPlayerList());
             if (Server.getAllPlayersControllerSet().isEmpty()) {
                 for (Player pl : Server.getAllPlayersSet()) {
@@ -316,10 +300,6 @@ public class SaveLoadServerXML {
                     }
                 }
             }
-            for (Player player : Server.getAllPlayersSet()) {
-                System.out.print(player.getLogin() + ", ");
-            }
-            System.out.println("\nupdated: allPlayersSet");
             SaveLoadServerXML.updatePlayerListXML();
 
             } catch(JAXBException e){
@@ -348,12 +328,9 @@ public class SaveLoadServerXML {
 
             Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
             AdminsList adminsList = (AdminsList) jaxbUnmarshaller.unmarshal(file1);
-            System.out.println("\nfound " + adminsList.getAdminList().size() + " admins in adminsList.xml:");
             for (int i = 0; i < adminsList.getAdminList().size(); i++){
                 Server.getAdminsSet().add(adminsList.getAdminList().get(i));
-                System.out.print(adminsList.getAdminList().get(i) + ", ");
             }
-            System.out.println("\nupdated: adminsSet");
             updateAdminsListXML();
         } catch (JAXBException e) {
             logger.error("Updating adminsSet error.", e);
@@ -381,12 +358,9 @@ public class SaveLoadServerXML {
 
             Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
             BannedIpList bannedIpList = (BannedIpList) jaxbUnmarshaller.unmarshal(file);
-            System.out.println("\nfound " + bannedIpList.getBannedIpList().size() + " ip's in bannedIpList.xml:");
             for (int i = 0; i < bannedIpList.getBannedIpList().size(); i++){
                 Server.getBannedIpListSet().add(bannedIpList.getBannedIpList().get(i));
-                System.out.print(bannedIpList.getBannedIpList().get(i) + ", ");
             }
-            System.out.println("\nupdated: bannedIpSet");
             updateBannedIpListXML();
         } catch (JAXBException e) {
             logger.error("Updating bannedIpSet error.", e);
@@ -417,17 +391,16 @@ public class SaveLoadServerXML {
                     }
                 });
                 xmlDelOrNot1.delete();
-                System.out.println("file deleted. it exists? = " + xmlDelOrNot1.exists());
                 Unmarshaller unMarshaller = context.createUnmarshaller();
                 Object xmlObject = c.cast(unMarshaller.unmarshal(xmlDelOrNot));
             } else {
                 logger.error("checked XML " + XMLforCheck + " is not exist");
             }
         } catch (IOException e) {
-            System.out.println("IOE");
+            logger.error("IOE when checkXMLsafety");
             return false;
         } catch (JAXBException e) {
-            System.out.println("JAXBE");
+            logger.error("JAXBE when checkXMLsafety");
             return false;
         }
         return true;

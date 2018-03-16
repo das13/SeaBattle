@@ -75,7 +75,6 @@ public class Server {
                 onlinePlayersSet.remove(player);
             }
         }
-        System.out.println("updated: onlinePlayersSet");
     }
 
     public static void updateIngamePlayersSet() {
@@ -86,7 +85,6 @@ public class Server {
                 ingamePlayersSet.remove(player);
             }
         }
-        System.out.println("updated: ingamePlayersSet");
     }
 
     public static int getPORT() {

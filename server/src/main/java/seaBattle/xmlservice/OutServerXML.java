@@ -1,5 +1,8 @@
 package seaBattle.xmlservice;
 
+import org.apache.log4j.Logger;
+import seaBattle.controller.PlayerController;
+
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -16,6 +19,8 @@ public class OutServerXML {
     private XMLStreamWriter writer;
     private Socket socket;
 
+    private final static Logger logger = Logger.getLogger(PlayerController.class);
+
     /**
      * <code>OutServerXML</code> initializes for every <code>PlayerController</code> thread
      * to send XML data to specific Client linked to this <code>PlayerController</code>
@@ -26,7 +31,7 @@ public class OutServerXML {
         try {
             writer = factory.createXMLStreamWriter(socket.getOutputStream());
         } catch (XMLStreamException | IOException e) {
-            e.printStackTrace();
+            logger.error("XMLStreamException or IOE when creating XMLStreamWriter");
         }
     }
 
@@ -51,10 +56,10 @@ public class OutServerXML {
             try {
                 Thread.sleep(50);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                logger.error("InterruptedException when sending");
             }
         } catch (XMLStreamException e) {
-            e.printStackTrace();
+            logger.error("XMLStreamException when sending");
         }
     }
 
@@ -87,10 +92,10 @@ public class OutServerXML {
             try {
                 Thread.sleep(50);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                logger.error("InterruptedException when sending");
             }
         } catch (XMLStreamException e) {
-            e.printStackTrace();
+            logger.error("XMLStreamException when sending");
         }
     }
 
@@ -119,10 +124,10 @@ public class OutServerXML {
             try {
                 Thread.sleep(50);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                logger.error("InterruptedException when sending");
             }
         } catch (XMLStreamException e) {
-            e.printStackTrace();
+            logger.error("XMLStreamException when sending");
         }
     }
 

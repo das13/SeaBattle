@@ -1,5 +1,8 @@
 package seaBattle.xmlservice;
 
+import org.apache.log4j.Logger;
+import seaBattle.controller.PlayerController;
+
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -20,6 +23,8 @@ public class InServerXML {
     private Reader fileReader;
     private Socket socket;
 
+    private final static Logger logger = Logger.getLogger(PlayerController.class);
+
     /**
      * <code>InServerXML</code> initializes for every <code>PlayerController</code> thread
      * to receive XML data from specific Client linked to this <code>PlayerController</code>
@@ -31,7 +36,7 @@ public class InServerXML {
         try {
             this.fileReader = new InputStreamReader(socket.getInputStream());
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("IOE when creating InputStreamReader");
         }
     }
 
@@ -53,7 +58,7 @@ public class InServerXML {
                 reader.next();
             }
         } catch (XMLStreamException e) {
-            e.printStackTrace();
+            logger.error("XMLStreamException when checkValue");
         }
         return value;
     }
