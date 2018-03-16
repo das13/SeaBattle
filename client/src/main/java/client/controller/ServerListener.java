@@ -390,9 +390,19 @@ public class ServerListener implements Runnable {
      * method to disconnect from the server and close streams and windows
      */
     public void disconnect() {
-        isConnect = false;
-        serverListenerThread.interrupt();
+
         try {
+            outClientXML.getWriter().close();
+            outClientXML.getWriter2().close();
+            isConnect = false;
+            serverListenerThread.interrupt();
+            if (socket != null) {
+                try {
+                    socket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
@@ -407,20 +417,12 @@ public class ServerListener implements Runnable {
                     MainLauncher.getPrimaryStageObj().show();
                 }
             });
-            outClientXML.getWriter().close();
-            outClientXML.getWriter2().close();
+
             RegController.getRegController().getSignButton().setDisable(true);
             RegController.getRegController().getRegButton().setDisable(true);
             regController.getBtnConnect().setText("Connect");
         } catch (XMLStreamException e1) {
             logger.error("Logout error", e1);
-        }
-        if (socket != null) {
-            try {
-                socket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
     }
 
