@@ -1,9 +1,15 @@
 package seaBattle.model;
 
+/**
+ * logic and model of field of sea battle
+ * logic of ships setting
+ * logic of shoot by opponent
+ * @author Roman Kraskovskiy
+ */
 public class Field {
     private int [][] field = new int[10][10];
     private int [] countOfShip = new int[4];
-    String str;
+    private String str;
 
     /**
      * @return field of player
@@ -214,7 +220,6 @@ public class Field {
             if (v) {
                 for (int i = a; i <= b; i++) {
                     if (field[stat][i] != 0) {
-                        System.out.println("U cant to place ship");
                         return false;
                     }
 
@@ -222,7 +227,6 @@ public class Field {
             } else {
                 for (int i = a; i <= b; i++) {
                     if (field[i][stat] != 0) {
-                        System.out.println("U cant to place ship");
                         return false;
                     }
                 }

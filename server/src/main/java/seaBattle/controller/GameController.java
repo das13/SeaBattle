@@ -7,6 +7,11 @@ import java.io.File;
 import java.util.Timer;
 import java.util.TimerTask;
 
+/**
+ * Game Controller
+ * control logic of game
+ * @author Roman Kraskovskiy
+ */
 public class GameController {
     private PlayerController playerController1;
     private PlayerController playerController2;
@@ -18,8 +23,6 @@ public class GameController {
     private int countShips2;
     private Timer timer;
     private File thisGame;
-   /* private boolean placedShipEndOne;
-    private boolean placedShipEndTwo;*/
     private boolean endGame = false;
 
     /**

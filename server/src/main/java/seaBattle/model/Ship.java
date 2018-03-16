@@ -1,5 +1,9 @@
 package seaBattle.model;
 
+/**
+ * model of ship
+ * @author Roman Kraskovskiy
+ */
 public class Ship {
 
     private int [] ship = new int[4];
