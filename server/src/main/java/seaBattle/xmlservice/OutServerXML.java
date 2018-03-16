@@ -31,7 +31,7 @@ public class OutServerXML {
         try {
             writer = factory.createXMLStreamWriter(socket.getOutputStream());
         } catch (XMLStreamException | IOException e) {
-            logger.error("XMLStreamException or IOE when creating XMLStreamWriter");
+            logger.error("XMLStreamException or IOE when creating XMLStreamWriter", e);
         }
     }
 
@@ -56,10 +56,10 @@ public class OutServerXML {
             try {
                 Thread.sleep(50);
             } catch (InterruptedException e) {
-                logger.error("InterruptedException when sending");
+                logger.error("InterruptedException when sending", e);
             }
         } catch (XMLStreamException e) {
-            logger.error("XMLStreamException when sending");
+            logger.error("XMLStreamException when sending", e);
         }
     }
 
@@ -92,10 +92,10 @@ public class OutServerXML {
             try {
                 Thread.sleep(50);
             } catch (InterruptedException e) {
-                logger.error("InterruptedException when sending");
+                logger.error("InterruptedException when sending", e);
             }
         } catch (XMLStreamException e) {
-            logger.error("XMLStreamException when sending");
+            logger.error("XMLStreamException when sending", e);
         }
     }
 
@@ -124,10 +124,10 @@ public class OutServerXML {
             try {
                 Thread.sleep(50);
             } catch (InterruptedException e) {
-                logger.error("InterruptedException when sending");
+                logger.error("InterruptedException when sending", e);
             }
         } catch (XMLStreamException e) {
-            logger.error("XMLStreamException when sending");
+            logger.error("XMLStreamException when sending", e);
         }
     }
 

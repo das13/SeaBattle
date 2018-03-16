@@ -397,10 +397,10 @@ public class SaveLoadServerXML {
                 logger.error("checked XML " + XMLforCheck + " is not exist");
             }
         } catch (IOException e) {
-            logger.error("IOE when checkXMLsafety");
+            logger.error("IOE when checkXMLsafety", e);
             return false;
         } catch (JAXBException e) {
-            logger.error("JAXBE when checkXMLsafety");
+            logger.error("JAXBE when checkXMLsafety", e);
             return false;
         }
         return true;
