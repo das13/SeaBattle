@@ -85,7 +85,6 @@ public class ServerListener implements Runnable {
         System.out.println("RUN is runed");
         while (!serverListenerThread.isInterrupted() && !socket.isClosed()) {
             try {
-                System.out.println("Enter to while (socket.isConnected()) cycle");
                 inClientXML.setReader(inClientXML.getFactory().createXMLStreamReader(inClientXML.getFileReader()));
             } catch (XMLStreamException e) {
                 logger.error("XMLStreamException in ServerListener thread", e);
@@ -98,9 +97,7 @@ public class ServerListener implements Runnable {
                         reader.next();
                         switch (inClientXML.checkValue(reader)) {
                             case "LOG IN": {
-                                System.out.println("\n\n\nSERVER:\"LOG IN\"");
                                 String value = inClientXML.checkValue(reader);
-                                System.out.println("result = \"" + value + "\"");
                                 if (value.equals("success!")) {
                                     Platform.runLater(new Runnable() {
                                         @Override
@@ -111,25 +108,19 @@ public class ServerListener implements Runnable {
                                     break;
                                 } else {
                                     DialogManager.showInfoDialog(MainLauncher.getPrimaryStageObj(), "Log in INFO", value);
-
                                 }
                                 break;
                             }
                             case "LOG OUT": {
-                                System.out.println("\n\n\nSERVER:\"LOG OUT\"");
                                 String value = inClientXML.checkValue(reader);
-                                System.out.println("result = \"" + value + "\"");
                                 break;
                             }
                             case "REG": {
-                                System.out.println("\n\n\nSERVER:\"REG\"");
                                 String value = inClientXML.checkValue(reader);
-                                System.out.println("result = \"" + value + "\"");
                                 DialogManager.showInfoDialog(MainLauncher.getPrimaryStageObj(), "Registration INFO", value);
                                 break;
                             }
                             case "MSG": {
-                                System.out.println("\n\n\nSERVER:\"MSG\"");
                                 String value = inClientXML.checkValue(reader);
                                 Platform.runLater(new Runnable() {
                                     @Override
@@ -140,11 +131,7 @@ public class ServerListener implements Runnable {
                                 break;
                             }
                             case "INVITE": {
-                                System.out.println("\n\n\nSERVER:\"INVITE\"");
                                 enemy = inClientXML.checkValue(reader);
-                                System.out.println("player \"" + enemy + "\" want to play with you. Use key \" REPLY\" to reply. " +
-                                        "value1 must be " + enemy + ", and value2 is your answer (now it is \"AUTOAGGREE\" MODE)");
-
                                 Platform.runLater(new Runnable() {
                                     @Override
                                     public void run() {
@@ -154,13 +141,10 @@ public class ServerListener implements Runnable {
                                 break;
                             }
                             case "REPLY": {
-                                System.out.println("\n\n\nSERVER:\"REPLY\"");
                                 String player1 = inClientXML.checkValue(reader);
-                                System.out.println("player \"" + player1 + "\" rejected your invite");
                                 break;
                             }
                             case "TURN": {
-                                System.out.println("\n\n\nSERVER:\"TURN\"");
                                 String turn = inClientXML.checkValue(reader);
                                 if (turn.equals("YES")) {
                                     Platform.runLater(new Runnable() {
@@ -182,9 +166,7 @@ public class ServerListener implements Runnable {
                                 break;
                             }
                             case "START GAME": {
-                                System.out.println("\n\n\nSERVER:\"START GAME\"");
                                 String value = inClientXML.checkValue(reader);
-
                                 if (value.equals("READY")) {
                                     gameController.setGameStart(true);
                                     Platform.runLater(new Runnable() {
@@ -195,7 +177,6 @@ public class ServerListener implements Runnable {
                                     });
                                     break;
                                 }
-                                System.out.println("GAME STARTED WITH = \"" + value + "\"");
                                 Platform.runLater(new Runnable() {
                                     @Override
                                     public void run() {
@@ -206,13 +187,11 @@ public class ServerListener implements Runnable {
                                 break;
                             }
                             case "ONLINE PLAYERS": {
-                                System.out.println("\n\n\nSERVER:\"ONLINE PLAYERS\"");
                                 int countOfPlayers = Integer.parseInt(inClientXML.checkValue(reader));
                                 listOnline.clear();
                                 for (int i = 1; i <= countOfPlayers; i++) {
                                     String name = inClientXML.checkValue(reader);
                                     rank = Integer.parseInt(inClientXML.checkValue(reader));
-                                    System.out.println("online player#" + i + " - " + name);
                                     if (!name.equals(username)) {
                                         listOnline.add(new Gamer(name, rank));
                                     } else {
@@ -228,12 +207,10 @@ public class ServerListener implements Runnable {
                                 break;
                             }
                             case "INGAME PLAYERS": {
-                                System.out.println("\n\n\nSERVER:\"INGAME PLAYERS\"");
                                 int countOfPlayers = Integer.parseInt(inClientXML.checkValue(reader));
                                 listOnGame.clear();
                                 for (int i = 1; i <= countOfPlayers; i++) {
                                     String name = inClientXML.checkValue(reader);
-                                    System.out.println("online player#" + i + " - " + name);
                                     if (!name.equals(username)) {
                                         listOnGame.add(new Gamer(name));
                                     }
@@ -242,13 +219,10 @@ public class ServerListener implements Runnable {
                                 break;
                             }
                             case "PLAYER INFO": {
-                                System.out.println("\n\n\nSERVER:\"PLAYER INFO\"");
                                 String value = inClientXML.checkValue(reader);
-                                System.out.println("You are = \"" + value + "\"");
                                 break;
                             }
                             case "SHIP LOCATION": {
-                                System.out.println("\n\n\nSERVER:\"LOCATION\"");
                                 String value = inClientXML.checkValue(reader);
                                 if (value.equals("OK")) {
                                     Platform.runLater(new Runnable() {
@@ -260,7 +234,6 @@ public class ServerListener implements Runnable {
                                     break;
                                 }
                                 if (value.equals("PLACED ENDED")) {
-
                                     Platform.runLater(new Runnable() {
                                         @Override
                                         public void run() {
@@ -280,7 +253,6 @@ public class ServerListener implements Runnable {
                                 break;
                             }
                             case "SHOOT MY SIDE": {
-                                System.out.println("\n\n\nSERVER:\"MY SIDE\"");
                                 String result = inClientXML.checkValue(reader);
                                 int x1 = Integer.parseInt(inClientXML.checkValue(reader));
                                 int y1 = Integer.parseInt(inClientXML.checkValue(reader));
@@ -294,7 +266,6 @@ public class ServerListener implements Runnable {
                                 break;
                             }
                             case "SHOOT RESULT": {
-                                System.out.println("\n\n\nSERVER:\"SHOOT RESULT\"");
                                 String value = inClientXML.checkValue(reader);
                                 if (value.equals("VICTORY!")) {
                                     Platform.runLater(new Runnable() {
@@ -328,7 +299,6 @@ public class ServerListener implements Runnable {
                                 break;
                             }
                             case "SURRENDER RESULT": {
-                                System.out.println("\n\n\nSERVER:\"SURRENDER\"");
                                 String value = inClientXML.checkValue(reader);
                                 if (value.equals("VICTORY!")) {
                                     Platform.runLater(new Runnable() {
@@ -357,15 +327,12 @@ public class ServerListener implements Runnable {
                                 break;
                             }
                             case "GAME OVER": {
-                                System.out.println("\n\n\nSERVER:\"GAME OVER\"");
                                 String value = inClientXML.checkValue(reader);
                                 DialogManager.showInfoDialog(commonWindowController.getGameWindow(), "GAME OVER", value);
                                 break;
                             }
                             case "INFO": {
-                                System.out.println("\n\n\nSERVER:\"INFO\"");
                                 String value = inClientXML.checkValue(reader);
-                                System.out.println("***\"" + value + "\"***");
                                 break;
                             }
                         }

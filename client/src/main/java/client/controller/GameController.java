@@ -32,55 +32,55 @@ import java.util.ResourceBundle;
 public class GameController implements Initializable {
 
     @FXML
-    public Label lblEnemyLogin;
+    private Label lblEnemyLogin;
     @FXML
-    public Label lblUserLogin;
+    private Label lblUserLogin;
     @FXML
-    public Label countShip1p;
+    private Label countShip1p;
     @FXML
-    public Label countShip2p;
+    private Label countShip2p;
     @FXML
-    public Label countShip3p;
+    private Label countShip3p;
     @FXML
-    public Label countShip4p;
+    private Label countShip4p;
     @FXML
-    public RadioButton rb_horizontally;
+    private RadioButton rb_horizontally;
     @FXML
-    public RadioButton rb_verically;
+    private RadioButton rb_verically;
     @FXML
-    public RadioButton rb_ship1p;
+    private RadioButton rb_ship1p;
     @FXML
-    public RadioButton rb_ship2p;
+    private RadioButton rb_ship2p;
     @FXML
-    public RadioButton rb_ship3p;
+    private RadioButton rb_ship3p;
     @FXML
-    public RadioButton rb_ship4p;
+    private RadioButton rb_ship4p;
     @FXML
-    public Pane userPane;
+    private Pane userPane;
     @FXML
-    public Pane enemyPane;
+    private Pane enemyPane;
     @FXML
-    public Button btnSurrender;
+    private Button btnSurrender;
     @FXML
-    public Pane paneColumn1;
+    private Pane paneColumn1;
     @FXML
-    public Pane paneRow1;
+    private Pane paneRow1;
     @FXML
-    public Pane paneColumn2;
+    private Pane paneColumn2;
     @FXML
-    public Pane paneRow2;
+    private Pane paneRow2;
     @FXML
-    public Label lblResultGameUser;
+    private Label lblResultGameUser;
     @FXML
-    public Label lblResultGameEnemy;
+    private Label lblResultGameEnemy;
     @FXML
-    public ProgressBar prgEnemy;
+    private ProgressBar prgEnemy;
     @FXML
-    public ProgressBar prgUser;
+    private ProgressBar prgUser;
     @FXML
-    public HBox enemyHbox;
+    private HBox enemyHbox;
     @FXML
-    public HBox userHbox;
+    private HBox userHbox;
     @FXML
     private TextArea txaGameInfo;
     final static Logger logger = Logger.getLogger(GameController.class);
@@ -175,7 +175,7 @@ public class GameController implements Initializable {
             try {
                 outClientXML.send("SHOOT", "" + y1, "" + x1);
             } catch (XMLStreamException e) {
-                e.printStackTrace();
+                logger.error("Error in void shoot(int x1, int y1", e);
             }
         } else {
             DialogManager.showInfoDialog(commonWindowController.getGameWindow(), "GAME INFO", "Game is not started");
@@ -188,18 +188,14 @@ public class GameController implements Initializable {
      * @param y1 coordinate of head of ship
      */
     public void sendAnswer(int x1, int y1) {
-        System.out.println(lblEnemyLogin.getText() + lblUserLogin.getText());
         this.x1 = x1;
         this.y1 = y1;
         x2 = (position == 0 ? x1 + length - 1 : x1);
         y2 = (position == 0 ? y1 : y1 + length - 1);
-        System.out.println("Ship" + x1 + y1 + x2 + y2);
         try {
-            System.out.println("socket " + listener.getSocket().isConnected());
             outClientXML.send("SHIP LOCATION", y1, x1, y2, x2);
         } catch (XMLStreamException e) {
             logger.error("SHIP LOCATION error", e);
-            System.out.println("socket closed:" + listener.getSocket().isClosed());
         }
     }
 
