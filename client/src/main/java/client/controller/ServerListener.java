@@ -360,7 +360,6 @@ public class ServerListener implements Runnable {
 
         try {
             outClientXML.getWriter().close();
-            outClientXML.getWriter2().close();
             isConnect = false;
             serverListenerThread.interrupt();
             if (socket != null) {

@@ -10,8 +10,6 @@ import java.net.Socket;
 public class OutClientXML {
     private XMLOutputFactory factory;
     private XMLStreamWriter writer;
-    //второй для контроля в консоли
-    private XMLStreamWriter writer2;
     private Socket socket;
 
     public OutClientXML(Socket socket){
@@ -19,8 +17,6 @@ public class OutClientXML {
         factory = XMLOutputFactory.newInstance();
         try {
             writer = factory.createXMLStreamWriter(socket.getOutputStream());
-            //console check
-            writer2 = factory.createXMLStreamWriter(System.out);
         } catch (XMLStreamException | IOException e) {
             e.printStackTrace();
         }
@@ -39,18 +35,6 @@ public class OutClientXML {
         writer.writeEndElement();
         writer.writeEndDocument();
         writer.flush();
-
-//        writer2.writeStartDocument("1.0");
-//        writer2.writeStartElement("root");
-//        writer2.writeStartElement("key");
-//        writer2.writeCharacters(key);
-//        writer2.writeEndElement();
-//        writer2.writeStartElement("value");
-//        writer2.writeCharacters(value1);
-//        writer2.writeEndElement();
-//        writer2.writeEndElement();
-//        writer2.writeEndDocument();
-//        writer2.flush();
     }
 
     //send XML with 2 values
@@ -69,22 +53,6 @@ public class OutClientXML {
         writer.writeEndElement();
         writer.writeEndDocument();
         writer.flush();
-
-        //console check
-        writer2.writeStartDocument("1.0");
-        writer2.writeStartElement("root");
-        writer2.writeStartElement("key");
-        writer2.writeCharacters(key);
-        writer2.writeEndElement();
-        writer2.writeStartElement("value");
-        writer2.writeCharacters(value1);
-        writer2.writeEndElement();
-        writer2.writeStartElement("value");
-        writer2.writeCharacters(value2);
-        writer2.writeEndElement();
-        writer2.writeEndElement();
-        writer2.writeEndDocument();
-        writer2.flush();
     }
 
     //XML with many values
@@ -103,22 +71,6 @@ public class OutClientXML {
         writer.writeEndElement();
         writer.writeEndDocument();
         writer.flush();
-
-        //console check
-        writer2.writeStartDocument("1.0");
-        writer2.writeStartElement("root");
-        writer2.writeStartElement("key");
-        writer2.writeCharacters(key);
-        writer2.writeEndElement();
-
-        for (String value : list) {
-            writer.writeStartElement("value");
-            writer.writeCharacters(value);
-            writer.writeEndElement();
-        }
-        writer2.writeEndElement();
-        writer2.writeEndDocument();
-        writer2.flush();
     }
 
     public synchronized void send(String key, int y1, int x1, int y2, int x2) throws XMLStreamException {
@@ -142,22 +94,6 @@ public class OutClientXML {
         writer.writeEndElement();
         writer.writeEndDocument();
         writer.flush();
-/*
-        //console check
-        writer2.writeStartDocument("1.0");
-        writer2.writeStartElement("root");
-        writer2.writeStartElement("key");
-        writer2.writeCharacters(key);
-        writer2.writeEndElement();
-        writer2.writeStartElement("value");
-        writer2.writeCharacters(value1);
-        writer2.writeEndElement();
-        writer2.writeStartElement("value");
-        writer2.writeCharacters(value2);
-        writer2.writeEndElement();
-        writer2.writeEndElement();
-        writer2.writeEndDocument();
-        writer2.flush();*/
     }
 
     public XMLOutputFactory getFactory() {
@@ -171,11 +107,5 @@ public class OutClientXML {
     }
     public void setWriter(XMLStreamWriter writer) {
         this.writer = writer;
-    }
-    public XMLStreamWriter getWriter2() {
-        return writer2;
-    }
-    public void setWriter2(XMLStreamWriter writer2) {
-        this.writer2 = writer2;
     }
 }
