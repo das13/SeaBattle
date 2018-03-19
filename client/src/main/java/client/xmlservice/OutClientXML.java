@@ -12,6 +12,11 @@ public class OutClientXML {
     private XMLStreamWriter writer;
     private Socket socket;
 
+    /**
+     * <code>OutClientXML</code> initializes to connect
+     * with <code>PlayerController</code> thread to send XML data
+     * @param socket - linked PlayerController thread socket
+     */
     public OutClientXML(Socket socket){
         this.socket = socket;
         factory = XMLOutputFactory.newInstance();
@@ -22,7 +27,11 @@ public class OutClientXML {
         }
     }
 
-    //send XML with 1 value
+    /**
+     * <code>send</code> sends XML data with specific key and 1 value1
+     * @param key - key
+     * @param value1 - value
+     */
     public synchronized void send(String key, String value1) throws XMLStreamException {
         writer.writeStartDocument("1.0");
         writer.writeStartElement("root");
@@ -37,7 +46,13 @@ public class OutClientXML {
         writer.flush();
     }
 
-    //send XML with 2 values
+    /**
+     * <code>send</code> sends XML data with specific key and 2 values - value1 and value2
+     * @param key - key
+     * @param value1 - value 1
+     * @param value2 - value 2
+     * @throws XMLStreamException
+     */
     public synchronized void send(String key, String value1, String value2) throws XMLStreamException {
         writer.writeStartDocument("1.0");
         writer.writeStartElement("root");
@@ -55,24 +70,15 @@ public class OutClientXML {
         writer.flush();
     }
 
-    //XML with many values
-    public synchronized void send(String key, String[] list) throws XMLStreamException {
-        writer.writeStartDocument("1.0");
-        writer.writeStartElement("root");
-        writer.writeStartElement("key");
-        writer.writeCharacters(key);
-        writer.writeEndElement();
-
-        for (String value : list) {
-            writer.writeStartElement("value");
-            writer.writeCharacters(value);
-            writer.writeEndElement();
-        }
-        writer.writeEndElement();
-        writer.writeEndDocument();
-        writer.flush();
-    }
-
+    /**
+     * <code>send</code> sends XML data with specific key and 4 values, used for indicate ship location
+     * @param key - key
+     * @param y1 - y1 coordinate
+     * @param x1 - x1 coordinate
+     * @param y2 - y2 coordinate
+     * @param x2 - x2 coordinate
+     * @throws XMLStreamException
+     */
     public synchronized void send(String key, int y1, int x1, int y2, int x2) throws XMLStreamException {
         writer.writeStartDocument("1.0");
         writer.writeStartElement("root");

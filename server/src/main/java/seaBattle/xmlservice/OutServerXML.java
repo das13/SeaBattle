@@ -24,6 +24,7 @@ public class OutServerXML {
     /**
      * <code>OutServerXML</code> initializes for every <code>PlayerController</code> thread
      * to send XML data to specific Client linked to this <code>PlayerController</code>
+     * @param socket - linked Client socket
      */
     public OutServerXML(Socket socket){
         this.socket = socket;

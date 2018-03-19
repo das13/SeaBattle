@@ -15,6 +15,11 @@ public class InClientXML {
     private Reader fileReader;
     private Socket socket;
 
+    /**
+     * <code>InServerXML</code> initializes to connect
+     * with <code>PlayerController</code> thread to receive XML data
+     @param socket - linked PlayerController thread socket
+     */
     public InClientXML(Socket socket){
         this.socket = socket;
         this.factory = XMLInputFactory.newInstance();
@@ -25,6 +30,11 @@ public class InClientXML {
         }
     }
 
+    /**
+     * The <code>checkValue</code> method returns all text information from value
+     * @param reader - XMLStreamReader
+     * @return - full String from text inside value
+     */
     public String checkValue(XMLStreamReader reader){
         StringBuilder sb = new StringBuilder();
         String value = "";
@@ -43,7 +53,6 @@ public class InClientXML {
         return value;
     }
 
-    //getters & setters
     public XMLStreamReader getReader() {
         return reader;
     }

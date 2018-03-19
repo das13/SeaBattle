@@ -462,4 +462,24 @@ public class PlayerController extends Thread {
         inServerXML = new InServerXML(socket);
         outServerXML = new OutServerXML(socket);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        PlayerController that = (PlayerController) o;
+
+        if (waitingForReply != that.waitingForReply) return false;
+        if (socket != null ? !socket.equals(that.socket) : that.socket != null) return false;
+        return thisPlayer != null ? thisPlayer.equals(that.thisPlayer) : that.thisPlayer == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = socket != null ? socket.hashCode() : 0;
+        result = 31 * result + (thisPlayer != null ? thisPlayer.hashCode() : 0);
+        result = 31 * result + (waitingForReply ? 1 : 0);
+        return result;
+    }
 }
