@@ -27,7 +27,7 @@ import java.util.List;
 public class ServerListener implements Runnable {
 
     final static Logger logger = Logger.getLogger(ServerListener.class);
-    private static OutClientXML outClientXML;
+    private OutClientXML outClientXML;
     private boolean isConnect;
     private Socket socket;
     private String username;
@@ -36,9 +36,8 @@ public class ServerListener implements Runnable {
     private GameController gameController;
     private InClientXML inClientXML;
     private String enemy;
-    public List<Gamer> listOnline = new ArrayList<>();
-    public List<Gamer> listOnGame = new ArrayList<>();
-    private int rank;
+    private List<Gamer> listOnline = new ArrayList<>();
+    private List<Gamer> listOnGame = new ArrayList<>();
     private Thread serverListenerThread;
 
     private ServerListener() {
@@ -82,7 +81,6 @@ public class ServerListener implements Runnable {
     @Override
     public void run() {
         regController = RegController.getRegController();
-        System.out.println("RUN is runed");
         while (!serverListenerThread.isInterrupted() && !socket.isClosed()) {
             try {
                 inClientXML.setReader(inClientXML.getFactory().createXMLStreamReader(inClientXML.getFileReader()));
@@ -191,7 +189,7 @@ public class ServerListener implements Runnable {
                                 listOnline.clear();
                                 for (int i = 1; i <= countOfPlayers; i++) {
                                     String name = inClientXML.checkValue(reader);
-                                    rank = Integer.parseInt(inClientXML.checkValue(reader));
+                                    int rank = Integer.parseInt(inClientXML.checkValue(reader));
                                     if (!name.equals(username)) {
                                         listOnline.add(new Gamer(name, rank));
                                     } else {
@@ -347,7 +345,6 @@ public class ServerListener implements Runnable {
                 logger.error("Error in ServerListenerThread run() XMLStreamException e");
             }
         }
-        System.out.println("RUN IS ENDED");
         if (!serverListenerThread.isInterrupted()) {
             disconnect();
         }
