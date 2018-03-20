@@ -44,7 +44,6 @@ public class MainLauncher extends Application {
             logger.info("Load regForm.fxml is successfully");
 
         } catch (IOException e) {
-            logger.info("Can not load regForm.fxml", e);
             logger.error("Can not load regForm.fxml", e);
         }
         primaryStage.setTitle("Sea Battle 2018");
