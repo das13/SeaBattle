@@ -271,7 +271,6 @@ public class ServerListener implements Runnable {
                                         public void run() {
                                             gameController.setShoot(value);
                                             gameController.resultGame(true);
-                                            //   regController.showCommonWindow();
                                         }
                                     });
                                     break;
@@ -281,7 +280,6 @@ public class ServerListener implements Runnable {
                                         @Override
                                         public void run() {
                                             gameController.resultGame(false);
-                                            //     regController.showCommonWindow();
                                         }
                                     });
                                     DialogManager.showInfoDialog(commonWindowController.getGameWindow(), "SHOOT RESULT", "Game over");
@@ -293,7 +291,6 @@ public class ServerListener implements Runnable {
                                         gameController.setShoot(value);
                                     }
                                 });
-                                //DialogManager.showInfoDialog(commonWindowController.getGameWindow(),"SHOOT RESULT", value);
                                 break;
                             }
                             case "SURRENDER RESULT": {
