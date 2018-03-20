@@ -195,7 +195,7 @@ public class GameController implements Initializable {
         try {
             outClientXML.send("SHIP LOCATION", y1, x1, y2, x2);
         } catch (XMLStreamException e) {
-            logger.error("SHIP LOCATION error", e);
+            logger.error("Error in void sendAnswer(int x1, int y1). Failed to send request for ship location", e);
         }
     }
 
