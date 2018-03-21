@@ -136,7 +136,7 @@ public class GameController implements Initializable {
      * @param isEnemy enemy or user field
      */
     private void createField(Pane pane, boolean isEnemy) {
-        char row = 65; // 'A'
+        char row = 65;
         for (int i = 0; i < 10; i++) {
             if (!isEnemy) {
                 paneColumn1.getChildren().add(new FieldDesignation(String.valueOf(i + 1), i, 0));

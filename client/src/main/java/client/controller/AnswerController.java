@@ -49,6 +49,5 @@ public class AnswerController {
 
     public void btnIgnorePressed(ActionEvent event) {
         CommonWindowController.getCwController().hideWaitAnswerWindow();
-        //ServerListener.getListener().getOutClientXML().send("REPLY","CANCEL");
     }
 }
