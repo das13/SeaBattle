@@ -132,7 +132,6 @@ public class OutServerXML {
         }
     }
 
-    //getters & setters
     public XMLOutputFactory getFactory() {
         return factory;
     }

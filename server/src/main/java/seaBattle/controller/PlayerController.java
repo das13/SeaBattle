@@ -117,25 +117,49 @@ public class PlayerController extends Thread {
                             }
                             case "MSG": {
                                 String msg = inServerXML.checkValue(reader);
-                                if (msg.contains("/BAN PLAYER")){
-                                    String playerToBan = msg.substring(12);
-                                    String result = banPlayerResult(thisPlayer.getLogin(),playerToBan);
-                                    outServerXML.send("BAN PLAYER", result);
-                                    if (("player " + playerToBan + " banned and kicked").equals(result)) {
-                                        updateAndSendPlayersInfo();
-                                    }
+                                msgResult(msg);
+                                break;
+                            }
+                            case "BAN PLAYER": {
+                                String playerToBan = InServerXML.checkValue(reader);
+                                String result = banPlayerResult(playerToBan);
+                                if ((result).contains("kicked")) {
+                                    updateAndSendPlayersInfo();
                                 }
-                                if (msg.contains("/BAN IP")){
-                                    String ipToBan = msg.substring(8);
-                                    String result = banIpResult(thisPlayer.getLogin(),ipToBan);
-                                    outServerXML.send("BAN IP", result);
-                                    if (("ip banned").equals(result)) {
-                                        updateAndSendPlayersInfo();
-                                    }
+                                msgServer(result);
+                                break;
+                            }
+                            case "BAN IP": {
+                                String ipToBan = InServerXML.checkValue(reader);
+                                String result = banIpResult(ipToBan);
+                                if ((result).contains("kicked")) {
+                                    updateAndSendPlayersInfo();
                                 }
-                                if (!msg.contains("/BAN IP") && !msg.contains("/BAN PLAYER")){
-                                    msgResult(thisPlayer.getLogin(),msg);
-                                }
+                                msgServer(result);
+                                break;
+                            }
+                            case "UNBAN PLAYER": {
+                                String playerToUnBan = InServerXML.checkValue(reader);
+                                String result = unbanPlayerResult(playerToUnBan);
+                                msgServer(result);
+                                break;
+                            }
+                            case "UNBAN IP": {
+                                String ipToUnBan = InServerXML.checkValue(reader);
+                                String result = unbanIpResult(ipToUnBan);
+                                msgServer(result);
+                                break;
+                            }
+                            case "REBOOT": {
+                                String admin = inServerXML.checkValue(reader);
+                                msgServer("Server rebooting by " + admin);
+                                rebootServer(admin);
+                                break;
+                            }
+                            case "SHUTDOWN": {
+                                String admin = inServerXML.checkValue(reader);
+                                msgServer("Server is shutting down by " + admin);
+                                shutdownServer(admin);
                                 break;
                             }
                             default:{
@@ -163,6 +187,30 @@ public class PlayerController extends Thread {
                 socket.close();
             } catch (IOException e) {
                 logger.error("Error with clothing thread", e);
+            }
+        }
+    }
+
+    /**
+     * <code>rebootServer</code> reboots server
+     * @param login - needed for check access
+     */
+    private void rebootServer(String login) {
+        for (String login1 : Server.getAdminsSet()) {
+            if (login1.equals(login)) {
+                Server.reboot();
+            }
+        }
+    }
+
+    /**
+     * <code>shutdownServer</code> is shutting server down
+     * @param login - needed for check access
+     */
+    private void shutdownServer(String login) {
+        for (String login1 : Server.getAdminsSet()) {
+            if (login1.equals(login)) {
+                Server.shutdown();
             }
         }
     }
@@ -245,18 +293,20 @@ public class PlayerController extends Thread {
 
     /**
      * <code>banPlayerResult</code> returns result of Client try to ban chosen player
-     * @param admin - sender login
      * @param playerToBan - players login to ban
      * @return - result
      */
-    public String banPlayerResult(String admin,String playerToBan) {
-        str = "something wrong";
+    public String banPlayerResult(String playerToBan) {
         for (String login : Server.getAdminsSet()) {
-            if (admin.equals(login)) {
+            if (thisPlayer.getLogin().equals(login)) {
                 for (Player pl1 : Server.getAllPlayersSet()) {
                     if (pl1.getLogin().equals(playerToBan)) {
+                        if (pl1.getStatus().equals("banned")){
+                            str = "player " + playerToBan + " already banned";
+                            return str;
+                        }
                         pl1.setStatus("banned");
-                        str = "player " + playerToBan + " banned";
+                        str = "player " + playerToBan + " was banned by " + thisPlayer.getLogin();
                         break;
                     }
                 }
@@ -265,7 +315,7 @@ public class PlayerController extends Thread {
                         if (pc1.getThisPlayer().getLogin().equals(playerToBan)) {
                             pc1.socket.close();
                             Server.getAllPlayersControllerSet().remove(pc1);
-                            str = "player " + playerToBan + " banned and kicked";
+                            str = "player " + playerToBan + " was banned and kicked by " + thisPlayer.getLogin();
                             return str;
                         }
                     }
@@ -278,15 +328,39 @@ public class PlayerController extends Thread {
     }
 
     /**
+     * <code>unbanPlayerResult</code> returns result of Client try to ban chosen player
+     * @param playerToUnBan - players login to ban
+     * @return - result
+     */
+    public String unbanPlayerResult(String playerToUnBan) {
+        for (String login : Server.getAdminsSet()) {
+            if (thisPlayer.getLogin().equals(login)) {
+                for (Player pl1 : Server.getAllPlayersSet()) {
+                    if (pl1.getLogin().equals(playerToUnBan)) {
+                        if (!pl1.getStatus().equals("banned")){
+                            str = "player " + playerToUnBan + " already unbanned";
+                            return str;
+                        }
+                        pl1.setStatus("offline");
+                        str = "player " + playerToUnBan + " was unbanned by " + thisPlayer.getLogin();
+                        return str;
+                    }
+                }
+            }
+        }
+        str = "player with login " + playerToUnBan + " was not found in playerList.";
+        return str;
+    }
+
+    /**
      * <code>banIpResult</code> returns result of Client try to ban chosen ip
-     * @param admin - sender login
      * @param ipToBan - ip to ban
      * @return - result
      * @throws IOException
      */
-    public String banIpResult(String admin,String ipToBan) throws IOException {
+    public String banIpResult(String ipToBan) throws IOException {
         for (String login : Server.getAdminsSet()) {
-            if (admin.equals(login)) {
+            if (thisPlayer.getLogin().equals(login)) {
                 for (String ip1 : Server.getBannedIpListSet()) {
                     if (ip1.equals(ipToBan)) {
                         str = "ip " + ipToBan + " already banned";
@@ -294,14 +368,38 @@ public class PlayerController extends Thread {
                     }
                 }
                 Server.getBannedIpListSet().add(ipToBan);
-                str = "ip banned";
+                str = "ip " + ipToBan + " banned by " + thisPlayer.getLogin();
                 for (PlayerController pc : Server.getAllPlayersControllerSet()) {
                     for (String ip : Server.getBannedIpListSet()) {
                         if (pc.socket.getInetAddress().toString().equals(ip)) {
+                            str = "ip " + ipToBan + " banned, and " + pc.getThisPlayer().getLogin() + " kicked by " + thisPlayer.getLogin();
                             pc.socket.close();
                         }
                     }
                 }
+            }
+        }
+        return str;
+    }
+
+    /**
+     * <code>unbanIpResult</code> returns result of Client try to ban chosen ip
+     * @param ipToUnBan - ip to ban
+     * @return - result
+     * @throws IOException
+     */
+    public String unbanIpResult(String ipToUnBan) throws IOException {
+        for (String login : Server.getAdminsSet()) {
+            if (thisPlayer.getLogin().equals(login)) {
+                for (String ip1 : Server.getBannedIpListSet()) {
+                    if (ip1.equals(ipToUnBan)) {
+                        Server.getBannedIpListSet().remove(ipToUnBan);
+                        SaveLoadServerXML.updateBannedIpListXML();
+                        str = "ip " + ipToUnBan + " was unbanned by " + thisPlayer.getLogin();
+                        return str;
+                    }
+                }
+                str = "ip " + ipToUnBan + " was not found in bannedIpList.";
             }
         }
         return str;
@@ -400,13 +498,22 @@ public class PlayerController extends Thread {
     }
 
     /**
-     * <code>msgResult</code> writes message to all Clients
-     * @param login - login
+     * <code>msgServer</code> writes message to all Clients from server
      * @param msg - message
      */
-    private void msgResult(String login, String msg) {
+    private void msgServer(String msg) {
         for (PlayerController pc : Server.getAllPlayersControllerSet()){
-            pc.getOutServerXML().send("MSG", login + ": " + msg);
+            pc.getOutServerXML().send("MSG", "SERVER: " + msg);
+        }
+    }
+
+    /**
+     * <code>msgResult</code> writes message to all Clients
+     * @param msg - message
+     */
+    private void msgResult(String msg) {
+        for (PlayerController pc : Server.getAllPlayersControllerSet()){
+            pc.getOutServerXML().send("MSG", thisPlayer.getLogin() + ": " + msg);
         }
     }
 
@@ -439,7 +546,6 @@ public class PlayerController extends Thread {
         return gc.shoot(this,Integer.parseInt(x1),Integer.parseInt(y1));
     }
 
-    //getters and setters
     public OutServerXML getOutServerXML() {
         return outServerXML;
     }

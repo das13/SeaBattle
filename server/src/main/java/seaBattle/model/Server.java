@@ -184,4 +184,11 @@ public class Server {
     }
 
 
+    public static void reboot() {
+        //TODO add code there
+    }
+
+    public static void shutdown() {
+        //TODO add code there
+    }
 }

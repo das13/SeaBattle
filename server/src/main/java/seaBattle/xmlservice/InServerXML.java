@@ -63,7 +63,6 @@ public class InServerXML {
         return value;
     }
 
-    //getters & setters
     public XMLStreamReader getReader() {
         return reader;
     }
