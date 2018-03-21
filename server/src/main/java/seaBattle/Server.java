@@ -3,6 +3,7 @@ package seaBattle;
 import org.apache.log4j.Logger;
 import seaBattle.controller.PlayerController;
 import seaBattle.model.Player;
+import seaBattle.model.Status;
 import seaBattle.xmlservice.SaveLoadServerXML;
 
 import java.io.File;
@@ -73,7 +74,7 @@ public class Server {
 
     public static void updateOnlinePlayersSet() {
         for (Player player : allPlayersSet) {
-            if ("online".equals(player.getStatus())) {
+            if (Status.ONLINE.equals(player.getStatus())) {
                 onlinePlayersSet.add(player);
             } else {
                 onlinePlayersSet.remove(player);
@@ -83,7 +84,7 @@ public class Server {
 
     public static void updateIngamePlayersSet() {
         for (Player player : allPlayersSet) {
-            if ("ingame".equals(player.getStatus())) {
+            if (Status.INGAME.equals(player.getStatus())) {
                 ingamePlayersSet.add(player);
             } else {
                 ingamePlayersSet.remove(player);

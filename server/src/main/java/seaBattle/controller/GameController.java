@@ -99,12 +99,12 @@ public class GameController {
         for (Player player : Server.getAllPlayersSet()){
             if (player.getLogin().equals(playerController.getThisPlayer().getLogin())){
                 player.setRank(player.getRank() - 5);
-                player.setStatus("online");
+                player.setStatus(Status.ONLINE);
                 count++;
             }
             if (player.getLogin().equals(winner.getThisPlayer().getLogin())){
                 player.setRank(player.getRank() + 10);
-                player.setStatus("online");
+                player.setStatus(Status.ONLINE);
                 count++;
             }
             if (count == 2){

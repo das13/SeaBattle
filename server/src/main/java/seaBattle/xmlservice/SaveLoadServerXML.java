@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import seaBattle.model.Field;
 import seaBattle.model.Player;
 import seaBattle.Server;
+import seaBattle.model.Status;
 import seaBattle.model.serverFileService.*;
 
 import javax.xml.bind.*;
@@ -82,13 +83,13 @@ public class SaveLoadServerXML {
         Player p1 = new Player();
         p1.setLogin("admin");
         p1.setPassword("admin");
-        p1.setStatus("offline");
+        p1.setStatus(Status.OFFLINE);
         p1.setRank(100);
 
         Player p2 = new Player();
         p2.setLogin("hacker");
         p2.setPassword("lol");
-        p2.setStatus("offline");
+        p2.setStatus(Status.OFFLINE);
         p2.setRank(9999);
 
         playerList.getPlayerList().add(p1);
@@ -280,8 +281,8 @@ public class SaveLoadServerXML {
             Server.getAllPlayersSet().addAll(playerList.getPlayerList());
             if (Server.getAllPlayersControllerSet().isEmpty()) {
                 for (Player pl : Server.getAllPlayersSet()) {
-                    if (!"offline".equals(pl.getStatus()) && !"banned".equals(pl.getStatus())) {
-                        pl.setStatus("offline");
+                    if (!Status.OFFLINE.equals(pl.getStatus()) && !Status.BANNED.equals(pl.getStatus())) {
+                        pl.setStatus(Status.OFFLINE);
                     }
                 }
             }

@@ -16,7 +16,7 @@ public class Player {
 
     private String login;
     private String password;
-    private String status;
+    private Status status;
     private int rank;
 
     /**
@@ -67,7 +67,7 @@ public class Player {
     /**
      * @return player status
      */
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
 
@@ -75,7 +75,7 @@ public class Player {
      * set status for player
      * @param status player status
      */
-    public void setStatus(String status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 }
