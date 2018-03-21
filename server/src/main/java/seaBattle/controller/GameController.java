@@ -199,7 +199,6 @@ public class GameController {
         if (countShips < 20) {
             return false;
         } else {
-//            saveGame();
             return true;
         }
     }
@@ -231,7 +230,6 @@ public class GameController {
         }
         if (checkStart(countShips)) {
             str ="PLACED ENDED";
-            //  placedShipEndOne = true;
         }
         return countShips;
     }

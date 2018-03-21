@@ -430,7 +430,6 @@ public class PlayerController extends Thread {
                 if (pc.isWaitingForReply()) {
                     gc = new GameController(pc, this);
                     pc.setGc(gc);
-                    //sets manipulation
                     for (Player player : Server.getAllPlayersSet()){
                         if (player.getLogin().equals(pc.getThisPlayer().getLogin())){
                             player.setStatus("ingame");
