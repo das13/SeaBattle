@@ -280,7 +280,7 @@ public class SaveLoadServerXML {
             Server.getAllPlayersSet().addAll(playerList.getPlayerList());
             if (Server.getAllPlayersControllerSet().isEmpty()) {
                 for (Player pl : Server.getAllPlayersSet()) {
-                    if (!pl.getStatus().equals("offline") && !pl.getStatus().equals("banned")) {
+                    if (!"offline".equals(pl.getStatus()) && !"banned".equals(pl.getStatus())) {
                         pl.setStatus("offline");
                     }
                 }

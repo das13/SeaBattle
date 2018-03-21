@@ -223,15 +223,15 @@ public class GameController implements Initializable {
     private Cell createNewCell(String result, int x1, int y1, boolean isEnemy) {
         String who = isEnemy ? "Enemy:" : "You:";
         Cell cell = new Cell(x1, y1);
-        if (result.equals("HIT")) {
+        if ("HIT".equals(result)) {
             cell.border.setFill(Color.BLACK);
             txaGameInfo.appendText(who + " HIT " + ((char) ('A' + x1)) + " " + (y1 + 1) + "\n");
         }
-        if (result.equals("MISS")) {
+        if ("MISS".equals(result)) {
             cell.border.setFill(Color.LIGHTBLUE);
             txaGameInfo.appendText(who + " MISS " + ((char) ('A' + x1)) + " " + (y1 + 1) + "\n");
         }
-        if (result.equals("DESTROY") || result.equals("VICTORY!")) {
+        if ("DESTROY".equals(result) || "VICTORY!".equals(result)) {
             txaGameInfo.appendText(who + " DESTROY " + ((char) ('A' + x1)) + " " + (y1 + 1) + "\n");
             cell.border.setFill(Color.GOLD);
         }
@@ -243,7 +243,7 @@ public class GameController implements Initializable {
      * @param result result of shot
      */
     public void setShoot(String result) {
-        if (result.equals("HIT") || result.equals("MISS") || result.equals("DESTROY")) {
+        if ("HIT".equals(result) || "MISS".equals(result) || "DESTROY".equals(result)) {
             enemyPane.getChildren().add(createNewCell(result, x1, y1, false));
         }
     }
@@ -253,7 +253,7 @@ public class GameController implements Initializable {
      * @param result result of shot
      */
     public void setShootbyEnemy(String result, int x1, int y1) {
-        if (result.equals("HIT") || result.equals("MISS") || result.equals("DESTROY")) {
+        if ("HIT".equals(result) || "MISS".equals(result) || "DESTROY".equals(result)) {
             userPane.getChildren().add(createNewCell(result, x1, y1, true));
         }
     }

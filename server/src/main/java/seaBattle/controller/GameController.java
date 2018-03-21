@@ -142,7 +142,7 @@ public class GameController {
         String y1 = String.valueOf(y);
         String x1 = String.valueOf(x);
         playerController.getOutServerXML().send("SHOOT MY SIDE", str, y1,x1);
-        if (!str.equals("MISS")) {
+        if (!"MISS".equals(str)) {
             countShips--;
             saveGame();
         } else {
@@ -225,7 +225,7 @@ public class GameController {
      */
     public int setShipResult(Field field,int countShips,Ship ship) {
         str = field.setShip(ship);
-        if(str.equals("OK")) {
+        if("OK".equals(str)) {
             countShips += ship.getHealth();
         }
         if (checkStart(countShips)) {

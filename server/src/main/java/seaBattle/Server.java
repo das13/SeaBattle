@@ -73,7 +73,7 @@ public class Server {
 
     public static void updateOnlinePlayersSet() {
         for (Player player : allPlayersSet) {
-            if (player.getStatus().equals("online")) {
+            if ("online".equals(player.getStatus())) {
                 onlinePlayersSet.add(player);
             } else {
                 onlinePlayersSet.remove(player);
@@ -83,7 +83,7 @@ public class Server {
 
     public static void updateIngamePlayersSet() {
         for (Player player : allPlayersSet) {
-            if (player.getStatus().equals("ingame")) {
+            if ("ingame".equals(player.getStatus())) {
                 ingamePlayersSet.add(player);
             } else {
                 ingamePlayersSet.remove(player);
