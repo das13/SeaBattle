@@ -2,7 +2,7 @@ package seaBattle.controller;
 
 import org.apache.log4j.Logger;
 import seaBattle.model.Player;
-import seaBattle.model.Server;
+import seaBattle.Server;
 import seaBattle.model.Ship;
 import seaBattle.xmlservice.InServerXML;
 import seaBattle.xmlservice.OutServerXML;
@@ -12,9 +12,6 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.IOException;
 import java.net.Socket;
-import java.util.Date;
-import java.util.SortedSet;
-import java.util.Timer;
 
 /**
  * <code>PlayerController</code> is the main communication unit that

@@ -3,7 +3,7 @@ package seaBattle.xmlservice;
 import org.apache.log4j.Logger;
 import seaBattle.model.Field;
 import seaBattle.model.Player;
-import seaBattle.model.Server;
+import seaBattle.Server;
 import seaBattle.model.serverFileService.*;
 
 import javax.xml.bind.*;

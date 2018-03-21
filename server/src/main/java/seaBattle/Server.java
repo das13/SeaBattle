@@ -1,7 +1,8 @@
-package seaBattle.model;
+package seaBattle;
 
 import org.apache.log4j.Logger;
 import seaBattle.controller.PlayerController;
+import seaBattle.model.Player;
 import seaBattle.xmlservice.SaveLoadServerXML;
 
 import java.io.File;

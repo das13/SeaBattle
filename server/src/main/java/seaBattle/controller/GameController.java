@@ -1,5 +1,6 @@
 package seaBattle.controller;
 
+import seaBattle.Server;
 import seaBattle.model.*;
 import seaBattle.xmlservice.SaveLoadServerXML;
 

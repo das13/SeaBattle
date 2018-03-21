@@ -1,5 +1,7 @@
 package seaBattle.model;
 
+import seaBattle.Server;
+
 /**
  * logic and model of field of sea battle
  * logic of ships setting
