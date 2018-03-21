@@ -226,36 +226,37 @@ public class PlayerController extends Thread {
             if (!player.getLogin().equals(login) && !player.getPassword().equals(password)){
                 str = "player with this login or password not found. register first";
             }
-            if ((!player.getLogin().equals(login) && player.getPassword().equals(password)) || (player.getLogin().equals(login) && !player.getPassword().equals(password))){
-                str = "login or password is incorrect";
-                return str;
-            }
-            if (player.getLogin().equals(login) && player.getPassword().equals(password) && player.getStatus().equals("online")){
-                str = "player with nickname \"" + login + "\" already logged in";
-                return str;
-            }
-            if (player.getLogin().equals(login) && player.getPassword().equals(password)){
-                for (String admin : Server.getAdminsSet()){
-                    if (player.getLogin().equals(admin)){
-                        str = "success! admin access.";
-                        return str;
-                    }
+            if (player.getLogin().equals(login)){
+                if (!player.getPassword().equals(password)){
+                    str = "password is incorrect";
                 }
-                if (player.getStatus().equals("banned")){
-                    str = "MORTAL, YOUR ACCOUNT IS BANNED BY HIGHER POWER!";
+                if (player.getPassword().equals(password) && player.getStatus().equals("online")){
+                    str = "player with nickname \"" + login + "\" already logged in";
                     return str;
                 }
-                for (String ip : Server.getBannedIpListSet()){
-                    if (socket.getInetAddress().equals(ip)){
-                        str = "MORTAL, YOUR IP IS BANNED BY HIGHER POWER!";
+                if (player.getPassword().equals(password)){
+                    for (String admin : Server.getAdminsSet()){
+                        if (player.getLogin().equals(admin)){
+                            str = "success! admin access.";
+                            return str;
+                        }
+                    }
+                    if (player.getStatus().equals("banned")){
+                        str = "MORTAL, YOUR ACCOUNT IS BANNED BY HIGHER POWER!";
                         return str;
                     }
-                }
-                for (Player player1 : Server.getAllPlayersSet()){
-                    if (player1.getLogin().equals(thisPlayer.getLogin())){
-                        player1.setStatus("online");
-                        thisPlayer.setStatus("online");
-                        str = "success!";
+                    for (String ip : Server.getBannedIpListSet()){
+                        if (socket.getInetAddress().toString().equals(ip)){
+                            str = "MORTAL, YOUR IP IS BANNED BY HIGHER POWER!";
+                            return str;
+                        }
+                    }
+                    for (Player player1 : Server.getAllPlayersSet()){
+                        if (player1.getLogin().equals(thisPlayer.getLogin())){
+                            player1.setStatus("online");
+                            thisPlayer.setStatus("online");
+                            str = "success!";
+                        }
                     }
                 }
                 return str;
