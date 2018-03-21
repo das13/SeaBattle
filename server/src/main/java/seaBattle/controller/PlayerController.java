@@ -84,7 +84,7 @@ public class PlayerController extends Thread {
                                 String player1 = inServerXML.checkValue(reader);
                                 String reply = inServerXML.checkValue(reader);
                                 str = replyResult(player1,reply);
-                                if (str.equals("OK")) {
+                                if ("OK".equals(str)) {
                                     updateAndSendPlayersInfo();
                                 }
                                 break;
@@ -121,7 +121,7 @@ public class PlayerController extends Thread {
                                     String playerToBan = msg.substring(12);
                                     String result = banPlayerResult(thisPlayer.getLogin(),playerToBan);
                                     outServerXML.send("BAN PLAYER", result);
-                                    if (result.equals("player " + playerToBan + " banned and kicked")) {
+                                    if (("player " + playerToBan + " banned and kicked").equals(result)) {
                                         updateAndSendPlayersInfo();
                                     }
                                 }
@@ -129,7 +129,7 @@ public class PlayerController extends Thread {
                                     String ipToBan = msg.substring(8);
                                     String result = banIpResult(thisPlayer.getLogin(),ipToBan);
                                     outServerXML.send("BAN IP", result);
-                                    if (result.equals("ip banned")) {
+                                    if (("ip banned").equals(result)) {
                                         updateAndSendPlayersInfo();
                                     }
                                 }
@@ -187,6 +187,12 @@ public class PlayerController extends Thread {
                 return str;
             }
             if (player.getLogin().equals(login) && player.getPassword().equals(password)){
+                for (String admin : Server.getAdminsSet()){
+                    if (player.getLogin().equals(admin)){
+                        str = "success! admin access.";
+                        return str;
+                    }
+                }
                 if (player.getStatus().equals("banned")){
                     str = "MORTAL, YOUR ACCOUNT IS BANNED BY HIGHER POWER!";
                     return str;
@@ -224,7 +230,7 @@ public class PlayerController extends Thread {
                 break;
             }
         }
-        if (str.equals("")){
+        if ("".equals(str)){
             Player player1 = new Player();
             player1.setLogin(login);
             player1.setPassword(password);
