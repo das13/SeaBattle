@@ -28,13 +28,16 @@ public class Server {
 
     private static int PORT;
     private static int countOfThread = 0;
-
+    private static ServerSocket listener;
 
     public static void main(String[] args) {
         serverLaunchPreparation();
         SaveLoadServerXML.readServerConfig();
         System.out.println("THE SERVER IS RUNNING");
-        ServerSocket listener = null;
+        startServer();
+    }
+
+    public static void startServer() {
         try {
             listener = new ServerSocket(PORT);
 
@@ -185,11 +188,12 @@ public class Server {
     }
 
 
-    public static void reboot() {
-        //TODO add code there
+    public static void reboot() throws IOException {
+        listener.close();
+        startServer();
     }
 
     public static void shutdown() {
-        //TODO add code there
+        System.exit(0);
     }
 }
