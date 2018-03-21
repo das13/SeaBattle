@@ -3,7 +3,8 @@ package seaBattle.xmlservice;
 import org.apache.log4j.Logger;
 import seaBattle.model.Field;
 import seaBattle.model.Player;
-import seaBattle.model.Server;
+import seaBattle.Server;
+import seaBattle.model.Status;
 import seaBattle.model.serverFileService.*;
 
 import javax.xml.bind.*;
@@ -57,19 +58,15 @@ public class SaveLoadServerXML {
      * or create xml server files if some of them is not exist
      */
     public static void checkExistanceOrCreateServerXMLfiles() {
-        //проверка наличия playerList.xml и создание при негативном результате
         if (!Server.getPlayerListXML().exists()) {
             createPlayerListXML();
         }
-        //проверка наличия bannedIpList.xml и создание при негативном результате
         if (!Server.getBannedIpListXML().exists()) {
             createBannedIpListXML();
         }
-        //проверка наличия adminsList.xml и создание при негативном результате
         if (!Server.getAdminsListXML().exists()) {
             createAdminsListXML();
         }
-        //проверка наличия serverConf.xml и создание при негативном результате
         if (!Server.getServerConfXML().exists()) {
             createServerConfXML();
         }
@@ -83,20 +80,18 @@ public class SaveLoadServerXML {
         PlayerList playerList = new PlayerList();
 
         playerList.setPlayerList(new ArrayList<Player>());
-        //создаём два игрока
         Player p1 = new Player();
         p1.setLogin("admin");
         p1.setPassword("admin");
-        p1.setStatus("offline");
+        p1.setStatus(Status.OFFLINE);
         p1.setRank(100);
 
         Player p2 = new Player();
         p2.setLogin("hacker");
         p2.setPassword("lol");
-        p2.setStatus("offline");
+        p2.setStatus(Status.OFFLINE);
         p2.setRank(9999);
 
-        //добавляем в список
         playerList.getPlayerList().add(p1);
         playerList.getPlayerList().add(p2);
 
@@ -106,9 +101,7 @@ public class SaveLoadServerXML {
             Marshaller jaxbMarshaller = null;
             jaxbMarshaller = jaxbContext.createMarshaller();
             jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            //Marsha-им плеерлист в консоль
             jaxbMarshaller.marshal(playerList, System.out);
-            //Marshal-им плеерлист в файл
             jaxbMarshaller.marshal(playerList, new File(Server.getPlayerListXML().getPath()));
         } catch (JAXBException e) {
             logger.error("playerList.xml creation error.", e);
@@ -123,7 +116,6 @@ public class SaveLoadServerXML {
         BannedIpList bannedIpList = new BannedIpList();
 
         bannedIpList.setBannedIpList(new ArrayList<String>());
-        //создаём два айпи
 
         bannedIpList.getBannedIpList().add("250.250.250.251");
         bannedIpList.getBannedIpList().add("250.250.250.252");
@@ -132,10 +124,8 @@ public class SaveLoadServerXML {
             Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
             jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
-            //Marsha-им лист в консоль
             jaxbMarshaller.marshal(bannedIpList, System.out);
 
-            //Marshal-им лист в файл
             jaxbMarshaller.marshal(bannedIpList, new File(Server.getBannedIpListXML().getPath()));
         } catch (JAXBException e) {
             logger.error("bannedIpList.xml creation error.", e);
@@ -151,7 +141,6 @@ public class SaveLoadServerXML {
 
         adminsList.setAdminList(new ArrayList<String>());
 
-        //создаём два логина
         adminsList.getAdminList().add("admin");
         adminsList.getAdminList().add("hacker");
         try{
@@ -159,10 +148,8 @@ public class SaveLoadServerXML {
             Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
             jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
-            //Marsha-им лист в консоль
             jaxbMarshaller.marshal(adminsList, System.out);
 
-            //Marshal-им лист в файл
             jaxbMarshaller.marshal(adminsList, new File(Server.getAdminsListXML().getPath()));
         } catch (JAXBException e) {
             logger.error("adminsList.xml creation error.", e);
@@ -185,7 +172,6 @@ public class SaveLoadServerXML {
             JAXBContext jaxbContext = JAXBContext.newInstance(ServerConf.class);
             Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 
-            // output pretty printed
             jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
             jaxbMarshaller.marshal(serverConf, file);
@@ -295,8 +281,8 @@ public class SaveLoadServerXML {
             Server.getAllPlayersSet().addAll(playerList.getPlayerList());
             if (Server.getAllPlayersControllerSet().isEmpty()) {
                 for (Player pl : Server.getAllPlayersSet()) {
-                    if (!pl.getStatus().equals("offline") && !pl.getStatus().equals("banned")) {
-                        pl.setStatus("offline");
+                    if (!Status.OFFLINE.equals(pl.getStatus()) && !Status.BANNED.equals(pl.getStatus())) {
+                        pl.setStatus(Status.OFFLINE);
                     }
                 }
             }
@@ -455,7 +441,6 @@ public class SaveLoadServerXML {
                 JAXBContext jaxbContext = JAXBContext.newInstance(GameCondition.class);
                 Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 
-                // pretty print
                 jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
                 jaxbMarshaller.marshal(gameCondition, file);

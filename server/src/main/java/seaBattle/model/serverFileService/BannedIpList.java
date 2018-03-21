@@ -22,7 +22,6 @@ public class BannedIpList
     public List<String> getBannedIpList() {
         return bannedIpList;
     }
-
     public void setBannedIpList(List<String> bannedIpList) {
         this.bannedIpList = bannedIpList;
     }

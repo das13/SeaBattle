@@ -1,7 +1,9 @@
-package seaBattle.model;
+package seaBattle;
 
 import org.apache.log4j.Logger;
 import seaBattle.controller.PlayerController;
+import seaBattle.model.Player;
+import seaBattle.model.Status;
 import seaBattle.xmlservice.SaveLoadServerXML;
 
 import java.io.File;
@@ -27,13 +29,16 @@ public class Server {
 
     private static int PORT;
     private static int countOfThread = 0;
-
+    private static ServerSocket listener;
 
     public static void main(String[] args) {
         serverLaunchPreparation();
         SaveLoadServerXML.readServerConfig();
         System.out.println("THE SERVER IS RUNNING");
-        ServerSocket listener = null;
+        startServer();
+    }
+
+    public static void startServer() {
         try {
             listener = new ServerSocket(PORT);
 
@@ -69,7 +74,7 @@ public class Server {
 
     public static void updateOnlinePlayersSet() {
         for (Player player : allPlayersSet) {
-            if (player.getStatus().equals("online")) {
+            if (Status.ONLINE.equals(player.getStatus())) {
                 onlinePlayersSet.add(player);
             } else {
                 onlinePlayersSet.remove(player);
@@ -79,7 +84,7 @@ public class Server {
 
     public static void updateIngamePlayersSet() {
         for (Player player : allPlayersSet) {
-            if (player.getStatus().equals("ingame")) {
+            if (Status.INGAME.equals(player.getStatus())) {
                 ingamePlayersSet.add(player);
             } else {
                 ingamePlayersSet.remove(player);
@@ -184,4 +189,12 @@ public class Server {
     }
 
 
+    public static void reboot() throws IOException {
+        listener.close();
+        startServer();
+    }
+
+    public static void shutdown() {
+        System.exit(0);
+    }
 }

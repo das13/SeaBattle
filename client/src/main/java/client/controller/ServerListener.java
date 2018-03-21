@@ -91,12 +91,12 @@ public class ServerListener implements Runnable {
             reader = inClientXML.getReader();
             try {
                 while (isConnect && reader.hasNext()) {
-                    if (reader.getEventType() == 1 && reader.getLocalName().equals("key")) {
+                    if (reader.getEventType() == 1 && "key".equals(reader.getLocalName())) {
                         reader.next();
                         switch (inClientXML.checkValue(reader)) {
                             case "LOG IN": {
                                 String value = inClientXML.checkValue(reader);
-                                if (value.equals("success!")) {
+                                if ("success!".equals(value)) {
                                     Platform.runLater(new Runnable() {
                                         @Override
                                         public void run() {
@@ -144,7 +144,7 @@ public class ServerListener implements Runnable {
                             }
                             case "TURN": {
                                 String turn = inClientXML.checkValue(reader);
-                                if (turn.equals("YES")) {
+                                if ("YES".equals(turn)) {
                                     Platform.runLater(new Runnable() {
                                         @Override
                                         public void run() {
@@ -165,7 +165,7 @@ public class ServerListener implements Runnable {
                             }
                             case "START GAME": {
                                 String value = inClientXML.checkValue(reader);
-                                if (value.equals("READY")) {
+                                if ("READY".equals(value)) {
                                     gameController.setGameStart(true);
                                     Platform.runLater(new Runnable() {
                                         @Override
@@ -222,7 +222,7 @@ public class ServerListener implements Runnable {
                             }
                             case "SHIP LOCATION": {
                                 String value = inClientXML.checkValue(reader);
-                                if (value.equals("OK")) {
+                                if ("OK".equals(value)) {
                                     Platform.runLater(new Runnable() {
                                         @Override
                                         public void run() {
@@ -231,7 +231,7 @@ public class ServerListener implements Runnable {
                                     });
                                     break;
                                 }
-                                if (value.equals("PLACED ENDED")) {
+                                if ("PLACED ENDED".equals(value)) {
                                     Platform.runLater(new Runnable() {
                                         @Override
                                         public void run() {
@@ -265,7 +265,7 @@ public class ServerListener implements Runnable {
                             }
                             case "SHOOT RESULT": {
                                 String value = inClientXML.checkValue(reader);
-                                if (value.equals("VICTORY!")) {
+                                if ("VICTORY!".equals(value)) {
                                     Platform.runLater(new Runnable() {
                                         @Override
                                         public void run() {
@@ -275,7 +275,7 @@ public class ServerListener implements Runnable {
                                     });
                                     break;
                                 }
-                                if (value.equals("DEFEAT!")) {
+                                if ("DEFEAT!".equals(value)) {
                                     Platform.runLater(new Runnable() {
                                         @Override
                                         public void run() {
@@ -295,7 +295,7 @@ public class ServerListener implements Runnable {
                             }
                             case "SURRENDER RESULT": {
                                 String value = inClientXML.checkValue(reader);
-                                if (value.equals("VICTORY!")) {
+                                if ("VICTORY!".equals(value)) {
                                     Platform.runLater(new Runnable() {
                                         @Override
                                         public void run() {
@@ -307,7 +307,7 @@ public class ServerListener implements Runnable {
                                     });
                                     break;
                                 }
-                                if (value.equals("DEFEAT!")) {
+                                if ("DEFEAT!".equals(value)) {
                                     Platform.runLater(new Runnable() {
                                         @Override
                                         public void run() {

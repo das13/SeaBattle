@@ -23,7 +23,6 @@ public class GameCondition {
     public List<PlayerInGame> getPlayerInGameList() {
         return playerInGameList;
     }
-
     public void setPlayerInGameList(List<PlayerInGame> playerInGameList) {
         this.playerInGameList = playerInGameList;
     }

@@ -1,5 +1,6 @@
 package seaBattle.controller;
 
+import seaBattle.Server;
 import seaBattle.model.*;
 import seaBattle.xmlservice.SaveLoadServerXML;
 
@@ -16,6 +17,7 @@ public class GameController {
     private PlayerController playerController1;
     private PlayerController playerController2;
     private PlayerController currentPlayerController;
+    private PlayerController winner;
     private Field field1;
     private Field field2;
     private String str;
@@ -64,20 +66,90 @@ public class GameController {
     }
 
     /**
+     * change player result
+     * @param playerController1 turn player
+     * @param playerController2 not turn player
+     */
+    public void changeCurrentPlayerResult(PlayerController playerController1,PlayerController playerController2) {
+        currentPlayerController = playerController2;
+        playerController2.getOutServerXML().send("TURN","YES");
+        playerController1.getOutServerXML().send("TURN","NO");
+    }
+
+    /**
      * change turn of players
      */
     public void changeCurrentPlayer(){
         if(currentPlayerController.equals(playerController1)) {
-            currentPlayerController = playerController2;
-            playerController2.getOutServerXML().send("TURN","YES");
-            playerController1.getOutServerXML().send("TURN","NO");
+            changeCurrentPlayerResult(playerController1,playerController2);
         } else {
             currentPlayerController = playerController1;
-            playerController2.getOutServerXML().send("TURN","NO");
-            playerController1.getOutServerXML().send("TURN","YES");
+            changeCurrentPlayerResult(playerController2,playerController1);
         }
     }
 
+    /**
+     * sets ranks and delete file of game
+     * @param playerController loser
+     */
+    public void gameEndResult(PlayerController playerController,String key) {
+        playerController.getOutServerXML().send(key,"DEFEAT!");
+        winner.getOutServerXML().send(key,"VICTORY!");
+        int count = 0;
+        for (Player player : Server.getAllPlayersSet()){
+            if (player.getLogin().equals(playerController.getThisPlayer().getLogin())){
+                player.setRank(player.getRank() - 5);
+                player.setStatus(Status.ONLINE);
+                count++;
+            }
+            if (player.getLogin().equals(winner.getThisPlayer().getLogin())){
+                player.setRank(player.getRank() + 10);
+                player.setStatus(Status.ONLINE);
+                count++;
+            }
+            if (count == 2){
+                if (new File("game-" + playerController.getThisPlayer().getLogin() +"VS"+ winner.getThisPlayer().getLogin() + ".xml").exists()){
+                    File file = new File(new File("game-" + playerController.getThisPlayer().getLogin() +"VS"+ winner.getThisPlayer().getLogin() + ".xml").getPath());
+                    file.delete();
+                }
+            }
+        }
+        timer.cancel();
+        endGame = true;
+        playerController1.updateAndSendPlayersInfo();
+    }
+
+    /**
+     * checking for game end
+     */
+    public void gameEndChecking() {
+        if (countShips1 == 0) {
+            gameEndResult(playerController1,"SHOOT RESULT");
+        } else if (countShips2 == 0) {
+            gameEndResult(playerController2,"SHOOT RESULT");
+        }
+    }
+
+    /**
+     * result of shooting
+     * @param playerController fired player
+     * @param x shoot row
+     * @param y shoot col
+     * @return count of player ship
+     */
+    public int shootResult(PlayerController playerController,Field field,int countShips,int x,int y) {
+        str = field.shoot(x,y);
+        String y1 = String.valueOf(y);
+        String x1 = String.valueOf(x);
+        playerController.getOutServerXML().send("SHOOT MY SIDE", str, y1,x1);
+        if (!"MISS".equals(str)) {
+            countShips--;
+            saveGame();
+        } else {
+            changeCurrentPlayer();
+        }
+        return countShips;
+    }
     /**
      * shoot of player
      * @param playerController player
@@ -90,80 +162,13 @@ public class GameController {
             return "NOT YOUR TURN";
         }
         if (playerController.equals(playerController1)){
-            str = field2.shoot(x,y);
-            String y1 = String.valueOf(y);
-            String x1 = String.valueOf(x);
-            playerController2.getOutServerXML().send("SHOOT MY SIDE", str, y1,x1);
-            if (!str.equals("MISS")) {
-                countShips2--;
-                saveGame();
-            } else {
-                changeCurrentPlayer();
-            }
+            winner = playerController1;
+            countShips2 = shootResult(playerController2,field2,countShips2,x,y);
         }else {
-            str = field1.shoot(x,y);
-            String y1 = String.valueOf(y);
-            String x1 = String.valueOf(x);
-            playerController1.getOutServerXML().send("SHOOT MY SIDE", str, y1,x1);
-            if (!str.equals("MISS")) {
-                saveGame();
-                countShips1--;
-            } else {
-                changeCurrentPlayer();
-            }
+            winner = playerController2;
+            countShips1 = shootResult(playerController1,field1,countShips1,x,y);
         }
-        if (countShips1 == 0) {
-            int count = 0;
-                playerController1.getOutServerXML().send("SHOOT RESULT","DEFEAT!");
-                playerController2.getOutServerXML().send("SHOOT RESULT","VICTORY!");
-                for (Player player : Server.getAllPlayersSet()){
-                    if (player.getLogin().equals(playerController1.getThisPlayer().getLogin())){
-                        player.setRank(player.getRank() - 5);
-                        player.setStatus("online");
-                        count++;
-                    }
-                    if (player.getLogin().equals(playerController2.getThisPlayer().getLogin())){
-                        player.setRank(player.getRank() + 10);
-                        player.setStatus("online");
-                        count++;
-                    }
-                    if (count == 2){
-                        if (new File("game-" + playerController1.getThisPlayer().getLogin() +"VS"+ playerController2.getThisPlayer().getLogin() + ".xml").exists()){
-                            File file = new File(new File("game-" + playerController1.getThisPlayer().getLogin() +"VS"+ playerController2.getThisPlayer().getLogin() + ".xml").getPath());
-                            file.delete();
-
-                        }
-                    }
-                }
-                timer.cancel();
-                endGame = true;
-                playerController1.updateAndSendPlayersInfo();
-            } else if (countShips2 == 0) {
-            int count = 0;
-                playerController1.getOutServerXML().send("SHOOT RESULT","VICTORY!");
-                playerController2.getOutServerXML().send("SHOOT RESULT","DEFEAT!");
-                for (Player player : Server.getAllPlayersSet()){
-                    if (player.getLogin().equals(playerController2.getThisPlayer().getLogin())){
-                        player.setRank(player.getRank() - 5);
-                        player.setStatus("online");
-                        count++;
-                    }
-                    if (player.getLogin().equals(playerController1.getThisPlayer().getLogin())){
-                        player.setRank(player.getRank() + 10);
-                        player.setStatus("online");
-                        count++;
-                    }
-                    if (count == 2){
-                        if (new File("game-" + playerController1.getThisPlayer().getLogin() +"VS"+ playerController2.getThisPlayer().getLogin() + ".xml").exists()){
-                            File file = new File(new File("game-" + playerController1.getThisPlayer().getLogin() +"VS"+ playerController2.getThisPlayer().getLogin() + ".xml").getPath());
-                            file.delete();
-                        }
-                    }
-                }
-                timer.cancel();
-                endGame = true;
-                playerController1.updateAndSendPlayersInfo();
-            }
+        gameEndChecking();
         if (!endGame) {
             timer.cancel();
             startTimer();
@@ -176,53 +181,13 @@ public class GameController {
      * @param playerController player
      */
     public void surrender(PlayerController playerController) {
-        int count = 0;
         if(playerController.equals(playerController1)) {
-            playerController1.getOutServerXML().send("SURRENDER RESULT","DEFEAT!");
-            playerController2.getOutServerXML().send("SURRENDER RESULT","VICTORY!");
-            for (Player player : Server.getAllPlayersSet()){
-                if (player.getLogin().equals(playerController1.getThisPlayer().getLogin())){
-                    player.setRank(player.getRank() - 5);
-                    player.setStatus("online");
-                    count++;
-                }
-                if (player.getLogin().equals(playerController2.getThisPlayer().getLogin())){
-                    player.setRank(player.getRank() + 10);
-                    player.setStatus("online");
-                    count++;
-                }
-                if (count == 2){
-                    if (new File("game-" + playerController1.getThisPlayer().getLogin() +"VS"+ playerController2.getThisPlayer().getLogin() + ".xml").exists()){
-                        File file = new File(new File("game-" + playerController1.getThisPlayer().getLogin() +"VS"+ playerController2.getThisPlayer().getLogin() + ".xml").getPath());
-                        file.delete();
-                    }
-                }
-            }
+            winner = playerController2;
+            gameEndResult(playerController1,"SURRENDER RESULT");
         } else {
-            playerController2.getOutServerXML().send("SURRENDER RESULT","DEFEAT!");
-            playerController1.getOutServerXML().send("SURRENDER RESULT","VICTORY!");
-            for (Player player : Server.getAllPlayersSet()){
-                if (player.getLogin().equals(playerController2.getThisPlayer().getLogin())){
-                    player.setRank(player.getRank() - 5);
-                    player.setStatus("online");
-                    count++;
-                }
-                if (player.getLogin().equals(playerController1.getThisPlayer().getLogin())){
-                    player.setRank(player.getRank() + 10);
-                    player.setStatus("online");
-                    count++;
-                }
-                if (count == 2){
-                    if (new File("game-" + playerController1.getThisPlayer().getLogin() +"VS"+ playerController2.getThisPlayer().getLogin() + ".xml").exists()){
-                        File file = new File(new File("game-" + playerController1.getThisPlayer().getLogin() +"VS"+ playerController2.getThisPlayer().getLogin() + ".xml").getPath());
-                        file.delete();
-                    }
-                }
-            }
+            winner = playerController1;
+            gameEndResult(playerController2,"SURRENDER RESULT");
         }
-        endGame = true;
-        timer.cancel();
-        playerController1.updateAndSendPlayersInfo();
     }
 
     /**
@@ -234,7 +199,6 @@ public class GameController {
         if (countShips < 20) {
             return false;
         } else {
-//            saveGame();
             return true;
         }
     }
@@ -253,6 +217,23 @@ public class GameController {
     }
 
     /**
+     * setting ship result
+     * @param field field of setting ship player
+     * @param countShips count of player ship
+     * @param ship player ship
+     * @return count of player ship
+     */
+    public int setShipResult(Field field,int countShips,Ship ship) {
+        str = field.setShip(ship);
+        if("OK".equals(str)) {
+            countShips += ship.getHealth();
+        }
+        if (checkStart(countShips)) {
+            str ="PLACED ENDED";
+        }
+        return countShips;
+    }
+    /**
      * ship setting
      * @param playerController player, who set ship
      * @param ship ship for setting
@@ -260,25 +241,11 @@ public class GameController {
      */
     public String setShip(PlayerController playerController, Ship ship) {
         if (playerController.equals(playerController1)){
-            str = field1.setShip(ship);
-            if(str.equals("OK")) {
-                countShips1 += ship.getHealth();
-            }
-            if (checkStart(countShips1)) {
-                str ="PLACED ENDED";
-              //  placedShipEndOne = true;
-            }
-        }else {
-            str = field2.setShip(ship);
-            if(str.equals("OK")) {
-                countShips2 += ship.getHealth();
-            }
-            if (checkStart(countShips2)) {
-                str ="PLACED ENDED";
-              //  placedShipEndTwo = true;
-            }
-        }
+            countShips1 = setShipResult(field1,countShips1,ship);
 
+        }else {
+            countShips2 = setShipResult(field2,countShips2,ship);
+        }
         return str;
     }
 

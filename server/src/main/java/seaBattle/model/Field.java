@@ -1,5 +1,7 @@
 package seaBattle.model;
 
+import seaBattle.Server;
+
 /**
  * logic and model of field of sea battle
  * logic of ships setting
@@ -46,36 +48,20 @@ public class Field {
     public boolean checkShipDestroy(int x,int y) {
         int c = 0;
         try {
-            if (field[x + 1][y] != 1) {
+            if (x + 1 > 10 || field[x + 1][y] != 1) {
                 c++;
             }
-        }catch (ArrayIndexOutOfBoundsException e){
-            Server.logger.info("Out of bound in checkShipDestroy",e);
-            c++;
-        }
-        try {
-            if (field[x - 1][y] != 1) {
+            if (x - 1 < 0 || field[x - 1][y] != 1) {
                 c++;
             }
-        }catch (ArrayIndexOutOfBoundsException e){
-            Server.logger.info("Out of bound in checkShipDestroy",e);
-            c++;
-        }
-        try {
-            if (field[x][y + 1] != 1) {
+            if (y + 1 > 10 || field[x][y + 1] != 1) {
                 c++;
             }
-        }catch (ArrayIndexOutOfBoundsException e){
-            Server.logger.info("Out of bound in checkShipDestroy",e);
-            c++;
-        }
-        try {
-            if (field[x][y - 1] != 1) {
+            if (y - 1 < 0 || field[x][y - 1] != 1) {
                 c++;
             }
-        }catch (ArrayIndexOutOfBoundsException e){
-            Server.logger.info("Out of bound in checkShipDestroy",e);
-            c++;
+        }catch (ArrayIndexOutOfBoundsException e) {
+            Server.logger.info("Out of bound in checkShipDestroy (x = " + x + ", y =" + y + ")",e);
         }
         if (c == 4) {
             try {
@@ -83,28 +69,24 @@ public class Field {
                     c--;
                 }
             } catch (ArrayIndexOutOfBoundsException e) {
-                Server.logger.info("Out of bound in checkShipDestroy second part",e);
             }
             try {
                 if (field[x - 2][y] == 1 && field[x - 1][y] == 3) {
                     c--;
                 }
             } catch (ArrayIndexOutOfBoundsException e) {
-                Server.logger.info("Out of bound in checkShipDestroy second part",e);
             }
             try {
                 if (field[x][y + 2] == 1 && field[x][y + 1] == 3) {
                     c--;
                 }
             } catch (ArrayIndexOutOfBoundsException e) {
-                Server.logger.info("Out of bound in checkShipDestroy second part",e);
             }
             try {
                 if (field[x][y - 2] == 1 && field[x][y - 1] == 3) {
                     c--;
                 }
             } catch (ArrayIndexOutOfBoundsException e) {
-                Server.logger.info("Out of bound in checkShipDestroy second part",e);
             }
         }
 
@@ -232,7 +214,6 @@ public class Field {
                 }
             }
         }catch (ArrayIndexOutOfBoundsException e) {
-            Server.logger.info("Out of bound in areaChecking" ,e);
             return false;
         }
         return true;

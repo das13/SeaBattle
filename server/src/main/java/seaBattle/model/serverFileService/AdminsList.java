@@ -22,7 +22,6 @@ public class AdminsList
     public List<String> getAdminList() {
         return adminList;
     }
-
     public void setAdminList(List<String> adminList) {
         this.adminList = adminList;
     }
