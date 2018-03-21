@@ -121,7 +121,7 @@ public class RegController {
                 Parent root = null;
                 comWindow = stage;
                 try {
-                    root = FXMLLoader.load(getClass().getResource("/views/commonWindow.fxml"));
+                    root = FXMLLoader.load(getClass().getResource(MainLauncher.getPropertyForms().getProperty("commonWindow")));
                     logger.info("Load commonWindow.fxml is successfully");
                 } catch (IOException e) {
                     logger.info("Can not load commonWindow.fxml", e);
@@ -261,6 +261,4 @@ public class RegController {
     public void hideCommonWindow() {
         comWindow.hide();
     }
-
-
 }

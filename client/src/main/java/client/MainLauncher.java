@@ -11,9 +11,12 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.apache.log4j.Logger;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 /**
  *Class of the main application loader
@@ -23,9 +26,10 @@ import java.util.List;
 
 public class MainLauncher extends Application {
 
-    final static Logger logger = Logger.getLogger(MainLauncher.class);
+    private final static Logger logger = Logger.getLogger(MainLauncher.class);
     private static Stage primaryStageObj;
     private List<Parent> parents = new ArrayList<>();
+    private static Properties propertyForms;
 
     public static Stage getPrimaryStageObj() {
         return primaryStageObj;
@@ -36,11 +40,12 @@ public class MainLauncher extends Application {
         primaryStageObj = primaryStage;
         ServerListener listener = ServerListener.getListener();
         Parent root = null;
+
         try {
-            parents.add(FXMLLoader.load(getClass().getResource("/views/regForm.fxml")));
-            parents.add(FXMLLoader.load(getClass().getResource("/views/commonWindow.fxml")));
-            parents.add(FXMLLoader.load(getClass().getResource("/views/GameWindow.fxml")));
-            root = parents.get(0);
+            parents.add(FXMLLoader.load(getClass().getResource(propertyForms.getProperty("regForm"))));
+            parents.add(FXMLLoader.load(getClass().getResource(propertyForms.getProperty("commonWindow"))));
+            parents.add(FXMLLoader.load(getClass().getResource(propertyForms.getProperty("GameWindow"))));
+            root = FXMLLoader.load(getClass().getResource(propertyForms.getProperty("regForm")));
             logger.info("Load regForm.fxml is successfully");
 
         } catch (IOException e) {
@@ -63,6 +68,25 @@ public class MainLauncher extends Application {
     }
 
     public static void main(String[] args) {
-        launch(args);
+        propertyForms = new Properties();
+        InputStream in = MainLauncher.class.getClassLoader().getResourceAsStream("form.properties");
+        try {
+            propertyForms.load(in);
+        } catch (IOException e) {
+            logger.error("Can not load form.properties", e);
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    logger.error("Can not close InputStream in main()", e);
+                }
+                launch(args);
+            }
+        }
+    }
+
+    public static Properties getPropertyForms() {
+        return propertyForms;
     }
 }

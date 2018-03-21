@@ -1,6 +1,7 @@
 package client.controller;
 
 
+import client.MainLauncher;
 import client.controller.models.Gamer;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
@@ -126,7 +127,7 @@ public class CommonWindowController {
         Parent root = null;
         try {
             root = FXMLLoader.load(getClass().getResource(form));
-            logger.info("Load " + form + "is successfully");
+            logger.info("Load " + form + " is successfully");
         } catch (IOException e) {
             logger.info("Can not load " + form, e);
             logger.error("Can not load " + form, e);
@@ -166,7 +167,6 @@ public class CommonWindowController {
             }
         });
     }
-
 
     /**
      * method of processing keystrokes in the txtMassage
@@ -218,13 +218,13 @@ public class CommonWindowController {
                 Parent root = null;
                 gameWindow = stage;
                 try {
-                    root = FXMLLoader.load(getClass().getResource("/views/GameWindow.fxml"));
+                    root = FXMLLoader.load(getClass().getResource(MainLauncher.getPropertyForms().getProperty("GameWindow")));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 stage.setOnCloseRequest((WindowEvent e) -> {
                     try {
-                        if (/*!isEnemySurrender() ||*/ !gameController.isGameFinish()) {
+                        if (!gameController.isGameFinish()) {
                             ServerListener.getListener().getOutClientXML().send("SURRENDER", lblLogin.getText());
                         }
                     } catch (XMLStreamException e1) {
@@ -235,7 +235,6 @@ public class CommonWindowController {
                 stage.setTitle("Sea battle");
                 stage.setScene(new Scene(root, 700, 500));
                 stage.setResizable(false);
-                // RegController.getRegController().comWindow.hide();
                 btnAtack.setDisable(true);
                 stage.show();
             }
