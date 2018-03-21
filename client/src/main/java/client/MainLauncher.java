@@ -45,7 +45,7 @@ public class MainLauncher extends Application {
             parents.add(FXMLLoader.load(getClass().getResource(propertyForms.getProperty("regForm"))));
             parents.add(FXMLLoader.load(getClass().getResource(propertyForms.getProperty("commonWindow"))));
             parents.add(FXMLLoader.load(getClass().getResource(propertyForms.getProperty("GameWindow"))));
-            root = FXMLLoader.load(getClass().getResource(propertyForms.getProperty("regForm")));
+            root = parents.get(0);
             logger.info("Load regForm.fxml is successfully");
 
         } catch (IOException e) {
@@ -81,9 +81,10 @@ public class MainLauncher extends Application {
                 } catch (IOException e) {
                     logger.error("Can not close InputStream in main()", e);
                 }
-                launch(args);
+
             }
         }
+        launch(args);
     }
 
     public static Properties getPropertyForms() {
