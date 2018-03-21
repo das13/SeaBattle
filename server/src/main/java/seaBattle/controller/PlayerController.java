@@ -192,7 +192,7 @@ public class PlayerController extends Thread {
      * <code>rebootServer</code> reboots server
      * @param login - needed for check access
      */
-    private void rebootServer(String login) {
+    private void rebootServer(String login) throws IOException {
         for (String login1 : Server.getAdminsSet()) {
             if (login1.equals(login)) {
                 Server.reboot();
