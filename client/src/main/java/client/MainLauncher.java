@@ -10,8 +10,6 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.apache.log4j.Logger;
-
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -40,7 +38,6 @@ public class MainLauncher extends Application {
         primaryStageObj = primaryStage;
         ServerListener listener = ServerListener.getListener();
         Parent root = null;
-
         try {
             parents.add(FXMLLoader.load(getClass().getResource(propertyForms.getProperty("regForm"))));
             parents.add(FXMLLoader.load(getClass().getResource(propertyForms.getProperty("commonWindow"))));
@@ -68,23 +65,30 @@ public class MainLauncher extends Application {
     }
 
     public static void main(String[] args) {
+        loadProperty("form.properties");
+        launch(args);
+    }
+
+    /**
+     * Method for loading property from file
+     * @param fileName
+     */
+    private static void loadProperty(String fileName) {
         propertyForms = new Properties();
-        InputStream in = MainLauncher.class.getClassLoader().getResourceAsStream("form.properties");
+        InputStream in = MainLauncher.class.getClassLoader().getResourceAsStream(fileName);
         try {
             propertyForms.load(in);
         } catch (IOException e) {
-            logger.error("Can not load form.properties", e);
+            logger.error("Can not load " + fileName, e);
         } finally {
             if (in != null) {
                 try {
                     in.close();
                 } catch (IOException e) {
-                    logger.error("Can not close InputStream in main()", e);
+                    logger.error("Can not close InputStream in loadProperty(String fileName)", e);
                 }
-
             }
         }
-        launch(args);
     }
 
     public static Properties getPropertyForms() {

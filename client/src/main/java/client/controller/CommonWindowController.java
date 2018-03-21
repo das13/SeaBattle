@@ -3,6 +3,7 @@ package client.controller;
 
 import client.MainLauncher;
 import client.controller.models.Gamer;
+import client.controller.utils.DialogManager;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -15,6 +16,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
@@ -33,6 +35,10 @@ import java.util.List;
  */
 public class CommonWindowController {
     final static Logger logger = Logger.getLogger(CommonWindowController.class);
+    @FXML
+    public TextField txaAdminField;
+    @FXML
+    public HBox adminBox;
     @FXML
     private Button btnAtack;
     @FXML
@@ -117,6 +123,91 @@ public class CommonWindowController {
     }
 
     /**
+     * method for processing keystrokes btnBanPlayer
+     * @param event
+     */
+    @FXML
+    public void btnBanPlayerPressed(ActionEvent event) {
+        String playerNickName = txaAdminField.getText();
+        if (!playerNickName.isEmpty()) {
+            sendAdminResponse("BAN PLAYER", playerNickName);
+        } else {
+            DialogManager.showInfoDialog(regController.getComWindow(), "INFO", "Please print the user nickname");
+        }
+    }
+
+    /**
+     * method for processing keystrokes btnBanIp
+     * @param event
+     */
+    @FXML
+    public void btnBanIpPressed(ActionEvent event) {
+        String playerIP = txaAdminField.getText();
+        if (!playerIP.isEmpty()) {
+            sendAdminResponse("BAN IP", playerIP);
+        } else {
+            DialogManager.showInfoDialog(regController.getComWindow(), "INFO", "Please print the user IP");
+        }
+    }
+
+    /**
+     * method for processing keystrokes btnUnBanPlayer
+     * @param event
+     */
+    @FXML
+    public void btnUnBanPlayerPressed(ActionEvent event) {
+        String playerNickName = txaAdminField.getText();
+        if (!playerNickName.isEmpty()) {
+            sendAdminResponse("UNBAN PLAYER", playerNickName);
+        } else {
+            DialogManager.showInfoDialog(regController.getComWindow(), "INFO", "Please print the user nickname");
+        }
+    }
+
+    /**
+     * method for processing keystrokes btnUnBanIp
+     * @param event
+     */
+    @FXML
+    public void btnUnBanIpPressed(ActionEvent event) {
+        String playerIP = txaAdminField.getText();
+        if (!playerIP.isEmpty()) {
+            sendAdminResponse("UNBAN IP", playerIP);
+        } else {
+            DialogManager.showInfoDialog(regController.getComWindow(), "INFO", "Please print the user IP");
+        }
+    }
+
+    /**
+     * method for processing keystrokes btnReboot
+     * @param event
+     */
+    @FXML
+    public void btnRebootPressed(ActionEvent event) {
+        sendAdminResponse("REBOOT", "REBOOT");
+    }
+
+    /**
+     * method for processing keystrokes btnShutdown
+     * @param event
+     */
+    @FXML
+    public void btnShutdownPressed(ActionEvent event) {
+        sendAdminResponse("SHUTDOWN", "SHUTDOWN");
+    }
+
+    /**
+     * method for sending responses from admin to server
+     */
+    private void sendAdminResponse(String key, String value) {
+        try {
+            listener.getOutClientXML().send(key, value);
+        } catch (XMLStreamException e) {
+            logger.error("Error in sendAdminResponse(String key, String value)", e);
+        }
+    }
+
+    /**
      * method for creating response windows
      * @param event
      * @param form form Answer or form WaitAnswer
@@ -129,7 +220,6 @@ public class CommonWindowController {
             root = FXMLLoader.load(getClass().getResource(form));
             logger.info("Load " + form + " is successfully");
         } catch (IOException e) {
-            logger.info("Can not load " + form, e);
             logger.error("Can not load " + form, e);
         }
         stage.setTitle("Sea Battle 2018");
@@ -271,5 +361,9 @@ public class CommonWindowController {
 
     public Stage getGameWindow() {
         return gameWindow;
+    }
+
+    public HBox getAdminBox() {
+        return adminBox;
     }
 }

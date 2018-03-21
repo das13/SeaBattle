@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.paint.*?>
 <?import java.lang.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="360.0" minWidth="640.0" prefHeight="360.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.controller.CommonWindowController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="360.0" minWidth="640.0" prefHeight="410.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.controller.CommonWindowController">
    <children>
       <HBox id="InfoPanel" maxHeight="40.0" minHeight="40.0" prefHeight="40.0" prefWidth="640.0">
          <children>
@@ -44,7 +45,7 @@
             </Label>
          </children>
       </HBox>
-      <HBox minHeight="250.0" minWidth="640.0">
+      <HBox minHeight="260.0" minWidth="640.0">
          <children>
             <AnchorPane id="ChatPanel" nodeOrientation="LEFT_TO_RIGHT" prefHeight="250.0" prefWidth="320.0">
                <children>
@@ -101,13 +102,69 @@
             </AnchorPane>
          </children>
       </HBox>
-      <AnchorPane prefHeight="60.0" prefWidth="360.0">
+      <HBox alignment="CENTER" prefHeight="140.0" prefWidth="200.0">
          <children>
-            <TextArea fx:id="txtMassage" nodeOrientation="LEFT_TO_RIGHT" onKeyPressed="#sendMethod" prefHeight="50.0" prefWidth="620.0" promptText="Print your message here..." scaleShape="false" wrapText="true" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="5.0" />
+            <TextArea fx:id="txtMassage" minHeight="50.0" nodeOrientation="LEFT_TO_RIGHT" onKeyPressed="#sendMethod" prefHeight="140.0" prefWidth="620.0" promptText="Print your message here..." scaleShape="false" wrapText="true">
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <HBox.margin>
+                  <Insets bottom="5.0" top="5.0" />
+               </HBox.margin></TextArea>
          </children>
-         <VBox.margin>
-            <Insets left="10.0" right="10.0" top="5.0" />
-         </VBox.margin>
-      </AnchorPane>
+         <opaqueInsets>
+            <Insets bottom="5.0" top="5.0" />
+         </opaqueInsets>
+      </HBox>
+      <HBox fx:id="adminBox" alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+         <children>
+            <Button fx:id="btnBanPlayer" mnemonicParsing="false" onAction="#btnBanPlayerPressed" text="BAN PLAYER">
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <HBox.margin>
+                  <Insets right="5.0" />
+               </HBox.margin>
+            </Button>
+            <Button fx:id="btnBanIp" mnemonicParsing="false" onAction="#btnBanIpPressed" text="BAN IP">
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <HBox.margin>
+                  <Insets right="5.0" />
+               </HBox.margin>
+            </Button>
+            <TextField fx:id="txaAdminField" promptText="Player info">
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <HBox.margin>
+                  <Insets right="5.0" />
+               </HBox.margin>
+            </TextField>
+            <Button fx:id="btnUnBanPlayer" mnemonicParsing="false" onAction="#btnUnBanPlayerPressed" text="UNBAN PLAYER">
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <HBox.margin>
+                  <Insets right="5.0" />
+               </HBox.margin>
+            </Button>
+            <Button fx:id="btnUnBanIp" mnemonicParsing="false" onAction="#btnUnBanIpPressed" text=" UNBAN IP">
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <HBox.margin>
+                  <Insets right="5.0" />
+               </HBox.margin>
+            </Button>
+            <Button fx:id="btnReboot" mnemonicParsing="false" onAction="#btnRebootPressed" text="REBOOT" textFill="#cd0a0a">
+               <HBox.margin>
+                  <Insets right="5.0" />
+               </HBox.margin>
+            </Button>
+            <Button fx:id="btnShutdown" mnemonicParsing="false" onAction="#btnShutdownPressed" text="SHUTDOWN" textFill="#e30b0b" />
+         </children>
+      </HBox>
    </children>
 </VBox>

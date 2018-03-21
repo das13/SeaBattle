@@ -100,13 +100,20 @@ public class ServerListener implements Runnable {
                                     Platform.runLater(new Runnable() {
                                         @Override
                                         public void run() {
-                                            regController.showCommonWindow();
+                                            regController.showCommonWindow(false);
                                         }
                                     });
                                     break;
-                                } else {
-                                    DialogManager.showInfoDialog(MainLauncher.getPrimaryStageObj(), "Log in INFO", value);
+                                } if ("success! admin access.".equals(value)) {
+                                    Platform.runLater(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            regController.showCommonWindow(true);
+                                        }
+                                    });
+                                    break;
                                 }
+                                DialogManager.showInfoDialog(MainLauncher.getPrimaryStageObj(), "Log in INFO", value);
                                 break;
                             }
                             case "LOG OUT": {

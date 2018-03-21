@@ -112,8 +112,9 @@ public class RegController {
 
     /**
      * method for creating a common application window
+     * @param isAdmin set the user status
      */
-    protected void showCommonWindow() {
+    protected void showCommonWindow(boolean isAdmin) {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
@@ -124,7 +125,6 @@ public class RegController {
                     root = FXMLLoader.load(getClass().getResource(MainLauncher.getPropertyForms().getProperty("commonWindow")));
                     logger.info("Load commonWindow.fxml is successfully");
                 } catch (IOException e) {
-                    logger.info("Can not load commonWindow.fxml", e);
                     logger.error("Can not load commonWindow.fxml", e);
                 }
                 stage.setOnCloseRequest((WindowEvent e) -> {
@@ -138,10 +138,12 @@ public class RegController {
                     }
                 });
                 stage.setTitle("Sea Battle 2018");
-                Scene scene = new Scene(root, 640, 360);
+                Scene scene = new Scene(root, 640, 360 + (isAdmin ? 40 : 0));
+                if (!isAdmin) {
+                    CommonWindowController.getCwController().getAdminBox().setVisible(false);
+                }
                 stage.setScene(scene);
-                stage.setMinHeight(360);
-                stage.setMinWidth(640);
+                stage.setResizable(false);
                 stage.show();
                 clearUserInput();
                 MainLauncher.getPrimaryStageObj().hide();
