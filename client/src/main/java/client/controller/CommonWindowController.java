@@ -30,15 +30,15 @@ import java.util.List;
 
 /**
  *class controller for working with a commonWindow form
- *@autor Dmytro Cherevko
+ *@author Dmytro Cherevko
  *@version 1.0
  */
 public class CommonWindowController {
-    final static Logger logger = Logger.getLogger(CommonWindowController.class);
+    private final static Logger logger = Logger.getLogger(CommonWindowController.class);
     @FXML
-    public TextField txaAdminField;
+    private TextField txaAdminField;
     @FXML
-    public HBox adminBox;
+    private HBox adminBox;
     @FXML
     private Button btnAtack;
     @FXML
@@ -60,9 +60,7 @@ public class CommonWindowController {
     @FXML
     private TextArea txaChat;
     private Stage gameWindow;
-    private boolean isEnemySurrender;
     private static Stage waitAnswerWindow;
-    private String key;
     private ServerListener listener;
     private String enemy;
     private final static String WAITANSWERFORM = "/views/WaitAnswer.fxml";
@@ -100,10 +98,11 @@ public class CommonWindowController {
 
     /**
      * method for processing keystrokes btnAtack
-     * @param event
+     * @param event press the button
      */
     @FXML
     public void pressBtnAtack(ActionEvent event) {
+        String key;
         Gamer selectedGamer = (Gamer) tblActiveGamers.getSelectionModel().getSelectedItem();
         if (selectedGamer == null) return;
         key = "INVITE";
@@ -124,7 +123,7 @@ public class CommonWindowController {
 
     /**
      * method for processing keystrokes btnBanPlayer
-     * @param event
+     * @param event press the button
      */
     @FXML
     public void btnBanPlayerPressed(ActionEvent event) {
@@ -138,7 +137,7 @@ public class CommonWindowController {
 
     /**
      * method for processing keystrokes btnBanIp
-     * @param event
+     * @param event press the button
      */
     @FXML
     public void btnBanIpPressed(ActionEvent event) {
@@ -152,7 +151,7 @@ public class CommonWindowController {
 
     /**
      * method for processing keystrokes btnUnBanPlayer
-     * @param event
+     * @param event press the button
      */
     @FXML
     public void btnUnBanPlayerPressed(ActionEvent event) {
@@ -166,7 +165,7 @@ public class CommonWindowController {
 
     /**
      * method for processing keystrokes btnUnBanIp
-     * @param event
+     * @param event press the button
      */
     @FXML
     public void btnUnBanIpPressed(ActionEvent event) {
@@ -180,7 +179,7 @@ public class CommonWindowController {
 
     /**
      * method for processing keystrokes btnReboot
-     * @param event
+     * @param event press the button
      */
     @FXML
     public void btnRebootPressed(ActionEvent event) {
@@ -189,7 +188,7 @@ public class CommonWindowController {
 
     /**
      * method for processing keystrokes btnShutdown
-     * @param event
+     * @param event press the button
      */
     @FXML
     public void btnShutdownPressed(ActionEvent event) {
@@ -209,7 +208,7 @@ public class CommonWindowController {
 
     /**
      * method for creating response windows
-     * @param event
+     * @param event press the button
      * @param form form Answer or form WaitAnswer
      */
     protected void showWaitAnswerWindow(ActionEvent event, String form) {
@@ -241,7 +240,7 @@ public class CommonWindowController {
     /**
      * method for sending messages from chat (from txtMassage)
      */
-    public void sendButtonAction() {
+    private void sendButtonAction() {
         String msg = txtMassage.getText();
         if (!txtMassage.getText().isEmpty()) {
             try {
@@ -260,10 +259,9 @@ public class CommonWindowController {
 
     /**
      * method of processing keystrokes in the txtMassage
-     * @param event
-     * @throws IOException
+     * @param event press the button
      */
-    public void sendMethod(KeyEvent event) throws IOException {
+    public void sendMethod(KeyEvent event)  {
         if (event.getCode() == KeyCode.ENTER) {
             sendButtonAction();
         }
@@ -337,10 +335,6 @@ public class CommonWindowController {
 
     public TextArea getTxaChat() {
         return txaChat;
-    }
-
-    public void setEnemySurrender(boolean enemySurrender) {
-        isEnemySurrender = enemySurrender;
     }
 
     public Button getBtnAtack() {

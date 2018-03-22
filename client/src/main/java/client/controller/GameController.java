@@ -25,7 +25,7 @@ import java.util.ResourceBundle;
 
 /**
  *class controller for working with a GameWindow form
- *@autor Dmytro Cherevko
+ *@author Dmytro Cherevko
  *@version 1.0
  */
 
@@ -43,18 +43,6 @@ public class GameController implements Initializable {
     private Label countShip3p;
     @FXML
     private Label countShip4p;
-    @FXML
-    private RadioButton rb_horizontally;
-    @FXML
-    private RadioButton rb_verically;
-    @FXML
-    private RadioButton rb_ship1p;
-    @FXML
-    private RadioButton rb_ship2p;
-    @FXML
-    private RadioButton rb_ship3p;
-    @FXML
-    private RadioButton rb_ship4p;
     @FXML
     private Pane userPane;
     @FXML
@@ -83,9 +71,9 @@ public class GameController implements Initializable {
     private HBox userHbox;
     @FXML
     private TextArea txaGameInfo;
-    final static Logger logger = Logger.getLogger(GameController.class);
-    public static final int TILE_SIZE = 25;
-    public static final int W = 250;
+    private final static Logger logger = Logger.getLogger(GameController.class);
+    private static final int TILE_SIZE = 25;
+    private static final int W = 250;
     private static final int H = 250;
     private static final int X_TILES = W / TILE_SIZE;
     private static final int Y_TILES = H / TILE_SIZE;
@@ -101,9 +89,7 @@ public class GameController implements Initializable {
     private static GameController gameController;
     private boolean isFinishSet;
     private boolean isGameFinish;
-    private int x1, y1, y2, x2;
-    private ShootProgress shootEnemyProgress;
-    private ShootProgress shootUserProgress;
+    private int x1, y1;
     private CommonWindowController commonWindowController;
 
     public GameController() {
@@ -164,7 +150,7 @@ public class GameController implements Initializable {
      * @param x1 shot coordinate
      * @param y1 shot coordinate
      */
-    public void shoot(int x1, int y1) {
+    private void shoot(int x1, int y1) {
         if (isGameFinish) {
             DialogManager.showInfoDialog(commonWindowController.getGameWindow(), "GAME INFO", "Game OVER");
             return;
@@ -187,11 +173,11 @@ public class GameController implements Initializable {
      * @param x1 coordinate of head of ship
      * @param y1 coordinate of head of ship
      */
-    public void sendAnswer(int x1, int y1) {
+    private void sendAnswer(int x1, int y1) {
         this.x1 = x1;
         this.y1 = y1;
-        x2 = (position == 0 ? x1 + length - 1 : x1);
-        y2 = (position == 0 ? y1 : y1 + length - 1);
+        int x2 = (position == 0 ? x1 + length - 1 : x1);
+        int y2 = (position == 0 ? y1 : y1 + length - 1);
         try {
             outClientXML.send("SHIP LOCATION", y1, x1, y2, x2);
         } catch (XMLStreamException e) {
@@ -263,6 +249,8 @@ public class GameController implements Initializable {
      * @param isUser whose turn is now
      */
     public void shootProgress(boolean isUser) {
+        ShootProgress shootEnemyProgress;
+        ShootProgress shootUserProgress;
         if (isUser) {
             shootUserProgress = new ShootProgress();
             prgUser.progressProperty().bind(shootUserProgress.progressProperty());
@@ -313,7 +301,7 @@ public class GameController implements Initializable {
 
     /**
      * method for processing keystrokes btnSurrender
-     * @param event
+     * @param event prees on button Surrender
      */
     public void pressBtnSurrender(ActionEvent event) {
         txaGameInfo.appendText("YOU: Surrender\n");

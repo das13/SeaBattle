@@ -21,13 +21,13 @@ import java.io.IOException;
 
 /**
  *class controller for working with a regForm form
- *@autor Dmytro Cherevko
+ *@author Dmytro Cherevko
  *@version 1.0
  */
 
 public class RegController {
 
-    final static Logger logger = Logger.getLogger(RegController.class);
+    private final static Logger logger = Logger.getLogger(RegController.class);
     @FXML
     public Button btnConnect;
     @FXML
@@ -88,7 +88,7 @@ public class RegController {
 
     /**
      * method for processing keystrokes signButton
-     * @param event
+     * @param event press the button
      */
     @FXML
     private void pressSignButton(ActionEvent event) {
@@ -225,7 +225,7 @@ public class RegController {
 
     /**
      * method for handling the button click event (btnConnect)
-     * @param event
+     * @param event press the button
      */
     public void pressConnectBtn(ActionEvent event) {
         if (listener.isConnect()) {

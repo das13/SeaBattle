@@ -20,13 +20,13 @@ import java.util.List;
  *streams (InClientXML, OutClientXML), and thread of Server listener
  *class is implemented as Singleton
  *
- *@autor Dmytro Cherevko
+ *@author Dmytro Cherevko
  *@version 1.0
  */
 
 public class ServerListener implements Runnable {
 
-    final static Logger logger = Logger.getLogger(ServerListener.class);
+    private final static Logger logger = Logger.getLogger(ServerListener.class);
     private OutClientXML outClientXML;
     private boolean isConnect;
     private Socket socket;
@@ -306,7 +306,6 @@ public class ServerListener implements Runnable {
                                     Platform.runLater(new Runnable() {
                                         @Override
                                         public void run() {
-                                            commonWindowController.setEnemySurrender(true);
                                             gameController.getBtnSurrender().setDisable(true);
                                             gameController.getTxaGameInfo().appendText("Server: Enemy surrender\n");
                                             gameController.resultGame(true);
@@ -318,7 +317,6 @@ public class ServerListener implements Runnable {
                                     Platform.runLater(new Runnable() {
                                         @Override
                                         public void run() {
-                                            commonWindowController.setEnemySurrender(true);
                                             commonWindowController.getBtnAtack().setDisable(false);
                                             gameController.getTxaGameInfo().appendText("Server: You Surrender\n");
                                             gameController.resultGame(false);

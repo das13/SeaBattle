@@ -9,7 +9,7 @@ import javafx.scene.control.ProgressBar;
 import javax.xml.stream.XMLStreamException;
 /**
  *class controller for working with a Answer form
- *@autor Dmytro Cherevko
+ *@author Dmytro Cherevko
  *@version 1.0
  */
 public class AnswerController {
@@ -38,6 +38,10 @@ public class AnswerController {
         new Thread(progressAnimation).start();
     }
 
+    /**
+     * Method send reply (Accept for invite)
+     * @param event press btnAcceptPressed
+     */
     public void btnAcceptPressed(ActionEvent event) {
         try {
             CommonWindowController.getCwController().hideWaitAnswerWindow();
