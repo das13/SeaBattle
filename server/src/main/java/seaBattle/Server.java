@@ -4,7 +4,7 @@ import org.apache.log4j.Logger;
 import seaBattle.controller.PlayerController;
 import seaBattle.model.Player;
 import seaBattle.model.Status;
-import seaBattle.xmlservice.SaveLoadServerXML;
+import seaBattle.services.xmlService.SaveLoadServerXML;
 
 import java.io.File;
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package seaBattle.model.serverFileService;
+package seaBattle.services.serverFileService;
 
 import seaBattle.model.Player;
 

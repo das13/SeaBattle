@@ -2,7 +2,8 @@ package seaBattle.controller;
 
 import seaBattle.Server;
 import seaBattle.model.*;
-import seaBattle.xmlservice.SaveLoadServerXML;
+import seaBattle.services.playerControllerService.ServerService;
+import seaBattle.services.xmlService.SaveLoadServerXML;
 
 import java.io.File;
 import java.util.Timer;
@@ -110,13 +111,18 @@ public class GameController {
             if (count == 2){
                 if (new File("game-" + playerController.getThisPlayer().getLogin() +"VS"+ winner.getThisPlayer().getLogin() + ".xml").exists()){
                     File file = new File(new File("game-" + playerController.getThisPlayer().getLogin() +"VS"+ winner.getThisPlayer().getLogin() + ".xml").getPath());
+                    System.out.println("\n\n\n\nFILE MUST BE DELETED\n\n\n\n");
                     file.delete();
                 }
             }
         }
         timer.cancel();
         endGame = true;
-        playerController1.updateAndSendPlayersInfo();
+        afterGameOver();
+    }
+
+    public void afterGameOver(){
+        ServerService.updateAndSendPlayersInfo();
     }
 
     /**
