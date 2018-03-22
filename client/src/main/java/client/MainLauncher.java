@@ -18,7 +18,7 @@ import java.util.Properties;
 
 /**
  *Class of the main application loader
- *@autor Dmytro Cherevko
+ *@author Dmytro Cherevko
  *@version 1.0
  */
 
@@ -71,7 +71,7 @@ public class MainLauncher extends Application {
 
     /**
      * Method for loading property from file
-     * @param fileName
+     * @param fileName file's name with properties
      */
     private static void loadProperty(String fileName) {
         propertyForms = new Properties();

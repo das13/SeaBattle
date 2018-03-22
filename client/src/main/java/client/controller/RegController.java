@@ -65,7 +65,7 @@ public class RegController {
 
     /**
      * method for processing keystrokes regButton
-     * @param event
+     * @param event regButton is pressed
      */
     @FXML
     private void pressRegButton(ActionEvent event) {
@@ -144,8 +144,8 @@ public class RegController {
                 }
                 stage.setScene(scene);
                 stage.setResizable(false);
-                stage.show();
                 clearUserInput();
+                stage.show();
                 MainLauncher.getPrimaryStageObj().hide();
             }
         });

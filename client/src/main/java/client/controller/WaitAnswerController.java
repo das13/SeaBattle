@@ -15,10 +15,6 @@ public class WaitAnswerController {
     private ProgressBar progressBar;
     @FXML
     private Label lblStatus;
-    private static WaitAnswerController waitAnswerController;
-    public WaitAnswerController() {
-        waitAnswerController = this;
-    }
 
     @FXML
     private void initialize(){

@@ -4,7 +4,7 @@ import javafx.concurrent.Task;
 
 /**
  *class extends Task<Integer> for creating Task for animation of progressBar
- *@autor Dmytro Cherevko
+ *@author Dmytro Cherevko
  *@version 1.0
  */
 

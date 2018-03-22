@@ -6,7 +6,7 @@ import javafx.stage.Window;
 
 /**
  *class for creating alert windows
- *@autor Dmytro Cherevko
+ *@author Dmytro Cherevko
  *@version 1.0
  */
 
@@ -23,7 +23,6 @@ public class DialogManager {
                 alert.setX(window.getX() + 50);
                 alert.setY(window.getY() + 200);
                 alert.showAndWait();
-
             }
         });
     }
@@ -47,10 +46,10 @@ public class DialogManager {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle(title);
                 alert.setContentText(text);
-                alert.setHeaderText("ERROR");
+                alert.setHeaderText("INFO");
                 alert.showAndWait();
             }
         });
