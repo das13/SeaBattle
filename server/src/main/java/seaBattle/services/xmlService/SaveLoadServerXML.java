@@ -397,58 +397,57 @@ public class SaveLoadServerXML {
      * saves game info from GameController class
      */
     public static void saveGame(String playerTurnTime, String player1, Field field1, String player2, Field field2){
-        if (!new File("game-" + player1 +"VS"+ player2 + ".xml").exists()){
 
-            GameCondition gameCondition = new GameCondition();
+        GameCondition gameCondition = new GameCondition();
 
-            gameCondition.setPlayerInGameList(new ArrayList<PlayerInGame>());
+        gameCondition.setPlayerInGameList(new ArrayList<PlayerInGame>());
 
-            PlayerInGame playerInGame1 = new PlayerInGame();
-            PlayerInGame playerInGame2 = new PlayerInGame();
+        PlayerInGame playerInGame1 = new PlayerInGame();
+        PlayerInGame playerInGame2 = new PlayerInGame();
 
-            playerInGame1.setLogin(player1);
-            playerInGame2.setLogin(player2);
+        playerInGame1.setLogin(player1);
+        playerInGame2.setLogin(player2);
 
-            playerInGame1.setTurnTime(playerTurnTime);
-            playerInGame2.setTurnTime(playerTurnTime);
+        playerInGame1.setTurnTime(playerTurnTime);
+        playerInGame2.setTurnTime(playerTurnTime);
 
-            String[][] tempList = new String[2][];
-            tempList[0] = playerInGame1.getRow();
-            tempList[1] = playerInGame2.getRow();
+        String[][] tempList = new String[2][];
+        tempList[0] = playerInGame1.getRow();
+        tempList[1] = playerInGame2.getRow();
 
-            StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
 
-            for (int t = 0; t < 2; t++) {
-                for (int i = 0; i < 10; i++) {
-                    for (int j = 0; j < 10; j++) {
-                        if (t == 0){
-                            sb.append(String.valueOf(field1.getField()[i][j]));
-                        }
-                        else {
-                            sb.append(String.valueOf(field2.getField()[i][j]));
-                        }
+        for (int t = 0; t < 2; t++) {
+            for (int i = 0; i < 10; i++) {
+                for (int j = 0; j < 10; j++) {
+                    if (t == 0){
+                        sb.append(String.valueOf(field1.getField()[i][j]));
                     }
-                    tempList[t][i] = String.valueOf(sb);
-                    sb.delete(0, 10);
+                    else {
+                        sb.append(String.valueOf(field2.getField()[i][j]));
+                    }
                 }
-            }
-
-            gameCondition.getPlayerInGameList().add(playerInGame1);
-            gameCondition.getPlayerInGameList().add(playerInGame2);
-
-            try {
-                File file = new File(new File("game-" + player1 +"VS"+ player2 + ".xml").getPath());
-                JAXBContext jaxbContext = JAXBContext.newInstance(GameCondition.class);
-                Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-
-                jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-
-                jaxbMarshaller.marshal(gameCondition, file);
-                jaxbMarshaller.marshal(gameCondition, System.out);
-
-            } catch (JAXBException e) {
-                logger.error("serverConf.xml creation error.", e);
+                tempList[t][i] = String.valueOf(sb);
+                sb.delete(0, 10);
             }
         }
+
+        gameCondition.getPlayerInGameList().add(playerInGame1);
+        gameCondition.getPlayerInGameList().add(playerInGame2);
+
+        try {
+            File file = new File(new File("game-" + player1 +"VS"+ player2 + ".xml").getPath());
+            JAXBContext jaxbContext = JAXBContext.newInstance(GameCondition.class);
+            Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+
+            jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+            jaxbMarshaller.marshal(gameCondition, file);
+            jaxbMarshaller.marshal(gameCondition, System.out);
+
+        } catch (JAXBException e) {
+            logger.error("serverConf.xml creation error.", e);
+        }
+
     }
 }
