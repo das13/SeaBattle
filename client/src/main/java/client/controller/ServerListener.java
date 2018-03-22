@@ -8,20 +8,22 @@ import client.xmlservice.OutClientXML;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import org.apache.log4j.Logger;
+
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.IOException;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- *Class implemets Runnable to work with the server and create a socket,
- *streams (InClientXML, OutClientXML), and thread of Server listener
- *class is implemented as Singleton
+ * Class implemets Runnable to work with the server and create a socket,
+ * streams (InClientXML, OutClientXML), and thread of Server listener
+ * class is implemented as Singleton
  *
- *@author Dmytro Cherevko
- *@version 1.0
+ * @author Dmytro Cherevko
+ * @version 1.0
  */
 
 public class ServerListener implements Runnable {
@@ -53,8 +55,9 @@ public class ServerListener implements Runnable {
 
     /**
      * method for creating a connection to the server
+     *
      * @param hostname host of server
-     * @param port port of server
+     * @param port     port of server
      */
     public void connect(String hostname, int port) {
         try {
@@ -69,9 +72,9 @@ public class ServerListener implements Runnable {
             serverListenerThread.start();
             logger.info("Connection accepted " + socket.getInetAddress() + ":" + socket.getPort());
             DialogManager.showInfoDialog(MainLauncher.getPrimaryStageObj(), "Server info", "You connect to server");
-        } catch (Exception e) {
+        } catch (IOException e) {
             DialogManager.showErrorDialog(MainLauncher.getPrimaryStageObj(), "Server Error", "Could not connect to server");
-            logger.error("Could not Connect to server", e);
+            logger.error("Could not Connect to server");
         }
     }
 
@@ -81,16 +84,11 @@ public class ServerListener implements Runnable {
     @Override
     public void run() {
         regController = RegController.getRegController();
-        while (!serverListenerThread.isInterrupted() && !socket.isClosed()) {
+        while (!socket.isClosed() && isConnect()) {
             try {
                 inClientXML.setReader(inClientXML.getFactory().createXMLStreamReader(inClientXML.getFileReader()));
-            } catch (XMLStreamException e) {
-                logger.error("XMLStreamException in ServerListener thread", e);
-            }
-            XMLStreamReader reader;
-            reader = inClientXML.getReader();
-            try {
-                while (isConnect && reader.hasNext()) {
+                XMLStreamReader reader = inClientXML.getReader();
+                while (!socket.isClosed() && reader.hasNext()) {
                     if (reader.getEventType() == 1 && "key".equals(reader.getLocalName())) {
                         reader.next();
                         switch (inClientXML.checkValue(reader)) {
@@ -104,7 +102,8 @@ public class ServerListener implements Runnable {
                                         }
                                     });
                                     break;
-                                } if ("success! admin access.".equals(value)) {
+                                }
+                                if ("success! admin access.".equals(value)) {
                                     Platform.runLater(new Runnable() {
                                         @Override
                                         public void run() {
@@ -333,6 +332,7 @@ public class ServerListener implements Runnable {
                             }
                             case "INFO": {
                                 String value = inClientXML.checkValue(reader);
+                                DialogManager.showInfoDialog("Server info", value);
                                 break;
                             }
                         }
@@ -344,7 +344,8 @@ public class ServerListener implements Runnable {
                     }
                 }
             } catch (XMLStreamException e) {
-                logger.error("Error in ServerListenerThread run() XMLStreamException e");
+                logger.error("Error in ServerListenerThread run() XMLStreamException");
+                isConnect = false;
             }
         }
         if (!serverListenerThread.isInterrupted()) {
@@ -356,11 +357,13 @@ public class ServerListener implements Runnable {
      * method to disconnect from the server and close streams and windows
      */
     public void disconnect() {
-
+        serverListenerThread.interrupt();
         try {
-            outClientXML.getWriter().close();
             isConnect = false;
-            serverListenerThread.interrupt();
+            outClientXML.getWriter().close();
+            if (inClientXML.getReader() != null) {
+                inClientXML.getReader().close();
+            }
             if (socket != null) {
                 try {
                     socket.close();
@@ -368,27 +371,34 @@ public class ServerListener implements Runnable {
                     e.printStackTrace();
                 }
             }
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        commonWindowController.hideGameWindow();
-                    } catch (Exception e) {
-                    }
-                    try {
-                        regController.hideCommonWindow();
-                    } catch (Exception e) {
-                    }
-                    MainLauncher.getPrimaryStageObj().show();
-                }
-            });
-
-            RegController.getRegController().getSignButton().setDisable(true);
-            RegController.getRegController().getRegButton().setDisable(true);
-            regController.getBtnConnect().setText("Connect");
         } catch (XMLStreamException e1) {
-            logger.error("Logout error", e1);
+            logger.error("XMLStreamException. Error in method void disconnect() ", e1);
         }
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    commonWindowController.hideGameWindow();
+                } catch (Exception e) {
+                }
+                try {
+                    regController.hideCommonWindow();
+                } catch (Exception e) {
+                }
+                MainLauncher.getPrimaryStageObj().show();
+            }
+        });
+
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                RegController.getRegController().getSignButton().setDisable(true);
+                RegController.getRegController().getRegButton().setDisable(true);
+                regController.getBtnConnect().setText("Connect");
+            }
+        });
+
+        DialogManager.showInfoDialog(MainLauncher.getPrimaryStageObj(), "Server info", "You disconnect from server");
     }
 
     public String getEnemy() {
