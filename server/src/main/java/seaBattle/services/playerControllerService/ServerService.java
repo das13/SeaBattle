@@ -22,9 +22,7 @@ public class ServerService {
         Server.updateIngamePlayersSet();
         for (PlayerController pc : Server.getAllPlayersControllerSet()){
             if (!pc.getSocket().isClosed()){
-                System.out.println("sending online to " + pc.getThisPlayer().getLogin());
                 sendOnlinePlayers(pc);
-                System.out.println("sending ingame to " + pc.getThisPlayer().getLogin());
                 sendIngamePlayers(pc);
             }
         }
