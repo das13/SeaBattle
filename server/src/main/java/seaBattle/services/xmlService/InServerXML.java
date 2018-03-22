@@ -1,4 +1,4 @@
-package seaBattle.xmlservice;
+package seaBattle.services.xmlService;
 
 import org.apache.log4j.Logger;
 import seaBattle.controller.PlayerController;

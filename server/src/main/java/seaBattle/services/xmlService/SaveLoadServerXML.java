@@ -1,11 +1,11 @@
-package seaBattle.xmlservice;
+package seaBattle.services.xmlService;
 
 import org.apache.log4j.Logger;
 import seaBattle.model.Field;
 import seaBattle.model.Player;
 import seaBattle.Server;
 import seaBattle.model.Status;
-import seaBattle.model.serverFileService.*;
+import seaBattle.services.serverFileService.*;
 
 import javax.xml.bind.*;
 import javax.xml.transform.Result;
