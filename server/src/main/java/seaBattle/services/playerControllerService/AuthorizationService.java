@@ -45,9 +45,6 @@ public class AuthorizationService {
                         return str;
                     }
                     for (String ip : Server.getBannedIpListSet()){
-                        System.out.println(pcThis.toString());
-                        System.out.println(pcThis.getSocket().toString());
-                        System.out.println(pcThis.getSocket().getInetAddress().toString());
                         if (ip.equals(pcThis.getSocket().getInetAddress().toString())){
                             str = "MORTAL, YOUR IP IS BANNED BY HIGHER POWER!";
                             return str;

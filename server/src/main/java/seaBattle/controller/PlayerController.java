@@ -107,7 +107,6 @@ public class PlayerController extends Thread {
                                 int y1 = Integer.parseInt(inServerXML.checkValue(reader));
                                 int x2 = Integer.parseInt(inServerXML.checkValue(reader));
                                 int y2 = Integer.parseInt(inServerXML.checkValue(reader));
-                                System.out.println("SHIT LOCATION");
                                 getOutServerXML().send("SHIP LOCATION", gc.setShip(this, new Ship(new int[]{x1, y1, x2, y2})));
                                 if (gc.checkStartGame()) {
                                     gc.getPlayerController1().getOutServerXML().send("START GAME","READY");

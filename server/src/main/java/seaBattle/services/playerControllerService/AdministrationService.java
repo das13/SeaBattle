@@ -26,7 +26,7 @@ public class AdministrationService {
      */
     public String banPlayerResult(String playerToBan) {
         for (String login : Server.getAdminsSet()) {
-            if (pcThis.getThisPlayer().equals(login)) {
+            if (pcThis.getThisPlayer().getLogin().equals(login)) {
                 for (Player pl1 : Server.getAllPlayersSet()) {
                     if (pl1.getLogin().equals(playerToBan)) {
                         if (Status.BANNED.equals(pl1.getStatus())){
