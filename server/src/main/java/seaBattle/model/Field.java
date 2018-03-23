@@ -170,12 +170,10 @@ public class Field {
     public void setSafeArea(int [][]f, int i1,int j1) {
         for (int i = i1 - 1; i < i1 + 2; i++) {
             for (int j = j1 -1 ; j< j1 + 2; j++) {
-                try {
+                if(i >= 0 && i<=9 && j >= 0 && j<=9) {
                     if (f[i][j] != 1) {
                         f[i][j] = 2;
                     }
-                }catch (ArrayIndexOutOfBoundsException e) {
-                    Server.logger.info("Out of bound in setSafeArea",e);
                 }
             }
         }
