@@ -233,7 +233,7 @@ public class PlayerController extends Thread {
     public Socket getSocket() {
         return socket;
     }
-    
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
