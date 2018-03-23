@@ -31,6 +31,10 @@ public class Server {
     private static int countOfThread = 0;
     private static ServerSocket listener;
 
+    /**
+     * main method
+     * @param args arguments
+     */
     public static void main(String[] args) {
         serverLaunchPreparation();
         SaveLoadServerXML.readServerConfig();
@@ -38,6 +42,9 @@ public class Server {
         startServer();
     }
 
+    /**
+     * method for start server
+     */
     public static void startServer() {
         try {
             listener = new ServerSocket(PORT);
@@ -59,6 +66,10 @@ public class Server {
         }
     }
 
+    /**
+     * load information from XML about all registered players
+     * and filling sets
+     */
     public static void serverLaunchPreparation() {
         SaveLoadServerXML.checkExistanceOrCreateServerXMLfiles();
         updateAllPlayersSet();
@@ -68,10 +79,16 @@ public class Server {
         SaveLoadServerXML.updateBannedIpSet();
     }
 
+    /**
+     * update set of all registered players from playerList.xml
+     */
     public static void updateAllPlayersSet() {
         SaveLoadServerXML.updateAllPlayersSet();
     }
 
+    /**
+     * update set of online players from allPlayerSet
+     */
     public static void updateOnlinePlayersSet() {
         for (Player player : allPlayersSet) {
             if (Status.ONLINE.equals(player.getStatus())) {
@@ -82,6 +99,9 @@ public class Server {
         }
     }
 
+    /**
+     * update set of ingame players from allPlayerSet
+     */
     public static void updateIngamePlayersSet() {
         for (Player player : allPlayersSet) {
             if (Status.INGAME.equals(player.getStatus())) {

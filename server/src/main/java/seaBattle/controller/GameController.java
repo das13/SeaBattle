@@ -120,6 +120,9 @@ public class GameController {
         afterGameOver();
     }
 
+    /**
+     * updating and sending information about online and ingame players
+     */
     public void afterGameOver(){
         ServerService.updateAndSendPlayersInfo();
     }
