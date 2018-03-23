@@ -101,7 +101,6 @@ public class SaveLoadServerXML {
             Marshaller jaxbMarshaller = null;
             jaxbMarshaller = jaxbContext.createMarshaller();
             jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            jaxbMarshaller.marshal(playerList, System.out);
             jaxbMarshaller.marshal(playerList, new File(Server.getPlayerListXML().getPath()));
         } catch (JAXBException e) {
             logger.error("playerList.xml creation error.", e);
@@ -124,8 +123,6 @@ public class SaveLoadServerXML {
             Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
             jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
-            jaxbMarshaller.marshal(bannedIpList, System.out);
-
             jaxbMarshaller.marshal(bannedIpList, new File(Server.getBannedIpListXML().getPath()));
         } catch (JAXBException e) {
             logger.error("bannedIpList.xml creation error.", e);
@@ -147,8 +144,6 @@ public class SaveLoadServerXML {
             JAXBContext jaxbContext = JAXBContext.newInstance(AdminsList.class);
             Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
             jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-
-            jaxbMarshaller.marshal(adminsList, System.out);
 
             jaxbMarshaller.marshal(adminsList, new File(Server.getAdminsListXML().getPath()));
         } catch (JAXBException e) {
@@ -175,7 +170,6 @@ public class SaveLoadServerXML {
             jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
             jaxbMarshaller.marshal(serverConf, file);
-            jaxbMarshaller.marshal(serverConf, System.out);
 
         } catch (JAXBException e) {
             logger.error("serverConf.xml creation error.", e);
@@ -443,7 +437,6 @@ public class SaveLoadServerXML {
             jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
             jaxbMarshaller.marshal(gameCondition, file);
-            jaxbMarshaller.marshal(gameCondition, System.out);
 
         } catch (JAXBException e) {
             logger.error("serverConf.xml creation error.", e);

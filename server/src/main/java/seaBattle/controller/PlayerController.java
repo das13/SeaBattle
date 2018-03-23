@@ -114,7 +114,6 @@ public class PlayerController extends Thread {
                                     gc.changeCurrentPlayer();
                                     gc.startTimer();
                                 }
-                                System.out.println();
                                 break;
                             }
                             case "SHOOT": {

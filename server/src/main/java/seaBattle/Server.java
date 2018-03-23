@@ -39,7 +39,7 @@ public class Server {
     public static void main(String[] args) {
         serverLaunchPreparation();
         SaveLoadServerXML.readServerConfig();
-        System.out.println("THE SERVER IS RUNNING");
+        logger.info("THE SERVER IS RUNNING");
         startServer();
     }
 
@@ -211,13 +211,21 @@ public class Server {
         Server.allPlayersControllerSet = allPlayersControllerSet;
     }
 
-
+    /**
+     * rebooting server
+     * @throws IOException
+     */
     public static void reboot() throws IOException {
+        logger.info("SERVER REBOOTING");
         listener.close();
         startServer();
     }
 
+    /**
+     * shutting down server
+     */
     public static void shutdown() {
+        logger.info("SERVER SHUTDOWN");
         System.exit(0);
     }
 }
