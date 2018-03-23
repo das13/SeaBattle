@@ -108,7 +108,7 @@ public class Field {
                             countOfShip[ship.getHealth() - 1]++;
                             return "OK";
                         } else {
-                            return "PLACE ERROR";
+                            return "you can not to place ship there";
                         }
                     } else {
                         if (areaChecking(a[1], a[0], a[2], ship.isVertical())) {
@@ -119,17 +119,17 @@ public class Field {
                             countOfShip[ship.getHealth() - 1]++;
                             return "OK";
                         } else {
-                            return "PLACE ERROR";
+                            return "you can not to place ship there";
                         }
                     }
                 } else {
-                    return "COUNT ERROR";
+                    return "count of this ship(s) is enough";
                 }
             } else {
-                return "LONG ERROR";
+                return "don't cheat please (your ship is so long)";
             }
         } else {
-            return "OUT OF BOUNDS ERROR";
+            return "you can not to place ship there";
         }
     }
 
