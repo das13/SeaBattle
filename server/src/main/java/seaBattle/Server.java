@@ -8,6 +8,7 @@ import seaBattle.services.xmlService.SaveLoadServerXML;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.BindException;
 import java.net.ServerSocket;
 import java.util.*;
 
@@ -61,6 +62,8 @@ public class Server {
             } finally {
                 listener.close();
             }
+        } catch (BindException e) {
+            logger.error("Error with starting server (PORT " + getPORT() + " is busy)", e);
         } catch (IOException e) {
             logger.error("Error with starting server", e);
         }
