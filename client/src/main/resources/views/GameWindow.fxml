@@ -151,7 +151,10 @@
                   <ProgressBar fx:id="prgUser" prefWidth="200.0" progress="0.0" />
                </children>
             </HBox>
-            <HBox prefHeight="50.0" prefWidth="100.0" />
+            <HBox alignment="CENTER" prefHeight="50.0" prefWidth="100.0">
+               <children>
+                  <Button fx:id="btnReplay" mnemonicParsing="false" onAction="#pressBtnReplay" text="REPLAY" visible="false" />
+               </children></HBox>
             <HBox alignment="CENTER" prefHeight="50.0" prefWidth="300.0">
                <children>
                   <Label text="Time for shoot:" />

@@ -10,6 +10,7 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -31,6 +32,8 @@ import java.util.ResourceBundle;
 
 public class GameController implements Initializable {
 
+    @FXML
+    private Button btnReplay;
     @FXML
     private Label lblEnemyLogin;
     @FXML
@@ -238,7 +241,7 @@ public class GameController implements Initializable {
      * method for displaying the result of a shot on users's field
      * @param result result of shot
      */
-    public void setShootbyEnemy(String result, int x1, int y1) {
+    public void setShootByEnemy(String result, int x1, int y1) {
         if ("HIT".equals(result) || "MISS".equals(result) || "DESTROY".equals(result)) {
             userPane.getChildren().add(createNewCell(result, x1, y1, true));
         }
@@ -284,6 +287,7 @@ public class GameController implements Initializable {
         setGameFinish(true);
         setGameStart(false);
         btnSurrender.setDisable(true);
+        btnReplay.setVisible(true);
         commonWindowController.getBtnAtack().setDisable(false);
         DialogManager.showInfoDialog(commonWindowController.getGameWindow(), "GAME", "Game over");
         if (isVictory) {
@@ -301,15 +305,23 @@ public class GameController implements Initializable {
 
     /**
      * method for processing keystrokes btnSurrender
-     * @param event prees on button Surrender
+     * @param event press on button Surrender
      */
     public void pressBtnSurrender(ActionEvent event) {
         txaGameInfo.appendText("YOU: Surrender\n");
         try {
             listener.getOutClientXML().send("SURRENDER", listener.getUsername());
         } catch (XMLStreamException e) {
-            e.printStackTrace();
+            logger.error("Error when try send message with key - SURRENDER", e);
         }
+    }
+    /**
+     * Send the invite to current enemy
+     * @param event press on button Replay
+     */
+    public void pressBtnReplay(ActionEvent event) {
+        commonWindowController.sendInviteToBattle(event, listener.getEnemy());
+        ((Node)(event.getSource())).getScene().getWindow().hide();
     }
 
     /**
@@ -395,7 +407,7 @@ public class GameController implements Initializable {
                 try {
                     Thread.sleep(300);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    logger.error("Error when try Thread.sleep()", e);
                 }
                 if (isCancelled()) {
                     return 0;
