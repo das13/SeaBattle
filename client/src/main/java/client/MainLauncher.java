@@ -1,5 +1,6 @@
 package client;
 
+import client.controller.PropertiesLoader;
 import client.controller.ServerListener;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -49,11 +50,13 @@ public class MainLauncher extends Application {
             logger.error("Can not load regForm.fxml", e);
         }
         primaryStage.setTitle("Sea Battle 2018");
-        Scene scene = new Scene(root, 300, 600);
-        scene.getStylesheets().add(0, "css/main.css");
-        scene.setRoot(root);
-        primaryStage.setScene(scene);
-        primaryStage.setResizable(false);
+        if (root != null) {
+            Scene scene = new Scene(root, 300, 600);
+            scene.getStylesheets().add(0, "css/main.css");
+            scene.setRoot(root);
+            primaryStage.setScene(scene);
+            primaryStage.setResizable(false);
+        }
         primaryStage.show();
         primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
@@ -65,30 +68,9 @@ public class MainLauncher extends Application {
     }
 
     public static void main(String[] args) {
-        loadProperty("form.properties");
+        PropertiesLoader pl = new PropertiesLoader();
+        propertyForms = pl.loadProperty("form.properties");
         launch(args);
-    }
-
-    /**
-     * Method for loading property from file
-     * @param fileName file's name with properties
-     */
-    private static void loadProperty(String fileName) {
-        propertyForms = new Properties();
-        InputStream in = MainLauncher.class.getClassLoader().getResourceAsStream(fileName);
-        try {
-            propertyForms.load(in);
-        } catch (IOException e) {
-            logger.error("Can not load " + fileName, e);
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    logger.error("Can not close InputStream in loadProperty(String fileName)", e);
-                }
-            }
-        }
     }
 
     public static Properties getPropertyForms() {
