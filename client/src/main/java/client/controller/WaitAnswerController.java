@@ -16,6 +16,9 @@ public class WaitAnswerController {
     @FXML
     private Label lblStatus;
 
+    /**
+     * Called to initialize a controller after its root element has been completely processed.
+     */
     @FXML
     private void initialize(){
         lblStatus.setText("Waiting for answer from " + CommonWindowController.getCwController().getEnemy());

@@ -28,6 +28,9 @@ public class AnswerController {
         return answerController;
     }
 
+    /**
+     * Called to initialize a controller after its root element has been completely processed.
+     */
     @FXML
     public void initialize() {
         listener = ServerListener.getListener();

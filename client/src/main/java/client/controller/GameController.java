@@ -101,7 +101,7 @@ public class GameController implements Initializable {
     }
 
     /**
-     * controller initialization method
+     * Called to initialize a controller after its root element has been completely processed.
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {

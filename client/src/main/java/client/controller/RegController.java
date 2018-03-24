@@ -55,7 +55,7 @@ public class RegController {
     }
 
     /**
-     * controller initialization method
+     * Called to initialize a controller after its root element has been completely processed.
      */
     @FXML
     private void initialize() {

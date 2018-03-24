@@ -80,7 +80,7 @@ public class CommonWindowController {
     }
 
     /**
-     * controller initialization method
+     * Called to initialize a controller after its root element has been completely processed.
      */
     @FXML
     private void initialize() {
@@ -323,7 +323,8 @@ public class CommonWindowController {
                     btnAtack.setDisable(false);
                 });
                 stage.setTitle("Sea battle");
-                stage.setScene(new Scene(root, 700, 500));
+                if (root != null)
+                    stage.setScene(new Scene(root, 700, 500));
                 stage.setResizable(false);
                 btnAtack.setDisable(true);
                 stage.show();

@@ -1,8 +1,6 @@
 package client.controller;
 
-import client.MainLauncher;
 import org.apache.log4j.Logger;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -13,9 +11,14 @@ public class PropertiesLoader {
     public PropertiesLoader() {
     }
 
+    /**
+     * Method for loading properties from file to object and return this object
+     * @param fileName path/file with properties
+     * @return object of class Properties with load of properties from fileName
+     */
     public Properties loadProperty(String fileName) {
         Properties properties = new Properties();
-        InputStream in = MainLauncher.class.getClassLoader().getResourceAsStream(fileName);
+        InputStream in = PropertiesLoader.class.getClassLoader().getResourceAsStream(fileName);
         try {
             properties.load(in);
         } catch (IOException e) {

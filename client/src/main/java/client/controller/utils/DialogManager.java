@@ -12,6 +12,12 @@ import javafx.stage.Window;
 
 public class DialogManager {
 
+    /**
+     * Created window with information
+     * @param window current window
+     * @param title title of alert-window
+     * @param text text of alert-window
+     */
     public static void showInfoDialog(Window window, String title, String text) {
         Platform.runLater(new Runnable() {
             @Override
@@ -27,6 +33,12 @@ public class DialogManager {
         });
     }
 
+    /**
+     * Created window with information about error
+     * @param window current window
+     * @param title title of alert-window
+     * @param text text of alert-window
+     */
     public static void showErrorDialog(Window window, String title, String text) {
         Platform.runLater(new Runnable() {
             @Override
@@ -42,6 +54,11 @@ public class DialogManager {
         });
     }
 
+    /**
+     * Created window with information
+     * @param title title of alert-window
+     * @param text text of alert-window
+     */
     public static void showInfoDialog(String title, String text) {
         Platform.runLater(new Runnable() {
             @Override
