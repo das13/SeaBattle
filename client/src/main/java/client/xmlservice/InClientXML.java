@@ -1,5 +1,8 @@
 package client.xmlservice;
 
+import client.controller.ServerListener;
+import org.apache.log4j.Logger;
+
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
@@ -10,6 +13,7 @@ import java.io.Reader;
 import java.net.Socket;
 
 public class InClientXML {
+    private final static Logger logger = Logger.getLogger(InClientXML.class);
     private XMLStreamReader reader;
     private XMLInputFactory factory;
     private Reader fileReader;
@@ -26,7 +30,7 @@ public class InClientXML {
         try {
             this.fileReader = new InputStreamReader(socket.getInputStream());
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Error when try create InputStreamReader", e);
         }
     }
 
@@ -48,7 +52,7 @@ public class InClientXML {
                 reader.next();
             }
         } catch (XMLStreamException e) {
-            e.printStackTrace();
+            logger.error("Error in method checkValue(XMLStreamReader reader)", e);
         }
         return value;
     }

@@ -358,8 +358,8 @@ public class ServerListener implements Runnable {
      */
     public void disconnect() {
         serverListenerThread.interrupt();
+        isConnect = false;
         try {
-            isConnect = false;
             outClientXML.getWriter().close();
             if (inClientXML.getReader() != null) {
                 inClientXML.getReader().close();
@@ -368,7 +368,7 @@ public class ServerListener implements Runnable {
                 try {
                     socket.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.error("Error while trying to close the socket", e);
                 }
             }
         } catch (XMLStreamException e1) {
@@ -377,14 +377,10 @@ public class ServerListener implements Runnable {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                try {
+                if (commonWindowController.getGameWindow() != null)
                     commonWindowController.hideGameWindow();
-                } catch (Exception e) {
-                }
-                try {
+                if (regController.getComWindow() != null)
                     regController.hideCommonWindow();
-                } catch (Exception e) {
-                }
                 MainLauncher.getPrimaryStageObj().show();
             }
         });
@@ -397,7 +393,6 @@ public class ServerListener implements Runnable {
                 regController.getBtnConnect().setText("Connect");
             }
         });
-
         DialogManager.showInfoDialog(MainLauncher.getPrimaryStageObj(), "Server info", "You disconnect from server");
     }
 

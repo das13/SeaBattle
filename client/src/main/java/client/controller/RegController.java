@@ -79,7 +79,7 @@ public class RegController {
                             listener.getOutClientXML().send("REG", username, password);
                         }
                     } catch (XMLStreamException e) {
-                        e.printStackTrace();
+                        logger.error("Can not send message with key - REG", e);
                     }
                 }
             });
@@ -103,8 +103,7 @@ public class RegController {
                             listener.setUsername(username);
                         }
                     } catch (XMLStreamException e) {
-                        e.printStackTrace();
-                    }
+                        logger.error("Can not send message with key - LOG IN", e);                    }
                 }
             });
         }
@@ -137,16 +136,18 @@ public class RegController {
                         comWindow.hide();
                     }
                 });
-                stage.setTitle("Sea Battle 2018");
-                Scene scene = new Scene(root, 640, 360 + (isAdmin ? 40 : 0));
-                if (!isAdmin) {
-                    CommonWindowController.getCwController().getAdminBox().setVisible(false);
+                if (root != null) {
+                    stage.setTitle("Sea Battle 2018");
+                    Scene scene = new Scene(root, 640, 360 + (isAdmin ? 40 : 0));
+                    if (!isAdmin) {
+                        CommonWindowController.getCwController().getAdminBox().setVisible(false);
+                    }
+                    stage.setScene(scene);
+                    stage.setResizable(false);
+                    clearUserInput();
+                    stage.show();
+                    MainLauncher.getPrimaryStageObj().hide();
                 }
-                stage.setScene(scene);
-                stage.setResizable(false);
-                clearUserInput();
-                stage.show();
-                MainLauncher.getPrimaryStageObj().hide();
             }
         });
     }

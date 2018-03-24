@@ -1,6 +1,8 @@
 package client.xmlservice;
 
 
+import org.apache.log4j.Logger;
+
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -8,6 +10,7 @@ import java.io.IOException;
 import java.net.Socket;
 
 public class OutClientXML {
+    private final static Logger logger = Logger.getLogger(OutClientXML.class);
     private XMLOutputFactory factory;
     private XMLStreamWriter writer;
     private Socket socket;
@@ -23,7 +26,7 @@ public class OutClientXML {
         try {
             writer = factory.createXMLStreamWriter(socket.getOutputStream());
         } catch (XMLStreamException | IOException e) {
-            e.printStackTrace();
+            logger.error("Error when try create XMLStreamWriter", e);
         }
     }
 

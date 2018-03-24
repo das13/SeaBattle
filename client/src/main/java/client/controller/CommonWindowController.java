@@ -222,15 +222,17 @@ public class CommonWindowController {
             logger.error("Can not load " + form, e);
         }
         stage.setTitle("Sea Battle 2018");
-        Scene scene = new Scene(root, 300, 200);
-        stage.setScene(scene);
-        stage.setX(regController.getComWindow().getX() + 200);
-        stage.setY(regController.getComWindow().getY() + 100);
-        stage.initStyle(StageStyle.UNDECORATED);
-        PauseTransition delay = new PauseTransition(Duration.seconds(11));
-        delay.setOnFinished(event1 -> stage.close());
-        delay.play();
-        stage.show();
+        if (root != null) {
+            Scene scene = new Scene(root, 300, 200);
+            stage.setScene(scene);
+            stage.setX(regController.getComWindow().getX() + 200);
+            stage.setY(regController.getComWindow().getY() + 100);
+            stage.initStyle(StageStyle.UNDECORATED);
+            PauseTransition delay = new PauseTransition(Duration.seconds(11));
+            delay.setOnFinished(event1 -> stage.close());
+            delay.play();
+            stage.show();
+        }
     }
 
     public void hideWaitAnswerWindow() {
@@ -246,7 +248,7 @@ public class CommonWindowController {
             try {
                 listener.getOutClientXML().send("MSG", msg);
             } catch (XMLStreamException e) {
-                e.printStackTrace();
+                logger.error("Error when try send message on the chat", e);
             }
         }
         Platform.runLater(new Runnable() {
