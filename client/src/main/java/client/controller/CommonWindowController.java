@@ -17,6 +17,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
@@ -44,9 +45,9 @@ public class CommonWindowController {
     @FXML
     private Label lblMyRank;
     @FXML
-    private TableView tblActiveGamers;
+    private TableView<Gamer> tblActiveGamers;
     @FXML
-    private TableView tblPassiveGamers;
+    private TableView<Gamer> tblPassiveGamers;
     @FXML
     private TableColumn<Gamer, String> colActiveNicks;
     @FXML
@@ -102,11 +103,19 @@ public class CommonWindowController {
      */
     @FXML
     public void pressBtnAtack(ActionEvent event) {
-        String key;
         Gamer selectedGamer = (Gamer) tblActiveGamers.getSelectionModel().getSelectedItem();
         if (selectedGamer == null) return;
-        key = "INVITE";
         enemy = selectedGamer.getName();
+        sendInviteToBattle(event, enemy);
+    }
+
+    /**
+     * Send the invite to battle to server
+     * @param event key pressed
+     * @param enemy your opponent's name
+     */
+    public void sendInviteToBattle(ActionEvent event, String enemy) {
+        String key = "INVITE";
         listener.setEnemy(enemy);
         try {
             listener.getOutClientXML().send(key, listener.getUsername(), enemy);
@@ -183,7 +192,7 @@ public class CommonWindowController {
      */
     @FXML
     public void btnRebootPressed(ActionEvent event) {
-        sendAdminResponse("REBOOT", "REBOOT");
+        sendAdminResponse("REBOOT", regController.getUsername());
     }
 
     /**
@@ -192,7 +201,7 @@ public class CommonWindowController {
      */
     @FXML
     public void btnShutdownPressed(ActionEvent event) {
-        sendAdminResponse("SHUTDOWN", "SHUTDOWN");
+        sendAdminResponse("SHUTDOWN", regController.getUsername());
     }
 
     /**
@@ -225,9 +234,11 @@ public class CommonWindowController {
         if (root != null) {
             Scene scene = new Scene(root, 300, 200);
             stage.setScene(scene);
-            stage.setX(regController.getComWindow().getX() + 200);
-            stage.setY(regController.getComWindow().getY() + 100);
+            stage.setX(listener.getCurrentWindow().getX() + 200);
+            stage.setY(listener.getCurrentWindow().getY() + 100);
             stage.initStyle(StageStyle.UNDECORATED);
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(listener.getCurrentWindow());
             PauseTransition delay = new PauseTransition(Duration.seconds(11));
             delay.setOnFinished(event1 -> stage.close());
             delay.play();
@@ -273,7 +284,7 @@ public class CommonWindowController {
      *
      * @param onlineGamersFromListener (list of online gamers from server)
      */
-    public void createActiveList(List onlineGamersFromListener) {
+    public void createActiveList(List<Gamer> onlineGamersFromListener) {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
@@ -287,7 +298,7 @@ public class CommonWindowController {
      *
      * @param onGameGamersFromListener (list of ingame gamers from server)
      */
-    public void createPassiveList(List onGameGamersFromListener) {
+    public void createPassiveList(List<Gamer> onGameGamersFromListener) {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
@@ -327,6 +338,8 @@ public class CommonWindowController {
                     stage.setScene(new Scene(root, 700, 500));
                 stage.setResizable(false);
                 btnAtack.setDisable(true);
+                stage.setX(regController.getComWindow().getX() + 200);
+                stage.setY(regController.getComWindow().getY() + 100);
                 stage.show();
             }
         });

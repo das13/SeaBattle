@@ -5,6 +5,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import org.apache.log4j.Logger;
 
 import javax.xml.stream.XMLStreamException;
 /**
@@ -13,6 +14,7 @@ import javax.xml.stream.XMLStreamException;
  *@version 1.0
  */
 public class AnswerController {
+    private final static Logger logger = Logger.getLogger(AnswerController.class);
     @FXML
     private ProgressBar progressBar;
     @FXML
@@ -27,6 +29,7 @@ public class AnswerController {
     public static AnswerController getAnswerController() {
         return answerController;
     }
+
 
     /**
      * Called to initialize a controller after its root element has been completely processed.
@@ -47,10 +50,13 @@ public class AnswerController {
      */
     public void btnAcceptPressed(ActionEvent event) {
         try {
+            if (CommonWindowController.getCwController().getGameWindow() != null){
+                CommonWindowController.getCwController().getGameWindow().hide();
+            }
             CommonWindowController.getCwController().hideWaitAnswerWindow();
             listener.getOutClientXML().send("REPLY", listener.getEnemy(), listener.getUsername());
         } catch (XMLStreamException e) {
-            e.printStackTrace();
+            logger.error("Exception when try send message with key - REPLY", e);
         }
     }
 

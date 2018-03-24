@@ -1,6 +1,8 @@
 package client.controller.utils;
 
+import client.controller.CommonWindowController;
 import javafx.concurrent.Task;
+import org.apache.log4j.Logger;
 
 /**
  *class extends Task<Integer> for creating Task for animation of progressBar
@@ -9,6 +11,7 @@ import javafx.concurrent.Task;
  */
 
 public class ProgressAnimation extends Task<Integer> {
+    public static final Logger logger = Logger.getLogger(ProgressAnimation.class);
 
     @Override
     protected Integer call() throws Exception {
@@ -17,7 +20,7 @@ public class ProgressAnimation extends Task<Integer> {
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                logger.error("Error when try Thread.sleep()", e);
             }
             if (isCancelled()) {return i;}
         }

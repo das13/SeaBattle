@@ -7,13 +7,13 @@ import client.xmlservice.InClientXML;
 import client.xmlservice.OutClientXML;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.stage.Stage;
 import org.apache.log4j.Logger;
-
+import javafx.stage.Window;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.IOException;
 import java.net.Socket;
-import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -112,7 +112,7 @@ public class ServerListener implements Runnable {
                                     });
                                     break;
                                 }
-                                DialogManager.showInfoDialog(MainLauncher.getPrimaryStageObj(), "Log in INFO", value);
+                                DialogManager.showInfoDialog(getCurrentWindow(), "Log in INFO", value);
                                 break;
                             }
                             case "LOG OUT": {
@@ -121,7 +121,7 @@ public class ServerListener implements Runnable {
                             }
                             case "REG": {
                                 String value = inClientXML.checkValue(reader);
-                                DialogManager.showInfoDialog(MainLauncher.getPrimaryStageObj(), "Registration INFO", value);
+                                DialogManager.showInfoDialog(getCurrentWindow(), "Registration INFO", value);
                                 break;
                             }
                             case "MSG": {
@@ -251,7 +251,7 @@ public class ServerListener implements Runnable {
                                 Platform.runLater(new Runnable() {
                                     @Override
                                     public void run() {
-                                        DialogManager.showInfoDialog(commonWindowController.getGameWindow(), "SHIP LOCATION", value);
+                                        DialogManager.showInfoDialog(getCurrentWindow(), "SHIP LOCATION", value);
                                     }
                                 });
                                 break;
@@ -264,7 +264,7 @@ public class ServerListener implements Runnable {
                                 Platform.runLater(new Runnable() {
                                     @Override
                                     public void run() {
-                                        gameController.setShootbyEnemy(result, x1, y1);
+                                        gameController.setShootByEnemy(result, x1, y1);
                                     }
                                 });
                                 break;
@@ -288,7 +288,6 @@ public class ServerListener implements Runnable {
                                             gameController.resultGame(false);
                                         }
                                     });
-                                    DialogManager.showInfoDialog(commonWindowController.getGameWindow(), "SHOOT RESULT", "Game over");
                                     break;
                                 }
                                 Platform.runLater(new Runnable() {
@@ -332,7 +331,7 @@ public class ServerListener implements Runnable {
                             }
                             case "INFO": {
                                 String value = inClientXML.checkValue(reader);
-                                DialogManager.showInfoDialog("Server info", value);
+                                DialogManager.showInfoDialog(getCurrentWindow(), "Server info", value);
                                 break;
                             }
                         }
@@ -394,6 +393,15 @@ public class ServerListener implements Runnable {
             }
         });
         DialogManager.showInfoDialog(MainLauncher.getPrimaryStageObj(), "Server info", "You disconnect from server");
+    }
+
+    public Stage getCurrentWindow() {
+        if (commonWindowController.getGameWindow() != null)
+            return commonWindowController.getGameWindow();
+        if (regController.getComWindow() != null) {
+            return regController.getComWindow();
+        }
+        return MainLauncher.getPrimaryStageObj();
     }
 
     public String getEnemy() {

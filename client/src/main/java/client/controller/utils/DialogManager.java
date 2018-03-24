@@ -53,23 +53,5 @@ public class DialogManager {
             }
         });
     }
-
-    /**
-     * Created window with information
-     * @param title title of alert-window
-     * @param text text of alert-window
-     */
-    public static void showInfoDialog(String title, String text) {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle(title);
-                alert.setContentText(text);
-                alert.setHeaderText("INFO");
-                alert.showAndWait();
-            }
-        });
-    }
 }
 
