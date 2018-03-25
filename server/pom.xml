@@ -11,15 +11,7 @@
 
     <artifactId>server</artifactId>
     <build>
-        <resources>
-            <resource>
-                <directory>resources</directory>
-                <targetPath>${project.build.directory}</targetPath>
-                <includes>
-                    <include>log4j.properties</include>
-                </includes>
-            </resource>
-        </resources>
+
         <plugins>
 
             <plugin>
