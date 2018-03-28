@@ -54,6 +54,7 @@ public class PlayerController extends Thread {
      * <code>run</code> adds PlayerController thread ability to receive XML data
      * from linked Client and send appropriate XML data answers, based on keys/values in incoming XMLs
      */
+    @Override
     public void run() {
         thisPlayer.setStatus(Status.OFFLINE);
         try {
@@ -164,13 +165,13 @@ public class PlayerController extends Thread {
                             }
                             case "REBOOT": {
                                 String admin = inServerXML.checkValue(reader);
-                                sS.msgServer("Server rebooting by " + admin);
+                                sS.msgServer("Server will reboot in 10 sec by " + admin);
                                 adS.rebootServer(admin);
                                 break;
                             }
                             case "SHUTDOWN": {
                                 String admin = inServerXML.checkValue(reader);
-                                sS.msgServer("Server is shutting down by " + admin);
+                                sS.msgServer("Server will shutdown in 10 sec by " + admin);
                                 adS.shutdownServer(admin);
                                 break;
                             }

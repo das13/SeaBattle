@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.BindException;
 import java.net.ServerSocket;
+import java.net.SocketException;
 import java.util.*;
 
 public class Server {
@@ -37,9 +38,6 @@ public class Server {
      * @param args arguments
      */
     public static void main(String[] args) {
-        serverLaunchPreparation();
-        SaveLoadServerXML.readServerConfig();
-        logger.info("THE SERVER IS RUNNING");
         startServer();
     }
 
@@ -47,26 +45,71 @@ public class Server {
      * method for start server
      */
     public static void startServer() {
+        serverLaunchPreparation();
+        SaveLoadServerXML.readServerConfig();
+        logger.info("THE SERVER IS RUNNING");
         try {
             listener = new ServerSocket(PORT);
-
             try {
-                while (true) {
-                    PlayerController pc;
-                    pc = new PlayerController();
-                    pc.setSocket(listener.accept());
-                    pc.start();
-                    allPlayersControllerSet.add(pc);
-                    countOfThread++;
+                while (!listener.isClosed()) {
+                    try {
+                        PlayerController pc;
+                        pc = new PlayerController();
+                        pc.setSocket(listener.accept());
+                        pc.start();
+                        allPlayersControllerSet.add(pc);
+                        countOfThread++;
+                    } catch (SocketException e) {
+                        break;
+                    }
                 }
             } finally {
-                listener.close();
+                if (!listener.isClosed()) {
+                    listener.close();
+                }
             }
         } catch (BindException e) {
             logger.error("Error with starting server (PORT " + getPORT() + " is busy)", e);
         } catch (IOException e) {
             logger.error("Error with starting server", e);
         }
+    }
+
+    /**
+     * rebooting server
+     * @throws IOException
+     */
+    public static void reboot() throws IOException {
+        logger.info("SERVER REBOOTING");
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            logger.info("Sleep exception",e);
+        }
+        for (PlayerController pc:getAllPlayersControllerSet()) {
+            pc.getSocket().close();
+        }
+        getAllPlayersControllerSet().clear();
+        listener.close();
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            logger.info("Sleep exception",e);
+        }
+        startServer();
+    }
+
+    /**
+     * shutting down server
+     */
+    public static void shutdown() {
+        logger.info("SERVER SHUTDOWN");
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            logger.info("Sleep exception",e);
+        }
+        System.exit(0);
     }
 
     /**
@@ -209,23 +252,5 @@ public class Server {
 
     public static void setAllPlayersControllerSet(HashSet<PlayerController> allPlayersControllerSet) {
         Server.allPlayersControllerSet = allPlayersControllerSet;
-    }
-
-    /**
-     * rebooting server
-     * @throws IOException
-     */
-    public static void reboot() throws IOException {
-        logger.info("SERVER REBOOTING");
-        listener.close();
-        startServer();
-    }
-
-    /**
-     * shutting down server
-     */
-    public static void shutdown() {
-        logger.info("SERVER SHUTDOWN");
-        System.exit(0);
     }
 }

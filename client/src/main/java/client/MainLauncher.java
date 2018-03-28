@@ -37,9 +37,10 @@ public class MainLauncher extends Application {
     @Override
     public void start(Stage primaryStage) {
         primaryStageObj = primaryStage;
-        ServerListener listener = ServerListener.getListener();
+        //ServerListener listener = ServerListener.getListener();
         Parent root = null;
         try {
+           //TODO delete
             parents.add(FXMLLoader.load(getClass().getResource(propertyForms.getProperty("regForm"))));
             parents.add(FXMLLoader.load(getClass().getResource(propertyForms.getProperty("commonWindow"))));
             parents.add(FXMLLoader.load(getClass().getResource(propertyForms.getProperty("GameWindow"))));

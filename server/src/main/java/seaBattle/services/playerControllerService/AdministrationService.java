@@ -34,6 +34,7 @@ public class AdministrationService {
                             return str;
                         }
                         pl1.setStatus(Status.BANNED);
+                        SaveLoadServerXML.updatePlayerListXML();
                         str = "player " + playerToBan + " was banned by " + pcThis.getThisPlayer().getLogin();
                         break;
                     }
@@ -43,6 +44,7 @@ public class AdministrationService {
                         if (pc1.getThisPlayer().getLogin().equals(playerToBan)) {
                             pc1.getSocket().close();
                             Server.getAllPlayersControllerSet().remove(pc1);
+                            SaveLoadServerXML.updatePlayerListXML();
                             str = "player " + playerToBan + " was banned and kicked by " + pcThis.getThisPlayer().getLogin();
                             return str;
                         }
@@ -70,6 +72,7 @@ public class AdministrationService {
                             return str;
                         }
                         pl1.setStatus(Status.OFFLINE);
+                        SaveLoadServerXML.updatePlayerListXML();
                         str = "player " + playerToUnBan + " was unbanned by " + pcThis.getThisPlayer().getLogin();
                         return str;
                     }
@@ -105,6 +108,7 @@ public class AdministrationService {
                         }
                     }
                 }
+                SaveLoadServerXML.updateBannedIpListXML();
             }
         }
         return str;
