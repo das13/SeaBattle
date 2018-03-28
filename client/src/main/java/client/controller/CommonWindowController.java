@@ -86,6 +86,7 @@ public class CommonWindowController {
     @FXML
     private void initialize() {
         listener = ServerListener.getListener();
+        listener.setCommonWindowController(this);
         regController = RegController.getRegController();
         tblActiveGamers.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         colActiveNicks.setCellValueFactory(new PropertyValueFactory<Gamer, String>("name"));
@@ -94,7 +95,6 @@ public class CommonWindowController {
         tblActiveGamers.setItems(FXCollections.observableArrayList(onlineGamers));
         tblPassiveGamers.setItems(FXCollections.observableArrayList(inGamePlayers));
         lblLogin.setText(regController.getUsername());
-        listener.setCommonWindowController(this);
     }
 
     /**

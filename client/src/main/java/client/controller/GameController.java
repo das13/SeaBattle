@@ -257,10 +257,9 @@ public class GameController implements Initializable {
      */
     public void shootProgress(boolean isUser) {
         ShootProgress shootProgress = new ShootProgress();
-        (isUser ? prgUser : prgEnemy).progressProperty().bind(shootProgress.progressProperty());
         shootProgress.updateProgress(0.0, 1.0);
-        (isUser ? prgUser : prgEnemy).progressProperty().bind(shootProgress.progressProperty());
         new Thread(shootProgress).start();
+        (isUser ? prgUser : prgEnemy).progressProperty().bind(shootProgress.progressProperty());
         (isUser ? prgEnemy : prgUser).progressProperty().unbind();
         (isUser ? prgEnemy : prgUser).setProgress(0.0);
         (isUser ? enemyHbox : userHbox).setBackground(new Background(new BackgroundFill(Color.LIGHTCORAL, null, null)));
