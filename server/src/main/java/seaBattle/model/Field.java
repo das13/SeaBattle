@@ -81,6 +81,28 @@ public class Field {
         }catch (ArrayIndexOutOfBoundsException e) {
             Server.logger.info("Out of bound in checkShipDestroy2 (x = " + x + ", y =" + y + ")",e);
         }
+        try {
+            if (c == 4) {
+                if (!(x + 3 > 9 || x + 2 > 9 || x + 1 > 9) && field[x + 3][y] == 1 && field[x + 2][y] == 3 &&
+                        field[x + 1][y] == 3) {
+                    c--;
+                }
+                if (!(x - 3 > 9 || x - 2 > 9 || x - 1 > 9) && field[x - 3][y] == 1 && field[x - 2][y] == 3 &&
+                        field[x - 1][y] == 3) {
+                    c--;
+                }
+                if (!(y + 3 > 9 || y + 2 > 9 || y + 1 > 9) && field[x][y + 3] == 1 && field[x][y + 2] == 3 &&
+                        field[x][y + 1] == 3) {
+                    c--;
+                }
+                if (!(y - 3 > 9 || y - 2 > 9 || y - 1 > 9) && field[x][y - 3] == 1 && field[x][y - 2] == 3 &&
+                        field[x][y - 1] == 3) {
+                    c--;
+                }
+            }
+        }catch (ArrayIndexOutOfBoundsException e) {
+            Server.logger.info("Out of bound in checkShipDestroy3 (x = " + x + ", y =" + y + ")",e);
+        }
 
         if (c == 4) {
             return true;
