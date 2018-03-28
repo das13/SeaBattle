@@ -239,7 +239,7 @@ public class CommonWindowController {
             stage.initStyle(StageStyle.UNDECORATED);
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(listener.getCurrentWindow());
-            PauseTransition delay = new PauseTransition(Duration.seconds(11));
+            PauseTransition delay = new PauseTransition(Duration.seconds(10));
             delay.setOnFinished(event1 -> stage.close());
             delay.play();
             stage.show();
@@ -314,7 +314,7 @@ public class CommonWindowController {
                 try {
                     root = FXMLLoader.load(getClass().getResource(MainLauncher.getPropertyForms().getProperty("GameWindow")));
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.error("Can not load GameWindow.fxml", e);
                 }
                 stage.setOnCloseRequest((WindowEvent e) -> {
                     try {
