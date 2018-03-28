@@ -125,6 +125,7 @@ public class RegController {
                     stage.setOnCloseRequest((WindowEvent e) -> {
                         try {
                             if (GameController.getGameController() != null && CommonWindowController.getCwController().getGameWindow() != null){
+                                CommonWindowController.getCwController().getGameWindow().hide();
                                 if (!GameController.getGameController().isGameFinish())
                                     listener.getOutClientXML().send("SURRENDER", username);
                             }
