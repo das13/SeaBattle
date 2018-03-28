@@ -6,7 +6,7 @@ import javafx.scene.paint.Color;
 /**
  * class for creating ships in user field
  * @version 1.0
- * @autor Dmytro Cherevko
+ * @author Dmytro Cherevko
  */
 
 public class Ship {

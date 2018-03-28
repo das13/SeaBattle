@@ -9,7 +9,6 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.stage.Stage;
 import org.apache.log4j.Logger;
-import javafx.stage.Window;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.IOException;
@@ -64,9 +63,9 @@ public class ServerListener implements Runnable {
             socket = new Socket(hostname, port);
             inClientXML = new InClientXML(socket);
             outClientXML = new OutClientXML(socket);
-            RegController.getRegController().getRegButton().setDisable(false);
-            RegController.getRegController().getSignButton().setDisable(false);
-            RegController.getRegController().getBtnConnect().setText("Disconnect");
+            regController.getRegButton().setDisable(false);
+            regController.getSignButton().setDisable(false);
+            regController.getBtnConnect().setText("Disconnect");
             isConnect = true;
             serverListenerThread = new Thread(this);
             serverListenerThread.start();
@@ -83,7 +82,6 @@ public class ServerListener implements Runnable {
      */
     @Override
     public void run() {
-        regController = RegController.getRegController();
         while (!socket.isClosed() && isConnect()) {
             try {
                 inClientXML.setReader(inClientXML.getFactory().createXMLStreamReader(inClientXML.getFileReader()));
@@ -95,28 +93,14 @@ public class ServerListener implements Runnable {
                             case "LOG IN": {
                                 String value = inClientXML.checkValue(reader);
                                 if ("success!".equals(value)) {
-                                    Platform.runLater(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            regController.showCommonWindow(false);
-                                        }
-                                    });
+                                    regController.showCommonWindow(false);
                                     break;
                                 }
                                 if ("success! admin access.".equals(value)) {
-                                    Platform.runLater(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            regController.showCommonWindow(true);
-                                        }
-                                    });
+                                    regController.showCommonWindow(true);
                                     break;
                                 }
                                 DialogManager.showInfoDialog(getCurrentWindow(), "Log in INFO", value);
-                                break;
-                            }
-                            case "LOG OUT": {
-                                String value = inClientXML.checkValue(reader);
                                 break;
                             }
                             case "REG": {
@@ -142,10 +126,6 @@ public class ServerListener implements Runnable {
                                         commonWindowController.showWaitAnswerWindow(new ActionEvent(), CommonWindowController.ANSWERFORM);
                                     }
                                 });
-                                break;
-                            }
-                            case "REPLY": {
-                                String player1 = inClientXML.checkValue(reader);
                                 break;
                             }
                             case "TURN": {
@@ -193,37 +173,38 @@ public class ServerListener implements Runnable {
                             case "ONLINE PLAYERS": {
                                 int countOfPlayers = Integer.parseInt(inClientXML.checkValue(reader));
                                 listOnline.clear();
-                                for (int i = 1; i <= countOfPlayers; i++) {
-                                    String name = inClientXML.checkValue(reader);
-                                    int rank = Integer.parseInt(inClientXML.checkValue(reader));
-                                    if (!name.equals(username)) {
-                                        listOnline.add(new Gamer(name, rank));
-                                    } else {
-                                        Platform.runLater(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                commonWindowController.getLblMyRank().setText(String.valueOf(rank));
-                                            }
-                                        });
+                                if (commonWindowController!= null) {
+                                    for (int i = 1; i <= countOfPlayers; i++) {
+                                        String name = inClientXML.checkValue(reader);
+                                        int rank = Integer.parseInt(inClientXML.checkValue(reader));
+                                        if (!name.equals(username)) {
+                                            listOnline.add(new Gamer(name, rank));
+                                        } else {
+                                            Platform.runLater(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    commonWindowController.getLblMyRank().setText(String.valueOf(rank));
+                                                }
+                                            });
+                                        }
                                     }
+                                    commonWindowController.createActiveList(listOnline);
                                 }
-                                commonWindowController.createActiveList(listOnline);
+
                                 break;
                             }
                             case "INGAME PLAYERS": {
                                 int countOfPlayers = Integer.parseInt(inClientXML.checkValue(reader));
                                 listOnGame.clear();
-                                for (int i = 1; i <= countOfPlayers; i++) {
-                                    String name = inClientXML.checkValue(reader);
-                                    if (!name.equals(username)) {
+                                if (commonWindowController!= null) {
+                                    for (int i = 1; i <= countOfPlayers; i++) {
+                                        String name = inClientXML.checkValue(reader);
                                         listOnGame.add(new Gamer(name));
                                     }
+
+                                    commonWindowController.createPassiveList(listOnGame);
                                 }
-                                commonWindowController.createPassiveList(listOnGame);
-                                break;
-                            }
-                            case "PLAYER INFO": {
-                                String value = inClientXML.checkValue(reader);
+
                                 break;
                             }
                             case "SHIP LOCATION": {
@@ -275,7 +256,7 @@ public class ServerListener implements Runnable {
                                     Platform.runLater(new Runnable() {
                                         @Override
                                         public void run() {
-                                            gameController.setShoot(value);
+                                            gameController.setShootByMe(value);
                                             gameController.resultGame(true);
                                         }
                                     });
@@ -293,7 +274,7 @@ public class ServerListener implements Runnable {
                                 Platform.runLater(new Runnable() {
                                     @Override
                                     public void run() {
-                                        gameController.setShoot(value);
+                                        gameController.setShootByMe(value);
                                     }
                                 });
                                 break;
@@ -387,8 +368,8 @@ public class ServerListener implements Runnable {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                RegController.getRegController().getSignButton().setDisable(true);
-                RegController.getRegController().getRegButton().setDisable(true);
+                regController.getSignButton().setDisable(true);
+                regController.getRegButton().setDisable(true);
                 regController.getBtnConnect().setText("Connect");
             }
         });
@@ -396,9 +377,9 @@ public class ServerListener implements Runnable {
     }
 
     public Stage getCurrentWindow() {
-        if (commonWindowController.getGameWindow() != null)
+        if (commonWindowController != null && commonWindowController.getGameWindow() != null)
             return commonWindowController.getGameWindow();
-        if (regController.getComWindow() != null) {
+        if (regController != null && regController.getComWindow() != null) {
             return regController.getComWindow();
         }
         return MainLauncher.getPrimaryStageObj();

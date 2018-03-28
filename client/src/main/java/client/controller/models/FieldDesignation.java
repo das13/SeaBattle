@@ -8,20 +8,16 @@ import javafx.scene.text.Text;
 
 /**
  *class extends StackPane for creating cells for Game Fields (field designations)
- *@autor Dmytro Cherevko
+ *@author Dmytro Cherevko
  *@version 1.0
  */
 
 public class FieldDesignation extends StackPane{
-        public static final int TILE_SIZE = 25;
-        public int x, y;
-    private Text text = new Text();
-
-        public Rectangle border = new Rectangle(TILE_SIZE - 2, TILE_SIZE - 2);
+        private static final int TILE_SIZE = 25;
 
         public FieldDesignation(String s, int y, int x) {
-            this.x = x;
-            this.y = y;
+            Rectangle border = new Rectangle(TILE_SIZE - 2, TILE_SIZE - 2);
+            Text text = new Text();
             border.setStroke(Color.LIGHTSEAGREEN);
             border.setFill(Color.BEIGE);
             text.setFont(Font.font(12));
@@ -30,7 +26,5 @@ public class FieldDesignation extends StackPane{
             getChildren().addAll(border, text);
             setTranslateX(x * TILE_SIZE);
             setTranslateY(y * TILE_SIZE);
-
         }
-
 }

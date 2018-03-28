@@ -1,6 +1,5 @@
 package client.controller.utils;
 
-import client.controller.CommonWindowController;
 import javafx.concurrent.Task;
 import org.apache.log4j.Logger;
 

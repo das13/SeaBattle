@@ -138,7 +138,7 @@ public class CommonWindowController {
     public void btnBanPlayerPressed(ActionEvent event) {
         String playerNickName = txaAdminField.getText();
         if (!playerNickName.isEmpty()) {
-            sendAdminResponse("BAN PLAYER", playerNickName);
+            sendAdminRequest("BAN PLAYER", playerNickName);
         } else {
             DialogManager.showInfoDialog(regController.getComWindow(), "INFO", "Please print the user nickname");
         }
@@ -152,9 +152,9 @@ public class CommonWindowController {
     public void btnBanIpPressed(ActionEvent event) {
         String playerIP = txaAdminField.getText();
         if (!playerIP.isEmpty()) {
-            sendAdminResponse("BAN IP", playerIP);
+            sendAdminRequest("BAN IP", playerIP);
         } else {
-            DialogManager.showInfoDialog(regController.getComWindow(), "INFO", "Please print the user IP");
+            DialogManager.showInfoDialog(listener.getCurrentWindow(), "INFO", "Please print the user IP");
         }
     }
 
@@ -166,9 +166,9 @@ public class CommonWindowController {
     public void btnUnBanPlayerPressed(ActionEvent event) {
         String playerNickName = txaAdminField.getText();
         if (!playerNickName.isEmpty()) {
-            sendAdminResponse("UNBAN PLAYER", playerNickName);
+            sendAdminRequest("UNBAN PLAYER", playerNickName);
         } else {
-            DialogManager.showInfoDialog(regController.getComWindow(), "INFO", "Please print the user nickname");
+            DialogManager.showInfoDialog(listener.getCurrentWindow(),"INFO", "Please print the user nickname");
         }
     }
 
@@ -180,9 +180,9 @@ public class CommonWindowController {
     public void btnUnBanIpPressed(ActionEvent event) {
         String playerIP = txaAdminField.getText();
         if (!playerIP.isEmpty()) {
-            sendAdminResponse("UNBAN IP", playerIP);
+            sendAdminRequest("UNBAN IP", playerIP);
         } else {
-            DialogManager.showInfoDialog(regController.getComWindow(), "INFO", "Please print the user IP");
+            DialogManager.showInfoDialog(listener.getCurrentWindow(), "INFO", "Please print the user IP");
         }
     }
 
@@ -192,7 +192,7 @@ public class CommonWindowController {
      */
     @FXML
     public void btnRebootPressed(ActionEvent event) {
-        sendAdminResponse("REBOOT", regController.getUsername());
+        sendAdminRequest("REBOOT", regController.getUsername());
     }
 
     /**
@@ -201,13 +201,13 @@ public class CommonWindowController {
      */
     @FXML
     public void btnShutdownPressed(ActionEvent event) {
-        sendAdminResponse("SHUTDOWN", regController.getUsername());
+        sendAdminRequest("SHUTDOWN", regController.getUsername());
     }
 
     /**
      * method for sending responses from admin to server
      */
-    private void sendAdminResponse(String key, String value) {
+    private void sendAdminRequest(String key, String value) {
         try {
             listener.getOutClientXML().send(key, value);
         } catch (XMLStreamException e) {
@@ -251,32 +251,25 @@ public class CommonWindowController {
     }
 
     /**
-     * method for sending messages from chat (from txtMassage)
-     */
-    private void sendButtonAction() {
-        String msg = txtMassage.getText();
-        if (!txtMassage.getText().isEmpty()) {
-            try {
-                listener.getOutClientXML().send("MSG", msg);
-            } catch (XMLStreamException e) {
-                logger.error("Error when try send message on the chat", e);
-            }
-        }
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                txtMassage.setText("");
-            }
-        });
-    }
-
-    /**
-     * method of processing keystrokes in the txtMassage
+     * method of processing keystrokes in the txtMassage and sending messages from chat (from txtMassage)
      * @param event press the button
      */
     public void sendMethod(KeyEvent event)  {
         if (event.getCode() == KeyCode.ENTER) {
-            sendButtonAction();
+            String msg = txtMassage.getText();
+            if (!txtMassage.getText().isEmpty()) {
+                try {
+                    listener.getOutClientXML().send("MSG", msg);
+                } catch (XMLStreamException e) {
+                    logger.error("Error when try send message on the chat", e);
+                }
+            }
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    txtMassage.setText("");
+                }
+            });
         }
     }
 

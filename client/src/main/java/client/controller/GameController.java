@@ -5,7 +5,6 @@ import client.controller.models.FieldDesignation;
 import client.controller.models.Ship;
 import client.controller.utils.DialogManager;
 import client.xmlservice.OutClientXML;
-import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -17,7 +16,6 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import org.apache.log4j.Layout;
 import org.apache.log4j.Logger;
 
 import javax.xml.stream.XMLStreamException;
@@ -113,10 +111,10 @@ public class GameController implements Initializable {
         createField(userPane, false);
         createField(enemyPane, true);
         listener.setGameController(this);
-        outClientXML = ServerListener.getListener().getOutClientXML();
+        outClientXML = listener.getOutClientXML();
         lblEnemyLogin.setText(listener.getEnemy());
         lblUserLogin.setText(listener.getUsername());
-        CommonWindowController.getCwController().setGameController(this);
+        commonWindowController.setGameController(this);
     }
 
     /**
@@ -140,7 +138,7 @@ public class GameController implements Initializable {
                 Cell cell = new Cell(x, y);
                 pane.getChildren().add(cell);
                 if (!isEnemy) {
-                    cell.setOnMouseClicked(e -> sendAnswer(cell.getX(), cell.getY()));
+                    cell.setOnMouseClicked(e -> sendRequestForLocation(cell.getX(), cell.getY()));
                 } else {
                     cell.setOnMouseClicked(e -> shoot(cell.getX(), cell.getY()));
                 }
@@ -155,7 +153,7 @@ public class GameController implements Initializable {
      */
     private void shoot(int x1, int y1) {
         if (isGameFinish) {
-            DialogManager.showInfoDialog(commonWindowController.getGameWindow(), "GAME INFO", "Game OVER");
+            DialogManager.showInfoDialog(listener.getCurrentWindow(), "GAME INFO", "Game OVER");
             return;
         }
         if (isGameStart) {
@@ -167,7 +165,7 @@ public class GameController implements Initializable {
                 logger.error("Error in void shoot(int x1, int y1", e);
             }
         } else {
-            DialogManager.showInfoDialog(commonWindowController.getGameWindow(), "GAME INFO", "Game is not started");
+            DialogManager.showInfoDialog(listener.getCurrentWindow(), "GAME INFO", "Game is not started");
         }
     }
 
@@ -176,7 +174,7 @@ public class GameController implements Initializable {
      * @param x1 coordinate of head of ship
      * @param y1 coordinate of head of ship
      */
-    private void sendAnswer(int x1, int y1) {
+    private void sendRequestForLocation(int x1, int y1) {
         this.x1 = x1;
         this.y1 = y1;
         int x2 = (position == 0 ? x1 + length - 1 : x1);
@@ -197,7 +195,7 @@ public class GameController implements Initializable {
             ship.setShip();
             updateCounter(length);
         } else {
-            DialogManager.showInfoDialog(commonWindowController.getGameWindow(), "GAME INFO", "you have already arranged all the ships");
+            DialogManager.showInfoDialog(listener.getCurrentWindow(), "GAME INFO", "you have already arranged all the ships");
         }
     }
 
@@ -231,8 +229,11 @@ public class GameController implements Initializable {
      * method for displaying the result of a shot on enemy's field
      * @param result result of shot
      */
-    public void setShoot(String result) {
+    public void setShootByMe(String result) {
         if ("HIT".equals(result) || "MISS".equals(result) || "DESTROY".equals(result)) {
+            if(!"MISS".equals(result) && !isGameFinish()){
+                shootProgress(true);
+            }
             enemyPane.getChildren().add(createNewCell(result, x1, y1, false));
         }
     }
@@ -243,6 +244,9 @@ public class GameController implements Initializable {
      */
     public void setShootByEnemy(String result, int x1, int y1) {
         if ("HIT".equals(result) || "MISS".equals(result) || "DESTROY".equals(result)) {
+            if(!"MISS".equals(result) ){
+                shootProgress(false);
+            }
             userPane.getChildren().add(createNewCell(result, x1, y1, true));
         }
     }
@@ -252,31 +256,15 @@ public class GameController implements Initializable {
      * @param isUser whose turn is now
      */
     public void shootProgress(boolean isUser) {
-        ShootProgress shootEnemyProgress;
-        ShootProgress shootUserProgress;
-        if (isUser) {
-            shootUserProgress = new ShootProgress();
-            prgUser.progressProperty().bind(shootUserProgress.progressProperty());
-            shootUserProgress.updateProgress(0.0, 1.0);
-            prgUser.progressProperty().bind(shootUserProgress.progressProperty());
-            Thread th1 = new Thread(shootUserProgress);
-            th1.start();
-            prgEnemy.progressProperty().unbind();
-            prgEnemy.setProgress(0.0);
-            enemyHbox.setBackground(new Background(new BackgroundFill(Color.LIGHTCORAL, null, null)));
-            userHbox.setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN, null, null)));
-        } else {
-            shootEnemyProgress = new ShootProgress();
-            prgEnemy.progressProperty().bind(shootEnemyProgress.progressProperty());
-            shootEnemyProgress.updateProgress(0.0, 1.0);
-            prgEnemy.progressProperty().bind(shootEnemyProgress.progressProperty());
-            Thread th2 = new Thread(shootEnemyProgress);
-            th2.start();
-            prgUser.progressProperty().unbind();
-            prgUser.setProgress(0.0);
-            enemyHbox.setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN, null, null)));
-            userHbox.setBackground(new Background(new BackgroundFill(Color.LIGHTCORAL, null, null)));
-        }
+        ShootProgress shootProgress = new ShootProgress();
+        (isUser ? prgUser : prgEnemy).progressProperty().bind(shootProgress.progressProperty());
+        shootProgress.updateProgress(0.0, 1.0);
+        (isUser ? prgUser : prgEnemy).progressProperty().bind(shootProgress.progressProperty());
+        new Thread(shootProgress).start();
+        (isUser ? prgEnemy : prgUser).progressProperty().unbind();
+        (isUser ? prgEnemy : prgUser).setProgress(0.0);
+        (isUser ? enemyHbox : userHbox).setBackground(new Background(new BackgroundFill(Color.LIGHTCORAL, null, null)));
+        (isUser ? userHbox : enemyHbox).setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN, null, null)));
     }
 
     /**
@@ -289,18 +277,12 @@ public class GameController implements Initializable {
         btnSurrender.setDisable(true);
         btnReplay.setVisible(true);
         commonWindowController.getBtnAtack().setDisable(false);
-        DialogManager.showInfoDialog(commonWindowController.getGameWindow(), "GAME", "Game over");
-        if (isVictory) {
-            prgUser.progressProperty().unbind();
-            lblResultGameUser.setText("WINNER");
-            lblResultGameEnemy.setText("LOSER");
-            gameController.getTxaGameInfo().appendText("Server: You WINNER\n");
-        } else {
-            prgEnemy.progressProperty().unbind();
-            lblResultGameUser.setText("LOSER");
-            lblResultGameEnemy.setText("WINNER");
-            gameController.getTxaGameInfo().appendText("Server: You DEFEAT\n");
-        }
+        DialogManager.showInfoDialog(listener.getCurrentWindow(), "GAME", "Game over");
+        lblResultGameUser.setText(isVictory ? "WINNER" : "LOSER");
+        lblResultGameEnemy.setText(isVictory ? "LOSER" : "WINNER");
+        gameController.getTxaGameInfo().appendText(" Server: " + (isVictory ? "You WINNER" : "You DEFEAT") + "\n");
+        prgUser.progressProperty().unbind();
+        prgEnemy.progressProperty().unbind();
     }
 
     /**

@@ -1,7 +1,6 @@
 package client;
 
 import client.controller.PropertiesLoader;
-import client.controller.ServerListener;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -12,9 +11,6 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.apache.log4j.Logger;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 
 /**
@@ -27,7 +23,6 @@ public class MainLauncher extends Application {
 
     private final static Logger logger = Logger.getLogger(MainLauncher.class);
     private static Stage primaryStageObj;
-    private List<Parent> parents = new ArrayList<>();
     private static Properties propertyForms;
 
     public static Stage getPrimaryStageObj() {
@@ -37,16 +32,10 @@ public class MainLauncher extends Application {
     @Override
     public void start(Stage primaryStage) {
         primaryStageObj = primaryStage;
-        //ServerListener listener = ServerListener.getListener();
         Parent root = null;
         try {
-           //TODO delete
-            parents.add(FXMLLoader.load(getClass().getResource(propertyForms.getProperty("regForm"))));
-            parents.add(FXMLLoader.load(getClass().getResource(propertyForms.getProperty("commonWindow"))));
-            parents.add(FXMLLoader.load(getClass().getResource(propertyForms.getProperty("GameWindow"))));
-            root = parents.get(0);
+            root = FXMLLoader.load(getClass().getResource(propertyForms.getProperty("regForm")));
             logger.info("Load regForm.fxml is successfully");
-
         } catch (IOException e) {
             logger.error("Can not load regForm.fxml", e);
         }

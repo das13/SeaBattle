@@ -9,7 +9,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -71,18 +70,13 @@ public class RegController {
     private void pressRegButton(ActionEvent event) {
         if (isValidUserInfo()) {
             initializeUserInfo();
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        if (isValidUserInfo()) {
-                            listener.getOutClientXML().send("REG", username, password);
-                        }
-                    } catch (XMLStreamException e) {
-                        logger.error("Can not send message with key - REG", e);
-                    }
+            try {
+                if (isValidUserInfo()) {
+                    listener.getOutClientXML().send("REG", username, password);
                 }
-            });
+            } catch (XMLStreamException e) {
+                logger.error("Can not send message with key - REG", e);
+            }
         }
     }
 
@@ -94,18 +88,14 @@ public class RegController {
     private void pressSignButton(ActionEvent event) {
         if (isValidUserInfo()) {
             initializeUserInfo();
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        if (isValidUserInfo()) {
-                            listener.getOutClientXML().send("LOG IN", username, password);
-                            listener.setUsername(username);
-                        }
-                    } catch (XMLStreamException e) {
-                        logger.error("Can not send message with key - LOG IN", e);                    }
+            try {
+                if (isValidUserInfo()) {
+                    listener.getOutClientXML().send("LOG IN", username, password);
+                    listener.setUsername(username);
                 }
-            });
+            } catch (XMLStreamException e) {
+                logger.error("Can not send message with key - LOG IN", e);
+            }
         }
     }
 
@@ -126,26 +116,30 @@ public class RegController {
                 } catch (IOException e) {
                     logger.error("Can not load commonWindow.fxml", e);
                 }
-                stage.setOnCloseRequest((WindowEvent e) -> {
-                    try {
-                        listener.getOutClientXML().send("LOG OUT", username);
-                    } catch (XMLStreamException e1) {
-                        logger.error("Logout error", e1);
-                    } finally {
-                        MainLauncher.getPrimaryStageObj().show();
-                        comWindow.hide();
-                    }
-                });
                 if (root != null) {
                     stage.setTitle("Sea Battle 2018");
                     Scene scene = new Scene(root, 640, 360 + (isAdmin ? 40 : 0));
-                    if (!isAdmin) {
-                        CommonWindowController.getCwController().getAdminBox().setVisible(false);
-                    }
                     stage.setScene(scene);
                     stage.setResizable(false);
                     clearUserInput();
+                    stage.setOnCloseRequest((WindowEvent e) -> {
+                        try {
+                            if (GameController.getGameController() != null && CommonWindowController.getCwController().getGameWindow() != null){
+                                if (!GameController.getGameController().isGameFinish())
+                                    listener.getOutClientXML().send("SURRENDER", username);
+                            }
+                            listener.getOutClientXML().send("LOG OUT", username);
+                        } catch (XMLStreamException e1) {
+                            logger.error("Logout error", e1);
+                        } finally {
+                            MainLauncher.getPrimaryStageObj().show();
+                            comWindow.hide();
+                        }
+                    });
                     stage.show();
+                    if (!isAdmin) {
+                        CommonWindowController.getCwController().getAdminBox().setVisible(false);
+                    }
                     MainLauncher.getPrimaryStageObj().hide();
                 }
             }
@@ -161,14 +155,14 @@ public class RegController {
         try {
             port = Integer.parseInt(txtServerPort.getText());
         } catch (NumberFormatException e) {
-            DialogManager.showInfoDialog(MainLauncher.getPrimaryStageObj(), "Server port", "No valid port");
+            DialogManager.showInfoDialog(listener.getCurrentWindow(), "Server port", "No valid port");
         }
         if (txtServerPort.getText().isEmpty()) {
-            DialogManager.showInfoDialog(MainLauncher.getPrimaryStageObj(), "Server port", "Please,enter the server port");
+            DialogManager.showInfoDialog(listener.getCurrentWindow(), "Server port", "Please,enter the server port");
             return false;
         }
         if (port < 0 || port > 65535) {
-            DialogManager.showInfoDialog(MainLauncher.getPrimaryStageObj(), "Port info", "Please, enter the valid port (0...65535)");
+            DialogManager.showInfoDialog(listener.getCurrentWindow(), "Port info", "Please, enter the valid port (0...65535)");
             return false;
         }
         return true;
@@ -180,21 +174,21 @@ public class RegController {
      */
     private boolean isValidUserInfo() {
         if (loginField.getText().isEmpty() || loginField.getText().length() > 12) {
-            DialogManager.showInfoDialog(MainLauncher.getPrimaryStageObj(), "Login info", "Please, enter the login from 1 symbol to 12");
+            DialogManager.showInfoDialog(listener.getCurrentWindow(), "Login info", "Please, enter the login from 1 symbol to 12");
             loginField.setText("");
             return false;
         }
         if (loginField.getText().contains(" ")) {
-            DialogManager.showInfoDialog(MainLauncher.getPrimaryStageObj(), "Login info", "Login can not include the space");
+            DialogManager.showInfoDialog(listener.getCurrentWindow(), "Login info", "Login can not include the space");
             loginField.setText("");
             return false;
         }
         if (passField.getText().isEmpty()) {
-            DialogManager.showInfoDialog(MainLauncher.getPrimaryStageObj(), "Password info", "Please,enter the password");
+            DialogManager.showInfoDialog(listener.getCurrentWindow(), "Password info", "Please,enter the password");
             return false;
         }
         if (txtServerHostname.getText().isEmpty()) {
-            DialogManager.showInfoDialog(MainLauncher.getPrimaryStageObj(), "Host info", "Please,enter the server host");
+            DialogManager.showInfoDialog(listener.getCurrentWindow(), "Host info", "Please,enter the server host");
             return false;
         }
         return true;
