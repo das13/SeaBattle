@@ -47,7 +47,7 @@ public class Field {
      */
     public boolean checkShipDestroy(int x,int y) {
         int c = 0;
-        try {
+        if (y >= 0 && y < 10 && x >= 0 && x < 10) {
             if (x + 1 > 9 || field[x + 1][y] != 1) {
                 c++;
             }
@@ -60,34 +60,26 @@ public class Field {
             if (y - 1 < 0 || field[x][y - 1] != 1) {
                 c++;
             }
-        }catch (ArrayIndexOutOfBoundsException e) {
-            Server.logger.info("Out of bound in checkShipDestroy1 (x = " + x + ", y =" + y + ")",e);
-        }
-        try {
             if (c == 4) {
                 if (!(x + 2 > 9 || x + 1 > 9) && field[x + 2][y] == 1 && field[x + 1][y] == 3) {
                     c--;
                 }
-                if (!(x - 2 > 9 || x - 1 > 9) && field[x - 2][y] == 1 && field[x - 1][y] == 3) {
+                if (!(x - 2 < 0 || x - 1 < 0) && field[x - 2][y] == 1 && field[x - 1][y] == 3) {
                     c--;
                 }
                 if (!(y + 2 > 9 || y + 1 > 9) && field[x][y + 2] == 1 && field[x][y + 1] == 3) {
                     c--;
                 }
-                if (!(y - 2 > 9 || y - 1 > 9) && field[x][y - 2] == 1 && field[x][y - 1] == 3) {
+                if (!(y - 2 < 0 || y - 1 < 0) && field[x][y - 2] == 1 && field[x][y - 1] == 3) {
                     c--;
                 }
             }
-        }catch (ArrayIndexOutOfBoundsException e) {
-            Server.logger.info("Out of bound in checkShipDestroy2 (x = " + x + ", y =" + y + ")",e);
-        }
-        try {
             if (c == 4) {
                 if (!(x + 3 > 9 || x + 2 > 9 || x + 1 > 9) && field[x + 3][y] == 1 && field[x + 2][y] == 3 &&
                         field[x + 1][y] == 3) {
                     c--;
                 }
-                if (!(x - 3 > 9 || x - 2 > 9 || x - 1 > 9) && field[x - 3][y] == 1 && field[x - 2][y] == 3 &&
+                if (!(x - 3 < 0 || x - 2 < 0 || x - 1 < 0) && field[x - 3][y] == 1 && field[x - 2][y] == 3 &&
                         field[x - 1][y] == 3) {
                     c--;
                 }
@@ -95,15 +87,12 @@ public class Field {
                         field[x][y + 1] == 3) {
                     c--;
                 }
-                if (!(y - 3 > 9 || y - 2 > 9 || y - 1 > 9) && field[x][y - 3] == 1 && field[x][y - 2] == 3 &&
+                if (!(y - 3 < 0 || y - 2 < 0 || y - 1 < 0) && field[x][y - 3] == 1 && field[x][y - 2] == 3 &&
                         field[x][y - 1] == 3) {
                     c--;
                 }
             }
-        }catch (ArrayIndexOutOfBoundsException e) {
-            Server.logger.info("Out of bound in checkShipDestroy3 (x = " + x + ", y =" + y + ")",e);
         }
-
         if (c == 4) {
             return true;
         } else {
@@ -210,7 +199,7 @@ public class Field {
      * @return result of checking
      */
     public boolean areaChecking(int stat,int a,int b,boolean v) {
-        try {
+        if (stat >= 0 && stat < 10 && a >= 0 && b < 10) {
             if (v) {
                 for (int i = a; i <= b; i++) {
                     if (field[stat][i] != 0) {
@@ -225,7 +214,7 @@ public class Field {
                     }
                 }
             }
-        }catch (ArrayIndexOutOfBoundsException e) {
+        } else {
             return false;
         }
         return true;
