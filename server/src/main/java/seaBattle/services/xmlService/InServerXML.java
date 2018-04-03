@@ -36,7 +36,7 @@ public class InServerXML {
         try {
             this.fileReader = new InputStreamReader(socket.getInputStream());
         } catch (IOException e) {
-            logger.error("IOE when creating InputStreamReader", e);
+            logger.error("IOE when creating reader for reading XML input stream", e);
         }
     }
 

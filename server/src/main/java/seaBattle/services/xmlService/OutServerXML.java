@@ -125,10 +125,10 @@ public class OutServerXML {
             try {
                 Thread.sleep(50);
             } catch (InterruptedException e) {
-                logger.error("InterruptedException when sending", e);
+                logger.error("Error when sending XML message(thread is sleeping)", e);
             }
         } catch (XMLStreamException e) {
-            logger.error("XMLStreamException when sending", e);
+            logger.error("Error when sending XML message", e);
         }
     }
 

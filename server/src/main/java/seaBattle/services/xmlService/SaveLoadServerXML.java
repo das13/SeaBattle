@@ -439,7 +439,7 @@ public class SaveLoadServerXML {
             jaxbMarshaller.marshal(gameCondition, file);
 
         } catch (JAXBException e) {
-            logger.error("serverConf.xml creation error.", e);
+            logger.error("save game creation error.", e);
         }
 
     }
