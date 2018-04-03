@@ -1,6 +1,5 @@
 package client.controller;
 
-
 import client.MainLauncher;
 import client.controller.models.Gamer;
 import client.controller.utils.DialogManager;
@@ -120,7 +119,7 @@ public class CommonWindowController {
         try {
             listener.getOutClientXML().send(key, listener.getUsername(), enemy);
         } catch (XMLStreamException e) {
-            logger.error("INVITE error", e);
+            logger.error("Error in method sendInviteToBattle when try send message to server with key INVITE", e);
         }
         Platform.runLater(new Runnable() {
             @Override
@@ -322,7 +321,7 @@ public class CommonWindowController {
                             ServerListener.getListener().getOutClientXML().send("SURRENDER", lblLogin.getText());
                         }
                     } catch (XMLStreamException e1) {
-                        logger.error("SURRENDER error", e1);
+                        logger.error("Error in method showGameWindow() when try send message to server with key SURRENDER", e1);
                     }
                     btnAtack.setDisable(false);
                 });

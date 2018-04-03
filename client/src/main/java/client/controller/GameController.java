@@ -162,7 +162,7 @@ public class GameController implements Initializable {
             try {
                 outClientXML.send("SHOOT", "" + y1, "" + x1);
             } catch (XMLStreamException e) {
-                logger.error("Error in void shoot(int x1, int y1", e);
+                logger.error("Error in method void shoot(int x1, int y1) when try send message to server", e);
             }
         } else {
             DialogManager.showInfoDialog(listener.getCurrentWindow(), "GAME INFO", "Game is not started");
@@ -253,17 +253,17 @@ public class GameController implements Initializable {
 
     /**
      * Method to update the progress of time on the shot. Color change on the form
-     * @param isUser whose turn is now
+     * @param isUserTurn whose turn is now
      */
-    public void shootProgress(boolean isUser) {
+    public void shootProgress(boolean isUserTurn) {
         ShootProgress shootProgress = new ShootProgress();
         shootProgress.updateProgress(0.0, 1.0);
         new Thread(shootProgress).start();
-        (isUser ? prgUser : prgEnemy).progressProperty().bind(shootProgress.progressProperty());
-        (isUser ? prgEnemy : prgUser).progressProperty().unbind();
-        (isUser ? prgEnemy : prgUser).setProgress(0.0);
-        (isUser ? enemyHbox : userHbox).setBackground(new Background(new BackgroundFill(Color.LIGHTCORAL, null, null)));
-        (isUser ? userHbox : enemyHbox).setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN, null, null)));
+        (isUserTurn ? prgUser : prgEnemy).progressProperty().bind(shootProgress.progressProperty());
+        (isUserTurn ? prgEnemy : prgUser).progressProperty().unbind();
+        (isUserTurn ? prgEnemy : prgUser).setProgress(0.0);
+        (isUserTurn ? enemyHbox : userHbox).setBackground(new Background(new BackgroundFill(Color.LIGHTCORAL, null, null)));
+        (isUserTurn ? userHbox : enemyHbox).setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN, null, null)));
     }
 
     /**
@@ -388,7 +388,7 @@ public class GameController implements Initializable {
                 try {
                     Thread.sleep(300);
                 } catch (InterruptedException e) {
-                    logger.error("Error when try Thread.sleep()", e);
+                    logger.error("Error when try Thread.sleep(300) in class ShootProgress", e);
                 }
                 if (isCancelled()) {
                     return 0;

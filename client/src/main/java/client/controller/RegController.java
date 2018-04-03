@@ -131,7 +131,7 @@ public class RegController {
                             }
                             listener.getOutClientXML().send("LOG OUT", username);
                         } catch (XMLStreamException e1) {
-                            logger.error("Logout error", e1);
+                            logger.error("Can not send message with key - LOG OUT or SURRENDER", e1);
                         } finally {
                             MainLauncher.getPrimaryStageObj().show();
                             comWindow.hide();
