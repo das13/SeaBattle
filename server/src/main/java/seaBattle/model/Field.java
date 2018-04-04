@@ -73,8 +73,7 @@ public class Field {
                 if (!(y - 2 < 0 || y - 1 < 0) && field[x][y - 2] == 1 && field[x][y - 1] == 3) {
                     c--;
                 }
-            }
-            if (c == 4) {
+
                 if (!(x + 3 > 9 || x + 2 > 9 || x + 1 > 9) && field[x + 3][y] == 1 && field[x + 2][y] == 3 &&
                         field[x + 1][y] == 3) {
                     c--;
